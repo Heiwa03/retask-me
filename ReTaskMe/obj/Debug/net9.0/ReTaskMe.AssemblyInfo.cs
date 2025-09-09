@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ReTaskMe")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+32da6b8d5afb67359069e5377384314ef7cc49c2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4d39bb109bd543b6673a4952b610c756b0212ed1")]
 [assembly: System.Reflection.AssemblyProductAttribute("ReTaskMe")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ReTaskMe")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
