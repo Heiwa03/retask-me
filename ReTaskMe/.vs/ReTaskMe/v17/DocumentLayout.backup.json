@@ -3,6 +3,27 @@
   "WorkspaceRootPath": "E:\\projects\\retaskmerepo\\retask-me\\ReTaskMe\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\businesslogiclayer\\services\\interfaces\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{89F0D778-E745-4C4E-89C9-52F4E8A2F32F}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\dataaccesslayer\\databasecontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{89F0D778-E745-4C4E-89C9-52F4E8A2F32F}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\dataaccesslayer\\repositories\\interfaces\\ibaserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{89F0D778-E745-4C4E-89C9-52F4E8A2F32F}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\dataaccesslayer\\entities\\baseid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{89F0D778-E745-4C4E-89C9-52F4E8A2F32F}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\dataaccesslayer\\dataaccesslayer.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\businesslogiclayer\\businesslogiclayer.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\businesslogiclayer\\dtos\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|e:\\projects\\retaskmerepo\\retask-me\\retaskme\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -11,16 +32,10 @@
       "RelativeMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|solutionrelative:controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\businesslogiclayer\\dtos\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\businesslogiclayer\\services\\temporaryloginchecker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\businesslogiclayer\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\businesslogiclayer\\services\\interfaces\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|e:\\projects\\retaskmerepo\\retask-me\\retaskme\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -34,11 +49,76 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "BaseId.cs",
+              "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Entities\\BaseId.cs",
+              "RelativeDocumentMoniker": "..\\DataAccessLayer\\Entities\\BaseId.cs",
+              "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Entities\\BaseId.cs",
+              "RelativeToolTip": "..\\DataAccessLayer\\Entities\\BaseId.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T12:29:48.2Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "IBaseRepository.cs",
+              "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Repositories\\Interfaces\\IBaseRepository.cs",
+              "RelativeDocumentMoniker": "..\\DataAccessLayer\\Repositories\\Interfaces\\IBaseRepository.cs",
+              "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Repositories\\Interfaces\\IBaseRepository.cs",
+              "RelativeToolTip": "..\\DataAccessLayer\\Repositories\\Interfaces\\IBaseRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T12:26:46.723Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "DatabaseContext.cs",
+              "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\DatabaseContext.cs",
+              "RelativeDocumentMoniker": "..\\DataAccessLayer\\DatabaseContext.cs",
+              "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\DatabaseContext.cs",
+              "RelativeToolTip": "..\\DataAccessLayer\\DatabaseContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T12:20:38.885Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DataAccessLayer",
+              "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\DataAccessLayer.csproj",
+              "RelativeDocumentMoniker": "..\\DataAccessLayer\\DataAccessLayer.csproj",
+              "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\DataAccessLayer.csproj",
+              "RelativeToolTip": "..\\DataAccessLayer\\DataAccessLayer.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-09-09T12:17:39.77Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 5,
+              "Title": "BusinessLogicLayer",
+              "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\BusinessLogicLayer.csproj",
+              "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\BusinessLogicLayer.csproj",
+              "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\BusinessLogicLayer.csproj",
+              "RelativeToolTip": "..\\BusinessLogicLayer\\BusinessLogicLayer.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-09-09T12:16:09.974Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "IAuthService.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
               "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
@@ -46,23 +126,25 @@
               "RelativeToolTip": "..\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-05T14:00:09.465Z"
+              "WhenOpened": "2025-09-05T14:00:09.465Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 10,
               "Title": "AuthService.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\Services\\AuthService.cs",
               "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\Services\\AuthService.cs",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\Services\\AuthService.cs",
               "RelativeToolTip": "..\\BusinessLogicLayer\\Services\\AuthService.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAADIAAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAIBJwDIAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-05T13:38:40.041Z"
+              "WhenOpened": "2025-09-05T13:38:40.041Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 11,
               "Title": "launchSettings.json",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\ReTaskMe\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "Properties\\launchSettings.json",
@@ -70,11 +152,12 @@
               "RelativeToolTip": "Properties\\launchSettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-09-05T13:14:41.084Z"
+              "WhenOpened": "2025-09-05T13:14:41.084Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 7,
               "Title": "Program.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\ReTaskMe\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -87,7 +170,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 9,
               "Title": "TemporaryLoginChecker.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
               "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
@@ -95,11 +178,12 @@
               "RelativeToolTip": "..\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-05T14:00:57.712Z"
+              "WhenOpened": "2025-09-05T14:00:57.712Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 8,
               "Title": "AuthController.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\ReTaskMe\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
@@ -107,11 +191,12 @@
               "RelativeToolTip": "Controllers\\AuthController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-05T14:06:15.478Z"
+              "WhenOpened": "2025-09-05T14:06:15.478Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 6,
               "Title": "LoginDto.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\DTOs\\LoginDto.cs",
               "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\DTOs\\LoginDto.cs",
@@ -119,7 +204,8 @@
               "RelativeToolTip": "..\\BusinessLogicLayer\\DTOs\\LoginDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-05T12:46:53.414Z"
+              "WhenOpened": "2025-09-05T12:46:53.414Z",
+              "EditorCaption": ""
             }
           ]
         }
