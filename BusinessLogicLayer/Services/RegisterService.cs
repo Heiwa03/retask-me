@@ -6,7 +6,10 @@ using System.Text;
 // Used namespaces
 using BusinessLogicLayer.Services.Interfaces;
 using BusinessLogicLayer.DTOs;
-using BusinessLogicLayer.testsBagrin;
+using BusinessLogicLayer.testsBagrin.Entity;
+using BusinessLogicLayer.testsBagrin.Interfaces;
+
+using HelperLayer.Security;
 
 
 namespace BusinessLogicLayer.Services{
@@ -20,10 +23,10 @@ namespace BusinessLogicLayer.Services{
         // 1. Main method for register
         public async Task RegisterUser(RegisterDTO dto){
             // Validate login / password / rep password
-            ValidateRegisterData(dto);
+            PasswordHelper.ValidateRegisterData(dto.Password, dto.RepeatPassword);
 
             // HashPassword
-            string hashedPassword = HashPassword(dto.Password);
+            string hashedPassword = PasswordHelper.HashPassword(dto.Password);
 
             // Save in bd
             TestUser user = new TestUser{
@@ -33,23 +36,6 @@ namespace BusinessLogicLayer.Services{
             };
 
             await(_userRep.AddUser(user));
-        }
-
-        // 2. Validate rep passowrd
-        private static void ValidateRegisterData(RegisterDTO dto){
-            if(dto.Password != dto.RepeatPassword){
-                throw new ArgumentException("Passwords do not match");
-            }
-        }
-
-        // 3. Hash password
-        private static string HashPassword(string password){
-            using (SHA256 sha256 = SHA256.Create()){
-                byte[] bytes = Encoding.UTF8.GetBytes(password);
-                byte[] hash = sha256.ComputeHash(bytes); // !!!
-                
-                return Convert.ToBase64String(hash);
-            }
         }
     }
 }
