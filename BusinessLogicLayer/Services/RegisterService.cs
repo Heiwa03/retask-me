@@ -3,12 +3,13 @@
 using System.Security.Cryptography;
 using System.Text;
 
-// Used namespaces
+// Used namespaces from BL
 using BusinessLogicLayer.Services.Interfaces;
 using BusinessLogicLayer.DTOs;
 using BusinessLogicLayer.testsBagrin.Entity;
 using BusinessLogicLayer.testsBagrin.Interfaces;
 
+// Used namespaces from HL
 using HelperLayer.Security;
 
 
@@ -28,14 +29,21 @@ namespace BusinessLogicLayer.Services{
             // HashPassword
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
 
+            // Create user 
+            TestUser user = CreateUser(dto, hashedPassword);
+
             // Save in bd
+            await _userRep.AddUser(user);
+        }
+
+        private TestUser CreateUser(RegisterDTO dto, string hashedPassword){
             TestUser user = new TestUser{
                 ID = 0,
                 Login = dto.Login,
                 HashedPassword = hashedPassword
             };
 
-            await(_userRep.AddUser(user));
+            return user;
         }
     }
 }
