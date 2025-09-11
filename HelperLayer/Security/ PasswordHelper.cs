@@ -11,6 +11,7 @@ namespace HelperLayer.Security{
             }
         }
 
+        // For now
         // Hash password (SHA256, no salt)
         public static string HashPassword(string password){
             using (SHA256 sha256 = SHA256.Create()){
@@ -20,5 +21,7 @@ namespace HelperLayer.Security{
                 return Convert.ToBase64String(hash);
             }
         }
+
+        // TODO: Salty Hash Password (SHA256) 
     }
 }

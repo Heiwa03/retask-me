@@ -33,7 +33,7 @@ namespace BusinessLogicLayer.testsBagrin{
             FakeUserRep repo = new FakeUserRep();
             RegisterService service = new RegisterService(repo);
 
-            var dto = new RegisterDTO{
+            RegisterDTO dto = new RegisterDTO{
                 Login = "testuser",
                 Password = "a",
                 RepeatPassword = "Password"
