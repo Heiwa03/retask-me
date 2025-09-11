@@ -5,7 +5,7 @@ using BusinessLogicLayer.testsBagrin.Entity;
 
 
 namespace BusinessLogicLayer.testsBagrin.Repo.Real{
-    public class TestUserRep : IUserRep{
+    public class TestUserRep { // IUserRepository
         private readonly TestConnector _context;
 
         public TestUserRep(TestConnector _context){

@@ -18,6 +18,7 @@ E:/projects/retaskmerepo/retask-me/BusinessLogicLayer/obj/Debug/net9.0/ref/Busin
 /home/scooperlosses/AmdarisTODO/backend/BusinessLogicLayer/bin/Debug/net9.0/BusinessLogicLayer.runtimeconfig.json
 /home/scooperlosses/AmdarisTODO/backend/BusinessLogicLayer/bin/Debug/net9.0/BusinessLogicLayer.dll
 /home/scooperlosses/AmdarisTODO/backend/BusinessLogicLayer/bin/Debug/net9.0/BusinessLogicLayer.pdb
+/home/scooperlosses/AmdarisTODO/backend/BusinessLogicLayer/bin/Debug/net9.0/BCrypt.Net-Next.dll
 /home/scooperlosses/AmdarisTODO/backend/BusinessLogicLayer/bin/Debug/net9.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
 /home/scooperlosses/AmdarisTODO/backend/BusinessLogicLayer/bin/Debug/net9.0/Microsoft.VisualStudio.CodeCoverage.Shim.dll
 /home/scooperlosses/AmdarisTODO/backend/BusinessLogicLayer/bin/Debug/net9.0/Microsoft.EntityFrameworkCore.dll
