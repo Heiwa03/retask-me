@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!--=============== REMIXICONS ===============-->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+
+  <!--=============== CSS ===============-->
+  <link rel="stylesheet" href="retask-me/src/app/pages/register/register.css">
+
+  <title>ReTask_Me - Register</title>
+</head>
+<body>
+  <div class="container">
+    <div class="login__content">
+      <img src="assets/img/bg-login.png" alt="background" class="login__img">
+
+      <form action="" class="login__form">
+        <!-- ✅ ReTask_Me brand text -->
+        <h2 class="login__brand">ReTask_Me</h2>
+
+        <div>
+          <h1 class="login__title">
+            <span>Create</span> Account
+          </h1>
+          <p class="login__description">
+            Fill in the details below to register.
+          </p>
+        </div>
+        
+        <div>
+          <div class="login__inputs">
+            <!-- Username -->
+            <div>
+              <label for="input-username" class="login__label">Username</label>
+              <input type="text" placeholder="Choose a username" required class="login__input" id="input-username">
+            </div>
+
+            <!-- Password -->
+            <div>
+              <label for="input-pass" class="login__label">Password</label>
+              <div class="login__box">
+                <input type="password" placeholder="Enter your password" required class="login__input" id="input-pass">
+                <i class="ri-eye-off-line login__eye"></i>
+              </div>
+            </div>
+
+            <!-- Repeat Password -->
+            <div>
+              <label for="input-repeat" class="login__label">Repeat Password</label>
+              <div class="login__box">
+                <input type="password" placeholder="Repeat your password" required class="login__input" id="input-repeat">
+                <i class="ri-eye-off-line login__eye"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="login__buttons">
+            <button type="submit" class="login__button">Register</button>
+            <a href="login.html" class="login__button login__button-ghost">Back to Login</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!--=============== MAIN JS ===============-->
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
