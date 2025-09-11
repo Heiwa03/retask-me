@@ -1,3 +1,4 @@
+/home/scooperlosses/AmdarisTODO/backend/HelperLayer/obj/Debug/net9.0/HelperLayer.csproj.AssemblyReference.cache
 /home/scooperlosses/AmdarisTODO/backend/HelperLayer/obj/Debug/net9.0/HelperLayer.GeneratedMSBuildEditorConfig.editorconfig
 /home/scooperlosses/AmdarisTODO/backend/HelperLayer/obj/Debug/net9.0/HelperLayer.AssemblyInfoInputs.cache
 /home/scooperlosses/AmdarisTODO/backend/HelperLayer/obj/Debug/net9.0/HelperLayer.AssemblyInfo.cs

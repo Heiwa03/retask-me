@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "jHLOEp7tmyc=",
+  "dgSpecHash": "fFkzcTc05OY=",
   "success": true,
   "projectFilePath": "/home/scooperlosses/AmdarisTODO/backend/HelperLayer/HelperLayer.csproj",
   "expectedPackageFiles": [
+    "/home/scooperlosses/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512",
     "/home/scooperlosses/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.8/microsoft.aspnetcore.app.ref.9.0.8.nupkg.sha512"
   ],
   "logs": []
