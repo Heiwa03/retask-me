@@ -3,6 +3,9 @@
   "WorkspaceRootPath": "E:\\projects\\retaskmerepo\\retask-me\\ReTaskMe\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{89F0D778-E745-4C4E-89C9-52F4E8A2F32F}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\dataaccesslayer\\repositories\\interfaces\\ibaserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{89F0D778-E745-4C4E-89C9-52F4E8A2F32F}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\dataaccesslayer\\entities\\usersession.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -12,10 +15,16 @@
       "AbsoluteMoniker": "D:0:0:{89F0D778-E745-4C4E-89C9-52F4E8A2F32F}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\dataaccesslayer\\entities\\baseid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{89F0D778-E745-4C4E-89C9-52F4E8A2F32F}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\dataaccesslayer\\repositories\\interfaces\\ibaserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{89F0D778-E745-4C4E-89C9-52F4E8A2F32F}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\dataaccesslayer\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{89F0D778-E745-4C4E-89C9-52F4E8A2F32F}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\dataaccesslayer\\databasecontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{89F0D778-E745-4C4E-89C9-52F4E8A2F32F}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\dataaccesslayer\\repositories\\interfaces\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{89F0D778-E745-4C4E-89C9-52F4E8A2F32F}|..\\DataAccessLayer\\DataAccessLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\dataaccesslayer\\repositories\\baserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|e:\\projects\\retaskmerepo\\retask-me\\businesslogiclayer\\services\\interfaces\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
@@ -55,76 +64,115 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 4,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Repositories\\UserRepository.cs",
+              "RelativeDocumentMoniker": "..\\DataAccessLayer\\Repositories\\UserRepository.cs",
+              "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Repositories\\UserRepository.cs",
+              "RelativeToolTip": "..\\DataAccessLayer\\Repositories\\UserRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T14:03:00.072Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "BaseRepository.cs",
+              "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Repositories\\BaseRepository.cs",
+              "RelativeDocumentMoniker": "..\\DataAccessLayer\\Repositories\\BaseRepository.cs",
+              "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Repositories\\BaseRepository.cs",
+              "RelativeToolTip": "..\\DataAccessLayer\\Repositories\\BaseRepository.cs",
+              "ViewState": "AgIAAIwAAAAAAAAAAAAUwA0AAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T13:56:08.471Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "IUserRepository.cs",
+              "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Repositories\\Interfaces\\IUserRepository.cs",
+              "RelativeDocumentMoniker": "..\\DataAccessLayer\\Repositories\\Interfaces\\IUserRepository.cs",
+              "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Repositories\\Interfaces\\IUserRepository.cs",
+              "RelativeToolTip": "..\\DataAccessLayer\\Repositories\\Interfaces\\IUserRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-09T13:52:28.756Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "UserSession.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Entities\\UserSession.cs",
               "RelativeDocumentMoniker": "..\\DataAccessLayer\\Entities\\UserSession.cs",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Entities\\UserSession.cs",
               "RelativeToolTip": "..\\DataAccessLayer\\Entities\\UserSession.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-09T12:40:26.618Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "User.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Entities\\User.cs",
               "RelativeDocumentMoniker": "..\\DataAccessLayer\\Entities\\User.cs",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Entities\\User.cs",
               "RelativeToolTip": "..\\DataAccessLayer\\Entities\\User.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-09T12:35:10.664Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "BaseId.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Entities\\BaseId.cs",
               "RelativeDocumentMoniker": "..\\DataAccessLayer\\Entities\\BaseId.cs",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Entities\\BaseId.cs",
               "RelativeToolTip": "..\\DataAccessLayer\\Entities\\BaseId.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-09T12:29:48.2Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "IBaseRepository.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Repositories\\Interfaces\\IBaseRepository.cs",
               "RelativeDocumentMoniker": "..\\DataAccessLayer\\Repositories\\Interfaces\\IBaseRepository.cs",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Repositories\\Interfaces\\IBaseRepository.cs",
               "RelativeToolTip": "..\\DataAccessLayer\\Repositories\\Interfaces\\IBaseRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAWAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-09T12:26:46.723Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "DatabaseContext.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\DatabaseContext.cs",
               "RelativeDocumentMoniker": "..\\DataAccessLayer\\DatabaseContext.cs",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\DatabaseContext.cs",
               "RelativeToolTip": "..\\DataAccessLayer\\DatabaseContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAApAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-09T12:20:38.885Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 9,
               "Title": "DataAccessLayer.csproj",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\DataAccessLayer.csproj",
               "RelativeDocumentMoniker": "..\\DataAccessLayer\\DataAccessLayer.csproj",
@@ -136,7 +184,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 10,
               "Title": "BusinessLogicLayer.csproj",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\BusinessLogicLayer.csproj",
               "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\BusinessLogicLayer.csproj",
@@ -148,7 +196,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 8,
               "Title": "IAuthService.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
               "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
@@ -156,12 +204,11 @@
               "RelativeToolTip": "..\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-05T14:00:09.465Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-05T14:00:09.465Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 15,
               "Title": "AuthService.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\Services\\AuthService.cs",
               "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\Services\\AuthService.cs",
@@ -173,7 +220,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 16,
               "Title": "launchSettings.json",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\ReTaskMe\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "Properties\\launchSettings.json",
@@ -185,7 +232,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 12,
               "Title": "Program.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\ReTaskMe\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -197,7 +244,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 14,
               "Title": "TemporaryLoginChecker.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
               "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
@@ -209,7 +256,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 13,
               "Title": "AuthController.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\ReTaskMe\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
@@ -221,7 +268,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 11,
               "Title": "LoginDto.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\DTOs\\LoginDto.cs",
               "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\DTOs\\LoginDto.cs",
