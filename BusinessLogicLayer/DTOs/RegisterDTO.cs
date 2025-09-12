@@ -19,7 +19,7 @@ namespace BusinessLogicLayer.DTOs{
         public string RepeatPassword { get; set; } = null!;
 
         [EmailAddress(ErrorMessage = "Invalid email format")]
-        public string? Mail {get; set; }
+        public string Mail {get; set; } = null!;
 
         //public UserRole Role {get; set; }
 

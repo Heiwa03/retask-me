@@ -12,9 +12,12 @@ namespace AuthBackend.Controllers
     {
         private readonly IAuthService _authService;
 
-        public AuthController(IAuthService authService)
+        private readonly IRegisterService _registerService;
+
+        public AuthController(IAuthService authService, IRegisterService registerService)
         {
             _authService = authService;
+            _registerService = registerService;
         }
 
         [HttpPost("login")]
@@ -29,5 +32,18 @@ namespace AuthBackend.Controllers
 
             return Ok(authResponse);
         }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO){
+            
+            try{
+                await _registerService.RegisterUser(registerDTO);
+                return Ok("User registred");
+
+            } catch(Exception e){
+                return BadRequest(e.Message);
+            }
+        }
+
     }
 }
