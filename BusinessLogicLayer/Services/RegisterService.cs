@@ -16,7 +16,7 @@ using HelperLayer.Security.Token;
 
 namespace BusinessLogicLayer.Services{
     public class RegisterService : IRegisterService{
-        IUserRepository _userRepository;
+        private readonly IUserRepository _userRepository;
 
         public RegisterService(IUserRepository _userRepository){
             this._userRepository = _userRepository;
@@ -31,7 +31,7 @@ namespace BusinessLogicLayer.Services{
             PasswordHelper.ValidateRegisterData(dto.Password, dto.RepeatPassword);
 
             // 1.3 TODO Validate email format
-            //CheckUniqueMail(dto.Mail);
+            CheckUniqueMail(dto.Mail);
             
             // 1.4 HashPassword
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
@@ -51,6 +51,7 @@ namespace BusinessLogicLayer.Services{
                 ID = 0,
                 Username = dto.Username,
                 HashedPassword = hashedPassword,
+                Mail = dto.Mail,
                 RefreshToken = refreshToken
             };
 
@@ -72,11 +73,11 @@ namespace BusinessLogicLayer.Services{
         private void CheckUniqueMail(string? Mail){
             var allUsers = _userRepository.GetAllMails();
 
-            // foreach(var user in allUsers){
-            //     if(string.Equals(user.Mail, Mail)){
-            //         throw new ArgumentException("This Mail already exist");
-            //     }
-            // }
+            foreach(var user in allUsers){
+                if(string.Equals(user.Mail, Mail)){
+                    throw new ArgumentException("This Mail already exist");
+                }
+            }
         }
     }
 }
