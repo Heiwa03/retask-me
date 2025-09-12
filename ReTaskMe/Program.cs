@@ -4,6 +4,9 @@ using System.Text;
 using BusinessLogicLayer.Services;
 using BusinessLogicLayer.Services.Interfaces;
 
+using BusinessLogicLayer.testsBagrin.Interfaces; // IUserRep
+using BusinessLogicLayer.testsBagrin.Repo.Fake;  // FakeUserRep
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddUserSecrets<Program>();
 var secretKey = builder.Configuration["JwtSecret"];
@@ -14,6 +17,12 @@ builder.Services.AddSwaggerGen();
 
 // The Scoped lifetime means a new instance is created for each HTTP request.
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+
+// Test reg
+builder.Services.AddScoped<IRegisterService, RegisterService>();
+builder.Services.AddScoped<IUserRepository, FakeUserRep>();
+
 
 // Register temporary login checker.
 builder.Services.AddScoped<ILoginChecker, TemporaryLoginChecker>();
