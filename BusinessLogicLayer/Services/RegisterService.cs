@@ -14,47 +14,84 @@ using HelperLayer.Security;
 using HelperLayer.Security.Token;
 
 
+// Used namespaces from DAL
+using DataAccessLayer.Repositories.Interfaces;
+using DataAccessLayer.Entities;
+
+
+
 namespace BusinessLogicLayer.Services{
     public class RegisterService : IRegisterService{
         private readonly IUserRepository _userRepository;
+        private readonly IBaseRepository _baseRepository;
 
-        public RegisterService(IUserRepository _userRepository){
+        public RegisterService(IUserRepository _userRepository, IBaseRepository _baseRepository){
             this._userRepository = _userRepository;
+            this._baseRepository = _baseRepository;
         }
 
         // 1. Main method for register
         public async Task RegisterUser(RegisterDTO dto){
-            // 1,1 TODO Validate Login
-            
-            // 1.2 Validate rep password
+            // 1.1. Check if username is unique
+            CheckUniqueUsername(dto.Username);
+
+            // 1.2. Validate rep password
             PasswordHelper.ValidateRegisterData(dto.Password, dto.RepeatPassword);
 
-            // 1.3 TODO Validate email format
+            // 1.3. TODO Validate email format
             
-            // 1.4 HashPassword
+            // 1.4. HashPassword
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
 
-            // 1.5 Create user 
-            TestUser user = CreateUser(dto, hashedPassword);
+            // 1.5. Create user 
+            User user = CreateUser(dto, hashedPassword);
+            _baseRepository.Add(user);
 
-            // Save in bd
-            await _userRepository.AddUser(user);
+            await _baseRepository.SaveChangesAsync();
+
+            // Create session
+            UserSession userSession = CreateSession(user);
+            _baseRepository.Add(userSession);
+
+            await _baseRepository.SaveChangesAsync();
+        }
+
+        // Check if username is unique
+        private void CheckUniqueUsername(string Username){
+            if(_userRepository.IsUserNameOccupied(Username)){
+                throw new InvalidOperationException("Username already exists");
+            }
         }
 
         // Create user model
-        private TestUser CreateUser(RegisterDTO dto, string hashedPassword){
-            string refreshToken = TokenHelper.GenerateRefreshToken();
-
-            TestUser user = new TestUser{
-                ID = 0,
+        private User CreateUser(RegisterDTO dto, string hashedPassword){
+            User user = new User{
+                Id = 0,
+                Uuid = Guid.NewGuid(),
                 Username = dto.Username,
-                HashedPassword = hashedPassword,
-                Mail = dto.Mail,
-                RefreshToken = refreshToken
+                NormalizedUsername = dto.Username.ToUpperInvariant(),
+                Password = hashedPassword,
+                //Mail = dto.Mail,
             };
-
             return user;
         }
 
+        // Create user session
+        private UserSession CreateSession(User user){
+            string generatedRefreshToken = TokenHelper.GenerateRefreshToken();
+
+            UserSession userSession = new UserSession{
+                Id = 0,
+                Uuid = user.Uuid,
+                User = user,
+                UserId = user.Id,
+                RefreshToken = generatedRefreshToken,
+                JwtId = user.Uuid.ToString(),
+                RefreshTokenExpiration = DateTime.UtcNow.AddDays(7),
+                Redeemed = false
+            };
+
+            return userSession;
+        }
     }
 }
