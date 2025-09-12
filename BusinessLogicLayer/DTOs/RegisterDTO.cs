@@ -18,8 +18,8 @@ namespace BusinessLogicLayer.DTOs{
         [Required(ErrorMessage = "Rep password is required")]
         public string RepeatPassword { get; set; } = null!;
 
-        [EmailAddress(ErrorMessage = "Invalid email format")]
-        public string Mail {get; set; } = null!;
+        //[EmailAddress(ErrorMessage = "Invalid email format")]
+        //public string Mail {get; set; } = null!;
 
         //public UserRole Role {get; set; }
 
