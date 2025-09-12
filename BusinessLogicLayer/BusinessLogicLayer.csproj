@@ -21,4 +21,8 @@
     <ProjectReference Include="..\HelperLayer\HelperLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
+  </ItemGroup>
+
 </Project>
