@@ -25,13 +25,11 @@ namespace BusinessLogicLayer.Services{
         // 1. Main method for register
         public async Task RegisterUser(RegisterDTO dto){
             // 1,1 TODO Validate Login
-            CheckUniqueUsername(dto.Username);
-
+            
             // 1.2 Validate rep password
             PasswordHelper.ValidateRegisterData(dto.Password, dto.RepeatPassword);
 
             // 1.3 TODO Validate email format
-            CheckUniqueMail(dto.Mail);
             
             // 1.4 HashPassword
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
@@ -56,28 +54,6 @@ namespace BusinessLogicLayer.Services{
             };
 
             return user;
-        }
-
-        // Check unique username
-        private void CheckUniqueUsername(string Username){
-            var allUsers = _userRepository.GetAllUsers();
-
-            foreach(var user in allUsers){
-                if(string.Equals(user.Username, Username)){
-                    throw new ArgumentException("Username already exist");
-                }
-            }
-        }
-
-        // Check unique mail
-        private void CheckUniqueMail(string? Mail){
-            var allUsers = _userRepository.GetAllMails();
-
-            foreach(var user in allUsers){
-                if(string.Equals(user.Mail, Mail)){
-                    throw new ArgumentException("This Mail already exist");
-                }
-            }
         }
     }
 }
