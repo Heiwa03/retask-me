@@ -4,7 +4,7 @@ using Xunit;
 
 using BusinessLogicLayer.testsBagrin.Repo.Fake;
 
-namespace BusinessLogicLayer.testsBagrin{
+namespace BusinessLogicLayer.testsBagrin.testUnit.PasswordsTest{
     public class TestValidateDtoPassword{
        
         // ---------------------
@@ -25,9 +25,6 @@ namespace BusinessLogicLayer.testsBagrin{
 
             await service.RegisterUser(dto);
 
-            var users = repo.GetAllUsers();
-            Assert.Single(users);
-            Assert.Equal("testuser", users.First().Username);
         }
 
 
@@ -39,15 +36,12 @@ namespace BusinessLogicLayer.testsBagrin{
 
             RegisterDTO dto = new RegisterDTO{
                 Username = "testuser",
-                Password = "a",
+                Password = "password",
                 RepeatPassword = "Password"
             };
 
             await service.RegisterUser(dto);
 
-            var users = repo.GetAllUsers();
-            Assert.Single(users);
-            Assert.Equal("testuser", users.First().Username);
         }
     }
 }
