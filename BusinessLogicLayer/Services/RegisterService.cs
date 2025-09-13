@@ -2,6 +2,7 @@
 // System dependency
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 // Used namespaces from BL
 using BusinessLogicLayer.Services.Interfaces;
@@ -53,7 +54,7 @@ namespace BusinessLogicLayer.Services{
             UserSession userSession = CreateSession(user);
             _baseRepository.Add(userSession);
 
-            await _baseRepository.SaveChangesAsync();
+            await SaveChanges();
         }
 
         // Check if username is unique
@@ -92,6 +93,17 @@ namespace BusinessLogicLayer.Services{
             };
 
             return userSession;
+        }
+
+        private async Task SaveChanges(){
+            try{
+                await _baseRepository.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex){
+                Console.WriteLine(ex.InnerException?.Message);
+                throw; 
+            }
+
         }
     }
 }
