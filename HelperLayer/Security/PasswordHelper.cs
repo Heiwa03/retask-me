@@ -7,10 +7,9 @@ namespace HelperLayer.Security{
     public static class PasswordHelper{
         
         // Validate rep passowrd
-        public static void ValidateRegisterData(string password, string repPassword){
-            if(password != repPassword){
-                throw new ArgumentException("Passwords does not match");
-            }
+        public static bool ValidateRegisterData(string password, string repPassword){
+            //return string.Equals(password, repPassword);
+            return password == repPassword;
         }
 
         // Hash password (BCrypt, 12)
@@ -21,6 +20,24 @@ namespace HelperLayer.Security{
         // Method for checking in auth 
         public static bool VerifyHashedPassword(string password, string hashedPassword){
             return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
+        }
+
+        public static bool IsPasswordStrong(string password){
+            char[] charPass = password.ToCharArray();
+
+            bool hasUpper = false;
+            bool hasLower = false;
+            bool hasDigit = false;
+            bool hasSpecial = false;
+
+            for (int i = 0; i < charPass.Length; i++){
+                if (char.IsUpper(charPass[i])) hasUpper = true;
+                else if (char.IsLower(charPass[i])) hasLower = true;
+                else if (char.IsDigit(charPass[i])) hasDigit = true;
+                else hasSpecial = true;
+            }
+
+            return hasUpper && hasLower && hasDigit && hasSpecial;
         }
     }
 }

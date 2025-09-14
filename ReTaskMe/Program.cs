@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("MariaDbConnection"),
-        new MySqlServerVersion(new Version(10, 11, 2)) // укажи свою версию MariaDB
+        new MySqlServerVersion(new Version(12, 0, 2)) 
     )
 );
 
