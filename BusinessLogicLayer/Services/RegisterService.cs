@@ -33,27 +33,28 @@ namespace BusinessLogicLayer.Services{
 
         // 1. Main method for register
         public async Task RegisterUser(RegisterDTO dto){
-            // 1.1. Check if username is unique
+            // Check if username is unique
             CheckUniqueUsername(dto.Username);
 
-            // 1.2. Validate rep password
-            PasswordHelper.ValidateRegisterData(dto.Password, dto.RepeatPassword);
+            // Validate rep password
+            CheckPasswordRequirements(dto.Password);
 
-            // 1.3. TODO Validate email format
+            // Validate password strengh
+            CheckRepeatPassword(dto.Password, dto.RepeatPassword);
             
-            // 1.4. HashPassword
+            // TODO Validate email format
+            
+            // Hashing Password with BCrypt
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
 
-            // 1.5. Create user 
+            // Create user 
             User user = CreateUser(dto, hashedPassword);
             _baseRepository.Add(user);
-
             await _baseRepository.SaveChangesAsync();
 
             // Create session
             UserSession userSession = CreateSession(user);
             _baseRepository.Add(userSession);
-
             await SaveChanges();
         }
 
@@ -61,6 +62,20 @@ namespace BusinessLogicLayer.Services{
         private void CheckUniqueUsername(string Username){
             if(_userRepository.IsUserNameOccupied(Username)){
                 throw new InvalidOperationException("Username already exists");
+            }
+        }
+
+        // Check repeat password requirements
+        private void CheckRepeatPassword(string password, string repeatPassword) {
+            if(!PasswordHelper.ValidateRegisterData(password, repeatPassword)){
+                throw new InvalidOperationException("Password does not match");
+            }
+        }
+
+        // Check password strengh
+        private void CheckPasswordRequirements(string password){
+            if(!PasswordHelper.IsPasswordStrong(password)){
+                throw new InvalidOperationException("Password is not strong");
             }
         }
 
@@ -95,6 +110,7 @@ namespace BusinessLogicLayer.Services{
             return userSession;
         }
 
+        // Save changes in bd
         private async Task SaveChanges(){
             try{
                 await _baseRepository.SaveChangesAsync();
@@ -103,7 +119,7 @@ namespace BusinessLogicLayer.Services{
                 Console.WriteLine(ex.InnerException?.Message);
                 throw; 
             }
-
         }
+
     }
 }
