@@ -20,7 +20,7 @@ namespace DataAccessLayer.Repositories
         /// <returns><c>true</c> if the username is occupied, <c>false</c> otherwise.</returns>
         public bool IsUserNameOccupied(string username)
         {
-            return _databaseContext.Users.Any(x => x.Username == username);
+            return _databaseContext.Users.Any(x => x.NormalizedUsername == username.ToUpper());
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace DataAccessLayer.Repositories
         /// </returns>
         public async Task<User?> GetUserByUsername(string username)
         {
-            var user = await _databaseContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username == username);
+            var user = await _databaseContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.NormalizedUsername == username.ToUpper());
 
             return user;
         }
