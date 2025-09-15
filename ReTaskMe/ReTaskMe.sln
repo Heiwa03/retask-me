@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataAccessLayer", "DataAcce
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayerCoreTests", "..\DataAccessLayer\DataAccessLayerCoreTests\DataAccessLayerCoreTests.csproj", "{667B1060-5FE4-4B63-ACBF-D9601A682758}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelperLayer", "..\HelperLayer\HelperLayer.csproj", "{1CE482AE-D97A-B53E-7644-237744FFD3F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{667B1060-5FE4-4B63-ACBF-D9601A682758}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{667B1060-5FE4-4B63-ACBF-D9601A682758}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{667B1060-5FE4-4B63-ACBF-D9601A682758}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CE482AE-D97A-B53E-7644-237744FFD3F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CE482AE-D97A-B53E-7644-237744FFD3F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CE482AE-D97A-B53E-7644-237744FFD3F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CE482AE-D97A-B53E-7644-237744FFD3F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
