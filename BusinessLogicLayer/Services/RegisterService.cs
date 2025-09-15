@@ -1,6 +1,3 @@
-
-
-// System dependency
 using Microsoft.EntityFrameworkCore;
 
 // Used namespaces from BL
@@ -14,8 +11,6 @@ using HelperLayer.Security.Token;
 // Used namespaces from DAL
 using DataAccessLayer.Repositories.Interfaces;
 using DataAccessLayer.Entities;
-
-
 
 namespace BusinessLogicLayer.Services
 {
