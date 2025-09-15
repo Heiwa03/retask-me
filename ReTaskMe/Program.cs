@@ -4,7 +4,23 @@ using System.Text;
 using BusinessLogicLayer.Services;
 using BusinessLogicLayer.Services.Interfaces;
 
+using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+
+using DataAccessLayer.Repositories.Interfaces;
+using DataAccessLayer.Repositories;
+using DataAccessLayer;
+using BusinessLogicLayer.testsBagrin.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<DatabaseContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("MariaDbConnection"),
+        new MySqlServerVersion(new Version(12, 0, 2)) 
+    )
+);
+
 builder.Configuration.AddUserSecrets<Program>();
 var secretKey = builder.Configuration["JwtSecret"];
 
@@ -14,6 +30,12 @@ builder.Services.AddSwaggerGen();
 
 // The Scoped lifetime means a new instance is created for each HTTP request.
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Test reg
+builder.Services.AddScoped<IBaseRepository, BaseRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRegisterService, RegisterService>();
+
 
 // Register temporary login checker.
 builder.Services.AddScoped<ILoginChecker, TemporaryLoginChecker>();
