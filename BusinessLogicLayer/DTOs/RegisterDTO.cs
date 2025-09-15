@@ -10,7 +10,7 @@ namespace BusinessLogicLayer.DTOs{
 
         [Required(ErrorMessage = "Mail is required")]
         [EmailAddress(ErrorMessage = "Invalid mail format")]
-        public string Mail { get; set; } = null!; // WAS USERNAME
+        public string Mail { get; set; } = null!; 
 
         [Required(ErrorMessage = "Password is required")]
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters length")]
