@@ -1,13 +1,8 @@
-// System dependency
-using System.Security.Cryptography;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 
 // Used namespaces from BL
 using BusinessLogicLayer.Services.Interfaces;
 using BusinessLogicLayer.DTOs;
-using BusinessLogicLayer.testsBagrin.Entity;
-using BusinessLogicLayer.testsBagrin.Interfaces;
 
 // Used namespaces from HL
 using HelperLayer.Security;
@@ -47,18 +42,14 @@ namespace BusinessLogicLayer.Services
         /// <returns>A task representing the asynchronous operation.</returns>
         public async Task RegisterUser(RegisterDTO dto)
         {
-            // Check if username is unique
-            CheckUniqueUsername(dto.Username);
+            // Check if mail is unique
+            CheckUniqueMail(dto.Mail);
 
             // Validate password repeat
             CheckRepeatPassword(dto.Password, dto.RepeatPassword);
 
             // Validate password strength
             CheckPasswordRequirements(dto.Password);
-
-
-
-            // TODO Validate email format
 
             // Hashing Password with BCrypt
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
@@ -75,13 +66,13 @@ namespace BusinessLogicLayer.Services
         }
 
         /// <summary>
-        /// Checks if the username is unique.
+        /// Checks if the mail is unique.
         /// </summary>
-        /// <param name="Username">The username to check.</param>
-        /// <exception cref="InvalidOperationException">Thrown if the username is already taken.</exception>
-        private void CheckUniqueUsername(string Username)
+        /// <param name="mail">The mail to check.</param>
+        /// <exception cref="InvalidOperationException">Thrown if the mail is already taken.</exception>
+        internal void CheckUniqueMail(string mail)
         {
-            if (_userRepository.IsUserNameOccupied(Username))
+            if (_userRepository.IsUserNameOccupied(mail))
             {
                 throw new InvalidOperationException("Username already exists");
             }
@@ -93,7 +84,7 @@ namespace BusinessLogicLayer.Services
         /// <param name="password">The original password.</param>
         /// <param name="repeatPassword">The repeated password.</param>
         /// <exception cref="InvalidOperationException">Thrown if passwords do not match.</exception>
-        private void CheckRepeatPassword(string password, string repeatPassword)
+        internal void CheckRepeatPassword(string password, string repeatPassword)
         {
             if (!PasswordHelper.ValidateRegisterData(password, repeatPassword))
             {
@@ -106,7 +97,7 @@ namespace BusinessLogicLayer.Services
         /// </summary>
         /// <param name="password">The password to check.</param>
         /// <exception cref="InvalidOperationException">Thrown if the password is not strong.</exception>
-        private void CheckPasswordRequirements(string password)
+        internal void CheckPasswordRequirements(string password)
         {
             if (!PasswordHelper.IsPasswordStrong(password))
             {
@@ -120,16 +111,15 @@ namespace BusinessLogicLayer.Services
         /// <param name="dto">The registration DTO.</param>
         /// <param name="hashedPassword">The hashed password.</param>
         /// <returns>The created <see cref="User"/> object.</returns>
-        private User CreateUser(RegisterDTO dto, string hashedPassword)
+        internal User CreateUser(RegisterDTO dto, string hashedPassword)
         {
             User user = new User
             {
                 Id = 0,
                 Uuid = Guid.NewGuid(),
-                Username = dto.Username,
-                NormalizedUsername = dto.Username.ToUpperInvariant(),
-                Password = hashedPassword,
-                //Mail = dto.Mail,
+                Username = dto.Mail,
+                NormalizedUsername = dto.Mail.ToUpperInvariant(),
+                Password = hashedPassword
             };
             return user;
         }
@@ -139,7 +129,7 @@ namespace BusinessLogicLayer.Services
         /// </summary>
         /// <param name="user">The user.</param>
         /// <returns>The created <see cref="UserSession"/> object.</returns>
-        private UserSession CreateSession(User user)
+        internal UserSession CreateSession(User user)
         {
             string generatedRefreshToken = TokenHelper.GenerateRefreshToken();
 
@@ -163,7 +153,7 @@ namespace BusinessLogicLayer.Services
         /// </summary>
         /// <returns>A task representing the asynchronous operation.</returns>
         /// <exception cref="DbUpdateException">Thrown if an error occurs during saving.</exception>
-        private async Task SaveChanges()
+        internal async Task SaveChanges()
         {
             try
             {

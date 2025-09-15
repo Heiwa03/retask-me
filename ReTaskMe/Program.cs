@@ -10,7 +10,6 @@ using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using DataAccessLayer.Repositories.Interfaces;
 using DataAccessLayer.Repositories;
 using DataAccessLayer;
-using BusinessLogicLayer.testsBagrin.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
