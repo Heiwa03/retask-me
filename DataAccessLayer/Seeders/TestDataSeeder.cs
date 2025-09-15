@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer;
 using System.Security.Cryptography;
+using System.Runtime.InteropServices.Swift;
 
 namespace DataAccessLayer.Seeders
 {
@@ -46,18 +47,21 @@ namespace DataAccessLayer.Seeders
                 { 
                     Uuid = Guid.NewGuid(),
                     Username = "Ivan",
+                    NormalizedUsername = "IVAN",
                     Password = "12341234"
                 },
                 new User
                 {
                     Uuid = Guid.NewGuid(),
                     Username = "Dan",
+                    NormalizedUsername = "DAN",
                     Password = "123321123"
                 },
                 new User
                 {
                     Uuid = Guid.NewGuid(),
                     Username = "Vlad",
+                    NormalizedUsername = "VLAD",
                     Password = "12344321"
                 }
             };
