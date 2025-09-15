@@ -1,0 +1,13 @@
+/home/scooperlosses/AmdarisTODO/backend/HelperLayer/bin/Debug/net9.0/HelperLayer.deps.json
+/home/scooperlosses/AmdarisTODO/backend/HelperLayer/bin/Debug/net9.0/HelperLayer.dll
+/home/scooperlosses/AmdarisTODO/backend/HelperLayer/bin/Debug/net9.0/HelperLayer.pdb
+/home/scooperlosses/AmdarisTODO/backend/HelperLayer/obj/Debug/net9.0/HelperLayer.csproj.AssemblyReference.cache
+/home/scooperlosses/AmdarisTODO/backend/HelperLayer/obj/Debug/net9.0/HelperLayer.GeneratedMSBuildEditorConfig.editorconfig
+/home/scooperlosses/AmdarisTODO/backend/HelperLayer/obj/Debug/net9.0/HelperLayer.AssemblyInfoInputs.cache
+/home/scooperlosses/AmdarisTODO/backend/HelperLayer/obj/Debug/net9.0/HelperLayer.AssemblyInfo.cs
+/home/scooperlosses/AmdarisTODO/backend/HelperLayer/obj/Debug/net9.0/HelperLayer.csproj.CoreCompileInputs.cache
+/home/scooperlosses/AmdarisTODO/backend/HelperLayer/obj/Debug/net9.0/HelperLayer.sourcelink.json
+/home/scooperlosses/AmdarisTODO/backend/HelperLayer/obj/Debug/net9.0/HelperLayer.dll
+/home/scooperlosses/AmdarisTODO/backend/HelperLayer/obj/Debug/net9.0/refint/HelperLayer.dll
+/home/scooperlosses/AmdarisTODO/backend/HelperLayer/obj/Debug/net9.0/HelperLayer.pdb
+/home/scooperlosses/AmdarisTODO/backend/HelperLayer/obj/Debug/net9.0/ref/HelperLayer.dll
