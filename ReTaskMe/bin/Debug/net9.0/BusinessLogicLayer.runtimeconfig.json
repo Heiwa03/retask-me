@@ -12,11 +12,7 @@
       }
     ],
     "configProperties": {
-<<<<<<< HEAD:ReTaskMe/bin/Debug/net9.0/ReTaskMe.runtimeconfig.json
-      "System.GC.Server": true,
-=======
       "MSTest.EnableParentProcessQuery": true,
->>>>>>> devel:ReTaskMe/bin/Debug/net9.0/BusinessLogicLayer.runtimeconfig.json
       "System.Reflection.NullabilityInfoContext.IsSupported": true,
       "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": false
     }
