@@ -24,3 +24,16 @@ E:\projects\retaskmerepo\retask-me\HelperLayer\obj\Debug\net9.0\HelperLayer.dll
 E:\projects\retaskmerepo\retask-me\HelperLayer\obj\Debug\net9.0\refint\HelperLayer.dll
 E:\projects\retaskmerepo\retask-me\HelperLayer\obj\Debug\net9.0\HelperLayer.pdb
 E:\projects\retaskmerepo\retask-me\HelperLayer\obj\Debug\net9.0\ref\HelperLayer.dll
+C:\Users\User\Desktop\GitArchitecture\ReTaskMeTestClean\HelperLayer\obj\Debug\net9.0\HelperLayer.csproj.AssemblyReference.cache
+C:\Users\User\Desktop\GitArchitecture\ReTaskMeTestClean\HelperLayer\obj\Debug\net9.0\HelperLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\Desktop\GitArchitecture\ReTaskMeTestClean\HelperLayer\obj\Debug\net9.0\HelperLayer.AssemblyInfoInputs.cache
+C:\Users\User\Desktop\GitArchitecture\ReTaskMeTestClean\HelperLayer\obj\Debug\net9.0\HelperLayer.AssemblyInfo.cs
+C:\Users\User\Desktop\GitArchitecture\ReTaskMeTestClean\HelperLayer\obj\Debug\net9.0\HelperLayer.csproj.CoreCompileInputs.cache
+C:\Users\User\Desktop\GitArchitecture\ReTaskMeTestClean\HelperLayer\obj\Debug\net9.0\HelperLayer.sourcelink.json
+C:\Users\User\Desktop\GitArchitecture\ReTaskMeTestClean\HelperLayer\obj\Debug\net9.0\HelperLayer.dll
+C:\Users\User\Desktop\GitArchitecture\ReTaskMeTestClean\HelperLayer\obj\Debug\net9.0\refint\HelperLayer.dll
+C:\Users\User\Desktop\GitArchitecture\ReTaskMeTestClean\HelperLayer\obj\Debug\net9.0\HelperLayer.pdb
+C:\Users\User\Desktop\GitArchitecture\ReTaskMeTestClean\HelperLayer\bin\Debug\net9.0\HelperLayer.deps.json
+C:\Users\User\Desktop\GitArchitecture\ReTaskMeTestClean\HelperLayer\bin\Debug\net9.0\HelperLayer.dll
+C:\Users\User\Desktop\GitArchitecture\ReTaskMeTestClean\HelperLayer\bin\Debug\net9.0\HelperLayer.pdb
+C:\Users\User\Desktop\GitArchitecture\ReTaskMeTestClean\HelperLayer\obj\Debug\net9.0\ref\HelperLayer.dll
