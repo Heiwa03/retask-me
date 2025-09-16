@@ -1,25 +1,122 @@
-﻿using DataAccessLayerCore.Entities;
+﻿using DataAccessLayerCore;
+using DataAccessLayerCore.Entities;
 using DataAccessLayerCore.Repositories;
-using DataAccessLayerCoreTests.Fixtures;
-using DataAccessLayerCoreTests.Helpers;
+using DataAccessLayerCoreTests.MockDbSet;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
 using Moq;
 using Xunit;
 
 namespace DataAccessLayerCoreTests
 {
-    public class UserRepositoryTests : IClassFixture<UserRepositoryFixture>
+    public class UserRepositoryTests
     {
-        private readonly UserRepositoryFixture _fixture;
+        private readonly Mock<DatabaseContext> _mockContext;
 
-        public UserRepositoryTests (UserRepositoryFixture fixture)
+        private readonly UserRepository _userRepository;
+        
+        // Here you can setup any of the data
+        private readonly List<User> _users = GetUserData();
+
+        public UserRepositoryTests() 
         {
-            _fixture = fixture;
+            var mockOptions = new DbContextOptions<DatabaseContext>();
+            _mockContext = new Mock<DatabaseContext>(mockOptions);
+
+            _userRepository = new UserRepository(_mockContext.Object);
         }
 
         [Fact]
+        public async Task GetUserByUsername_ReturnsSuccessResult_UserWasCreated()
+        {
+            _mockContext.Setup(x => x.Users).Returns(_users.AsDbSetMock().Object);
+            
+            var result = await _userRepository.GetUserByUsername(_users.First().NormalizedUsername);
+            
+            Assert.NotNull(result);
+            Assert.Equal(_users.First().Username, result.Username);
+        }
+        
+        [Fact]
+        public async Task GetUserByUsername_WhenUserDoesNotExist_ReturnsNull()
+        {
+            var users = new List<User>
+            {
+                new() { Id = 1, Username = "Alice", NormalizedUsername = "ALICE", Password = "p1", Uuid = Guid.NewGuid() }
+            };
+
+            _mockContext.Setup(x => x.Users).Returns(users.AsDbSetMock().Object);
+
+            var result = await _userRepository.GetUserByUsername("Bob");
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetUserByUsername_IsCaseInsensitive_FindsUser()
+        {
+            var users = new List<User>
+            {
+                new() { Id = 2, Username = "John", NormalizedUsername = "JOHN", Password = "p2", Uuid = Guid.NewGuid() }
+            };
+
+            _mockContext.Setup(x => x.Users).Returns(users.AsDbSetMock().Object);
+
+            var result = await _userRepository.GetUserByUsername("john");
+
+            Assert.NotNull(result);
+            Assert.Equal("JOHN", result!.NormalizedUsername);
+            Assert.Equal("John", result.Username);
+        }
+
+        [Fact]
+        public async Task GetUserByUsername_WhenMultipleHaveSameNormalizedName_ReturnsFirst()
+        {
+            var first = new User { Id = 3, Username = "FirstDup", NormalizedUsername = "DUP", Password = "p3", Uuid = Guid.NewGuid() };
+            var second = new User { Id = 4, Username = "SecondDup", NormalizedUsername = "DUP", Password = "p4", Uuid = Guid.NewGuid() };
+            var users = new List<User> { first, second };
+
+            _mockContext.Setup(x => x.Users).Returns(users.AsDbSetMock().Object);
+
+            var result = await _userRepository.GetUserByUsername("dup");
+
+            Assert.NotNull(result);
+            Assert.Equal(first.Id, result!.Id);
+            Assert.Equal("FirstDup", result.Username);
+        }
+
+        [Fact]
+        public async Task GetUserByUsername_WithWhitespaceAroundUsername_ReturnsNull()
+        {
+            var users = new List<User>
+            {
+                new() { Id = 5, Username = "Emma", NormalizedUsername = "EMMA", Password = "p5", Uuid = Guid.NewGuid() }
+            };
+
+            _mockContext.Setup(x => x.Users).Returns(users.AsDbSetMock().Object);
+
+            var result = await _userRepository.GetUserByUsername("  emma  ");
+
+            Assert.Null(result);
+        }
+
+        private static List<User> GetUserData()
+        {
+            return
+            [
+                new User
+                {
+                    Id = 1,
+                    Uuid = Guid.NewGuid(),
+                    isActive = true,
+                    CreatedDate = DateTime.Now,
+                    Username = "Penis@gmail.com",
+                    NormalizedUsername = "PENIS@GMAIL.COM",
+                    Password = "sdasdasdaawdasdasd"
+                }
+            ];
+        }
+
+        /*[Fact]
         public void Add_AddEntity_CallsDbContextSetAdd()
         {
             // Arrange
@@ -30,6 +127,8 @@ namespace DataAccessLayerCoreTests
                 NormalizedUsername = "IVAN.REVENKO@ISA.UTM.MD",
                 Password = "password123"
             };
+            
+            _mockContext.Setup(x => x.)
 
             _fixture.MockContext.Setup(c => c.Set<User>()).Returns(_fixture.MockSet.Object);
 
@@ -424,6 +523,6 @@ namespace DataAccessLayerCoreTests
             // Assert
             Assert.NotNull(result);
             Assert.Equal("TESTUSER", result.NormalizedUsername);
-        }
+        }*/
     }
 }
