@@ -2,10 +2,6 @@
 
 using System.ComponentModel.DataAnnotations;
 using BusinessLogicLayer.Enums;
-<<<<<<< HEAD
-
-=======
->>>>>>> regist+helper
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Query;
 
