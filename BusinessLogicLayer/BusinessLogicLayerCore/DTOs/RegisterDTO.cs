@@ -2,7 +2,6 @@
 
 using System.ComponentModel.DataAnnotations;
 using BusinessLogicLayer.Enums;
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Query;
 
