@@ -6,7 +6,22 @@ using System.Security.Cryptography.X509Certificates;
 using BusinessLogicLayer.Services;
 using BusinessLogicLayer.Services.Interfaces;
 
+using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+
+using DataAccessLayer.Repositories.Interfaces;
+using DataAccessLayer.Repositories;
+using DataAccessLayer;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<DatabaseContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("MariaDbConnection"),
+        new MySqlServerVersion(new Version(12, 0, 2)) 
+    )
+);
+
 builder.Configuration.AddUserSecrets<Program>();
 var jwtPrivateKeyPem = builder.Configuration["Jwt:PrivateKeyPem"]; // optional path to private key .pem
 var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"]; // optional path to public key .pem
@@ -38,6 +53,11 @@ builder.Services.AddScoped<IAuthService, AuthService>();
         throw new ApplicationException("JWT PEM is not configured. Provide Jwt:PrivateKeyPem (PEM). Optional Jwt:PublicKeyPem for validation.");
     }
 }
+// Test reg
+builder.Services.AddScoped<IBaseRepository, BaseRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRegisterService, RegisterService>();
+
 
 // Register temporary login checker.
 builder.Services.AddScoped<ILoginChecker, TemporaryLoginChecker>();
