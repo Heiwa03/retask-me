@@ -36,6 +36,7 @@ builder.Services.AddSwaggerGen();
 // The Scoped lifetime means a new instance is created for each HTTP request.
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+<<<<<<< HEAD
 {
     SigningCredentials signingCredentials;
 
@@ -53,6 +54,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
         throw new ApplicationException("JWT PEM is not configured. Provide Jwt:PrivateKeyPem (PEM). Optional Jwt:PublicKeyPem for validation.");
     }
 }
+=======
+>>>>>>> regist+helper
 // Test reg
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
