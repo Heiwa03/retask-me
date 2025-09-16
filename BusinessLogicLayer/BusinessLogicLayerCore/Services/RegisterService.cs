@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-=======
-
-
 // System dependency
->>>>>>> regist+helper
 using Microsoft.EntityFrameworkCore;
 
 // Used namespaces from BL
@@ -18,11 +13,6 @@ using HelperLayer.Security.Token;
 using DataAccessLayer.Repositories.Interfaces;
 using DataAccessLayer.Entities;
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> regist+helper
 namespace BusinessLogicLayer.Services
 {
     /// <summary>
