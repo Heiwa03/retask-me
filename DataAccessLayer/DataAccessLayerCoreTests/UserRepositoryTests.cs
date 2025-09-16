@@ -344,5 +344,86 @@ namespace DataAccessLayerCoreTests
             // 2. Verify that the returned object is the same mock transaction that was set up.
             Assert.Equal(mockTransaction.Object, result);
         }
+
+        [Fact]
+        public void IsUserNameOccupied_WhenUsernameExists_ReturnsTrue()
+        {
+            // Arrange
+            var users = new List<User>
+            {
+                new User { Id = 1, Username = "TestUser", NormalizedUsername = "TESTUSER", Password = "p1", Uuid = Guid.NewGuid() }
+            }.AsQueryable();
+
+            var repository = new UserRepository(_fixture.MockContext.Object);
+
+            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(users.Provider);
+            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
+            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
+            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
+
+            // Act
+            var isOccupied = repository.IsUserNameOccupied("TestUser");
+
+            // Assert
+            Assert.True(isOccupied);
+        }
+        
+        [Fact]
+        public void IsUserNameOccupied_WhenUsernameDoesNotExist_ReturnsFalse()
+        {
+            // Arrange
+            var users = new List<User>
+            {
+                new User { Id = 1, Username = "ExistingUser", NormalizedUsername = "EXISTINGUSER", Password = "p1", Uuid = Guid.NewGuid() }
+            }.AsQueryable();
+
+            var repository = new UserRepository(_fixture.MockContext.Object);
+
+            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(users.Provider);
+            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
+            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
+            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
+
+            // Act
+            var isOccupied = repository.IsUserNameOccupied("NonExistentUser");
+
+            // Assert
+            Assert.False(isOccupied);
+        }
+
+        [Fact]
+        public async Task GetUserByUsername_WhenUsernameExists_ReturnsUser()
+        {
+            // Arrange
+            var users = new List<User>
+            {
+                new User { Id = 1, Username = "TestUser", NormalizedUsername = "TESTUSER", Password = "p1", Uuid = Guid.NewGuid() }
+            }.AsQueryable();
+
+            // Configure the DbSet mock for asynchronous LINQ operations.
+            // This is the correct syntax for chaining the setup.
+            _fixture.MockSet.As<IAsyncEnumerable<User>>()
+                .Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
+                .Returns(new TestAsyncEnumerator<User>(users.GetEnumerator()));
+
+            _fixture.MockSet.As<IQueryable<User>>()
+                .Setup(m => m.Provider)
+                .Returns(new TestAsyncQueryProvider<User>(users.Provider));
+
+            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
+            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
+            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
+
+            _fixture.MockContext.Setup(m => m.Users).Returns(_fixture.MockSet.Object);
+
+            var repository = new UserRepository(_fixture.MockContext.Object);
+
+            // Act
+            var result = await repository.GetUserByUsername("testuser");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("TESTUSER", result.NormalizedUsername);
+        }
     }
 }
