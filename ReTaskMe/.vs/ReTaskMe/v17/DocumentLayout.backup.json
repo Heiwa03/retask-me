@@ -80,8 +80,7 @@
               "RelativeToolTip": "appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-09-12T09:46:58.056Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-12T09:46:58.056Z"
             },
             {
               "$type": "Document",
@@ -93,8 +92,7 @@
               "RelativeToolTip": "..\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
               "ViewState": "AgIAAAUAAAAAAAAAAAAAwBAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-12T09:31:26.708Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-12T09:31:26.708Z"
             },
             {
               "$type": "Document",
@@ -104,7 +102,7 @@
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAA0AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-05T12:45:40.826Z",
               "EditorCaption": ""
@@ -119,8 +117,7 @@
               "RelativeToolTip": "..\\BusinessLogicLayer\\Services\\AuthService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAABLAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-12T09:10:26.048Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-12T09:10:26.048Z"
             },
             {
               "$type": "Document",
@@ -132,8 +129,7 @@
               "RelativeToolTip": "..\\BusinessLogicLayer\\DTOs\\LoginDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAuwAcAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-12T09:10:19.458Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-12T09:10:19.458Z"
             },
             {
               "$type": "Document",
@@ -145,8 +141,7 @@
               "RelativeToolTip": "..\\BusinessLogicLayer\\Services\\Interfaces\\ILoginChecker.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-12T09:32:18.878Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-12T09:32:18.878Z"
             },
             {
               "$type": "Document",
@@ -158,8 +153,7 @@
               "RelativeToolTip": "..\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-12T09:10:34.391Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-12T09:10:34.391Z"
             },
             {
               "$type": "Document",

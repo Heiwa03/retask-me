@@ -3,38 +3,48 @@
   "WorkspaceRootPath": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|c:\\users\\user\\desktop\\retaskmetest\\retaskme\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|c:\\users\\user\\desktop\\retaskmetest\\retaskme\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|solutionrelative:controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|c:\\users\\user\\desktop\\retaskmetest\\businesslogiclayer\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|c:\\users\\user\\desktop\\retaskmetest\\businesslogiclayer\\services\\temporaryloginchecker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|c:\\users\\user\\desktop\\retaskmetest\\retaskme\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|c:\\users\\user\\desktop\\retaskmetest\\retaskme\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|c:\\users\\user\\desktop\\retaskmetest\\retaskme\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|c:\\users\\user\\desktop\\retaskmetest\\businesslogiclayer\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|c:\\users\\user\\desktop\\retaskmetest\\businesslogiclayer\\dtos\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|c:\\users\\user\\desktop\\retaskmetest\\businesslogiclayer\\services\\interfaces\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|c:\\users\\user\\desktop\\retaskmetest\\retaskme\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{89F0D778-E745-4C4E-89C9-52F4E8A2F32F}|..\\DataAccessLayer\\DataAccessLayer.csproj|c:\\users\\user\\desktop\\retaskmetest\\dataaccesslayer\\databasecontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{89F0D778-E745-4C4E-89C9-52F4E8A2F32F}|..\\DataAccessLayer\\DataAccessLayer.csproj|c:\\users\\user\\desktop\\retaskmetest\\dataaccesslayer\\entities\\baseid.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|c:\\users\\user\\desktop\\retaskmetest\\businesslogiclayer\\services\\interfaces\\iloginchecker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|c:\\users\\user\\desktop\\retaskmetest\\businesslogiclayer\\services\\temporaryloginchecker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{62DA2E9D-5F2F-47BF-A236-8172B1E1AF8E}|..\\BusinessLogicLayer\\BusinessLogicLayer.csproj|c:\\users\\user\\desktop\\retaskmetest\\businesslogiclayer\\services\\interfaces\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|c:\\users\\user\\desktop\\retaskmetest\\retaskme\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|solutionrelative:controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|c:\\users\\user\\desktop\\retaskmetest\\retaskme\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{F89AAC60-D278-4DE0-A0AF-C8BD43D3BF5F}|ReTaskMe.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Entities\\BaseId.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
@@ -68,17 +78,30 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "appsettings.Development.json",
+              "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\appsettings.Development.json",
+              "RelativeToolTip": "appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-09-12T10:42:23.678Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
               "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\appsettings.json",
               "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-09-12T09:46:58.056Z",
               "EditorCaption": ""
@@ -86,32 +109,45 @@
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "IAuthService.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
-              "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
-              "RelativeToolTip": "..\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAAwBAAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-12T09:31:26.708Z",
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\Properties\\launchSettings.json",
+              "RelativeToolTip": "Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-09-05T13:14:41.084Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAABAAAAAAAAAA==",
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "Controllers\\AuthController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-05T12:45:40.826Z",
+              "WhenOpened": "2025-09-05T14:06:15.478Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "TemporaryLoginChecker.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
+              "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
+              "RelativeToolTip": "..\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-12T09:10:34.391Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "AuthService.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\BusinessLogicLayer\\Services\\AuthService.cs",
               "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\Services\\AuthService.cs",
@@ -124,7 +160,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "LoginDto.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\BusinessLogicLayer\\DTOs\\LoginDto.cs",
               "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\DTOs\\LoginDto.cs",
@@ -137,7 +173,59 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAABWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-05T12:45:40.826Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "DatabaseContext.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\DataAccessLayer\\DatabaseContext.cs",
+              "RelativeDocumentMoniker": "..\\DataAccessLayer\\DatabaseContext.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\DataAccessLayer\\DatabaseContext.cs",
+              "RelativeToolTip": "..\\DataAccessLayer\\DatabaseContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-12T10:42:07.97Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "BaseId.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\DataAccessLayer\\Entities\\BaseId.cs",
+              "RelativeDocumentMoniker": "..\\DataAccessLayer\\Entities\\BaseId.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\DataAccessLayer\\Entities\\BaseId.cs",
+              "RelativeToolTip": "..\\DataAccessLayer\\Entities\\BaseId.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-12T10:42:00.677Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "IAuthService.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
+              "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
+              "RelativeToolTip": "..\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAAwBAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-12T09:31:26.708Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "ILoginChecker.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\BusinessLogicLayer\\Services\\Interfaces\\ILoginChecker.cs",
               "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\Services\\Interfaces\\ILoginChecker.cs",
@@ -150,20 +238,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "TemporaryLoginChecker.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
-              "RelativeDocumentMoniker": "..\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
-              "RelativeToolTip": "..\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-12T09:10:34.391Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 14,
               "Title": "IBaseRepository.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Repositories\\Interfaces\\IBaseRepository.cs",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Repositories\\Interfaces\\IBaseRepository.cs",
@@ -173,7 +248,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 15,
               "Title": "DatabaseContext.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\DatabaseContext.cs",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\DatabaseContext.cs",
@@ -183,7 +258,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 16,
               "Title": "DataAccessLayer.csproj",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\DataAccessLayer.csproj",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\DataAccessLayer.csproj",
@@ -193,7 +268,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 17,
               "Title": "BusinessLogicLayer.csproj",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\BusinessLogicLayer.csproj",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\BusinessLogicLayer.csproj",
@@ -203,7 +278,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 12,
               "Title": "IAuthService.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\Services\\Interfaces\\IAuthService.cs",
@@ -212,7 +287,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 18,
               "Title": "AuthService.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\Services\\AuthService.cs",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\Services\\AuthService.cs",
@@ -222,7 +297,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 13,
               "Title": "BaseId.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Entities\\BaseId.cs",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\DataAccessLayer\\Entities\\BaseId.cs",
@@ -232,19 +307,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "launchSettings.json",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\Properties\\launchSettings.json",
-              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
-              "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\Properties\\launchSettings.json",
-              "RelativeToolTip": "Properties\\launchSettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-09-05T13:14:41.084Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 19,
               "Title": "TemporaryLoginChecker.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\Services\\TemporaryLoginChecker.cs",
@@ -254,19 +317,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "AuthController.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\Controllers\\AuthController.cs",
-              "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\RetaskMeTest\\ReTaskMe\\Controllers\\AuthController.cs",
-              "RelativeToolTip": "Controllers\\AuthController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-05T14:06:15.478Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 20,
               "Title": "LoginDto.cs",
               "DocumentMoniker": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\DTOs\\LoginDto.cs",
               "ToolTip": "E:\\projects\\retaskmerepo\\retask-me\\BusinessLogicLayer\\DTOs\\LoginDto.cs",
