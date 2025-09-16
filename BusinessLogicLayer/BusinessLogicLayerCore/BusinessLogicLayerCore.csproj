@@ -18,15 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HelperLayer\HelperLayer.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
+    <ProjectReference Include="..\..\DataAccessLayer\DataAccessLayerCore\DataAccessLayerCore.csproj" />
+    <ProjectReference Include="..\..\HelperLayer\HelperLayer.csproj" />
   </ItemGroup>
 
 </Project>
