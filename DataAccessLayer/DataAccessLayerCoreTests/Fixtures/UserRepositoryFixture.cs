@@ -21,7 +21,7 @@ namespace DataAccessLayerCoreTests.Fixtures
             MockSet = new Mock<DbSet<User>>();
             MockContext = new Mock<DatabaseContext>();
 
-            MockContext.Setup(m => m.Users).Returns(MockSet.Object);
+            MockContext.Setup(m => m.Set<User>()).Returns(MockSet.Object);
         }
 
         public void Dispose() { }
