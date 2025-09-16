@@ -8,10 +8,9 @@ using BusinessLogicLayer.Services.Interfaces;
 
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-
-using DataAccessLayer.Repositories.Interfaces;
-using DataAccessLayer.Repositories;
-using DataAccessLayer;
+using DataAccessLayerCore;
+using DataAccessLayerCore.Repositories;
+using DataAccessLayerCore.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

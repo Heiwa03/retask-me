@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using DataAccessLayer.Entities;
-using DataAccessLayer.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccessLayerCore;
+using DataAccessLayerCore.Entities;
+using DataAccessLayerCore.Repositories.Interfaces;
 
-namespace DataAccessLayer.Repositories
+namespace DataAccessLayerCore.Repositories
 {
     public class UserRepository (DatabaseContext databaseContext) : BaseRepository(databaseContext), IUserRepository
     {

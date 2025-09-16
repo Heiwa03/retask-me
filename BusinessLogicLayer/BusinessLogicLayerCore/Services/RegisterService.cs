@@ -10,8 +10,8 @@ using HelperLayer.Security;
 using HelperLayer.Security.Token;
 
 // Used namespaces from DAL
-using DataAccessLayer.Repositories.Interfaces;
-using DataAccessLayer.Entities;
+using DataAccessLayerCore.Entities;
+using DataAccessLayerCore.Repositories.Interfaces;
 
 namespace BusinessLogicLayer.Services
 {

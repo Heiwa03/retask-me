@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using DataAccessLayer.Entities;
-using DataAccessLayer.Repositories.Interfaces;
+using DataAccessLayerCore;
+using DataAccessLayerCore.Entities;
+using DataAccessLayerCore.Repositories.Interfaces;
 
-namespace DataAccessLayer.Repositories
+namespace DataAccessLayerCore.Repositories
 {
     public class BaseRepository(DatabaseContext databaseContext) : IBaseRepository
     {
