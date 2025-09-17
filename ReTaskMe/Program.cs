@@ -1,34 +1,45 @@
+// Microsoft Packages
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
+
+
+// System
 using System.Text;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+
+
+// BL
 using BusinessLogicLayer.Services;
 using BusinessLogicLayer.Services.Interfaces;
 
-using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
+// DAL
 using DataAccessLayer.Repositories.Interfaces;
 using DataAccessLayer.Repositories;
 using DataAccessLayer;
 
+
+// ---- PROGRAM.CS ------
+
+// Builder
 var builder = WebApplication.CreateBuilder(args);
 
+// Database
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("MariaDbConnection"),
-        new MySqlServerVersion(new Version(12, 0, 2)) 
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("AzureSqlConnection")
     )
 );
 
 builder.Configuration.AddUserSecrets<Program>();
-var jwtPrivateKeyPem = builder.Configuration["Jwt:PrivateKeyPem"]; // optional path to private key .pem
+var jwtPrivateKeyPem = builder.Configuration["JwtSecret:PrivateKeyPem"]; // optional path to private key .pem
 var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"]; // optional path to public key .pem
 var jwtIssuer = builder.Configuration["Authorization:Issuer"];
 var jwtAudience = builder.Configuration["Authorization:Audience"];
-// Enforce certificate/PEM for signing
 
+// Enforce certificate/PEM for signing
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -58,7 +69,6 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
-
 
 // Register temporary login checker.
 builder.Services.AddScoped<ILoginChecker, TemporaryLoginChecker>();
@@ -103,6 +113,9 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = issuerSigningKey
     };
 });
+
+
+// APP runner
 
 var app = builder.Build();
 
