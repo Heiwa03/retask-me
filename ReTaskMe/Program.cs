@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Cryptography;
-using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using BusinessLogicLayer.Services;
 using BusinessLogicLayer.Services.Interfaces;
 
@@ -15,29 +15,19 @@ using DataAccessLayer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Database configuration (supports InMemory for local testing)
-var useInMemory = builder.Configuration.GetValue<bool>("Database:UseInMemory");
-if (useInMemory)
-{
-    builder.Services.AddDbContext<DatabaseContext>(options => options.UseInMemoryDatabase("TestDb"));
-}
-else
-{
-    var connectionString = builder.Configuration.GetConnectionString("MariaDbConnection");
-    builder.Services.AddDbContext<DatabaseContext>(options =>
-        options.UseMySql(
-            connectionString,
-            ServerVersion.AutoDetect(connectionString)
-        )
-    );
-}
+builder.Services.AddDbContext<DatabaseContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("MariaDbConnection"),
+        new MySqlServerVersion(new Version(12, 0, 2)) 
+    )
+);
 
 builder.Configuration.AddUserSecrets<Program>();
-var jwtSecret = builder.Configuration["JwtSecret"]; // symmetric fallback
-var jwtPrivateKeyPem = builder.Configuration["Jwt:PrivateKeyPem"]; // raw PEM content or path
-var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"]; // raw PEM content or path
+var jwtPrivateKeyPem = builder.Configuration["Jwt:PrivateKeyPem"]; // optional path to private key .pem
+var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"]; // optional path to public key .pem
 var jwtIssuer = builder.Configuration["Authorization:Issuer"];
 var jwtAudience = builder.Configuration["Authorization:Audience"];
+// Enforce certificate/PEM for signing
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -45,46 +35,32 @@ builder.Services.AddSwaggerGen();
 
 // The Scoped lifetime means a new instance is created for each HTTP request.
 builder.Services.AddScoped<IAuthService, AuthService>();
-// Provide SigningCredentials via DI (prefer RSA PEM, fallback to symmetric secret)
+
 {
     SigningCredentials signingCredentials;
 
-    RSA? rsa = null;
-    if (!string.IsNullOrWhiteSpace(jwtPrivateKeyPem))
+    if (!string.IsNullOrWhiteSpace(jwtPrivateKeyPem) && File.Exists(jwtPrivateKeyPem))
     {
-        var pemContent = File.Exists(jwtPrivateKeyPem) ? File.ReadAllText(jwtPrivateKeyPem) : jwtPrivateKeyPem;
-        try
-        {
-            rsa = RSA.Create();
-            rsa.ImportFromPem(pemContent);
-        }
-        catch
-        {
-            rsa?.Dispose();
-            rsa = null;
-        }
-    }
-
-    if (rsa != null)
-    {
-        signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
+        RSA rsa = RSA.Create();
+        var privatePem = File.ReadAllText(jwtPrivateKeyPem);
+        rsa.ImportFromPem(privatePem);
+        var rsaKey = new RsaSecurityKey(rsa);
+        signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
+        builder.Services.AddSingleton(signingCredentials);
     }
     else
     {
-        if (string.IsNullOrEmpty(jwtSecret)) throw new ApplicationException("JwtSecret is not configured.");
-        signingCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)), SecurityAlgorithms.HmacSha256);
+        throw new ApplicationException("JWT PEM is not configured. Provide Jwt:PrivateKeyPem (PEM). Optional Jwt:PublicKeyPem for validation.");
     }
-
-    builder.Services.AddSingleton(signingCredentials);
 }
+
 // Test reg
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 
 
-// Register DB-backed login checker.
-builder.Services.AddScoped<ILoginChecker, DbLoginChecker>();
+
 
 // Configure authentication with JWT Bearer.
 builder.Services.AddAuthentication(options =>
@@ -95,33 +71,30 @@ builder.Services.AddAuthentication(options =>
 
 .AddJwtBearer(options =>
 {
-    // Build validation key (prefer public PEM, then private PEM, else symmetric)
     SecurityKey issuerSigningKey;
-    RSA? rsaValidate = null;
-    if (!string.IsNullOrWhiteSpace(jwtPublicKeyPem))
+    if (!string.IsNullOrWhiteSpace(jwtPublicKeyPem) && File.Exists(jwtPublicKeyPem))
     {
-        var pubContent = File.Exists(jwtPublicKeyPem) ? File.ReadAllText(jwtPublicKeyPem) : jwtPublicKeyPem;
-        try { rsaValidate = RSA.Create(); rsaValidate.ImportFromPem(pubContent); } catch { rsaValidate = null; }
+        RSA rsaPub = RSA.Create();
+        var pubPem = File.ReadAllText(jwtPublicKeyPem);
+        rsaPub.ImportFromPem(pubPem);
+        issuerSigningKey = new RsaSecurityKey(rsaPub);
     }
-    if (rsaValidate == null && !string.IsNullOrWhiteSpace(jwtPrivateKeyPem))
+    else if (!string.IsNullOrWhiteSpace(jwtPrivateKeyPem) && File.Exists(jwtPrivateKeyPem))
     {
-        var privContent = File.Exists(jwtPrivateKeyPem) ? File.ReadAllText(jwtPrivateKeyPem) : jwtPrivateKeyPem;
-        try { rsaValidate = RSA.Create(); rsaValidate.ImportFromPem(privContent); } catch { rsaValidate = null; }
-    }
-    if (rsaValidate != null)
-    {
-        issuerSigningKey = new RsaSecurityKey(rsaValidate);
+        RSA rsa = RSA.Create();
+        var privatePem = File.ReadAllText(jwtPrivateKeyPem);
+        rsa.ImportFromPem(privatePem);
+        issuerSigningKey = new RsaSecurityKey(rsa);
     }
     else
     {
-        if (string.IsNullOrEmpty(jwtSecret)) throw new ApplicationException("JwtSecret is not configured.");
-        issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
+        throw new ApplicationException("JWT PEM is not configured. Provide Jwt:PublicKeyPem or Jwt:PrivateKeyPem (PEM).");
     }
 
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = !string.IsNullOrEmpty(jwtIssuer),
-        ValidateAudience = !string.IsNullOrEmpty(jwtAudience),
+        ValidateIssuer = true,
+        ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtIssuer,
