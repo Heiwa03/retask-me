@@ -1,8 +1,8 @@
-﻿using DataAccessLayer.Entities;
+﻿using DataAccessLayerCore.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
-namespace DataAccessLayer.Entities;
+namespace DataAccessLayerCore.Entities;
 
 [Index(nameof(Username), IsUnique = true)]
 public class User : BaseId

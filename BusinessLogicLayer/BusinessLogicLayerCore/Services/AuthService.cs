@@ -1,11 +1,12 @@
 ﻿using BusinessLogicLayer.Services;
-using BusinessLogicLayer.Services.Interfaces;
+using BusinessLogicLayerCore.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
-namespace BusinessLogicLayer.Services
+
+namespace BusinessLogicLayerCore.Services
 {
     public class AuthService : IAuthService
     {

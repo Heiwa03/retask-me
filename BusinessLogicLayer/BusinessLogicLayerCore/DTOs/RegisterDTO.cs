@@ -1,11 +1,15 @@
 
-
+// System
 using System.ComponentModel.DataAnnotations;
-using BusinessLogicLayer.Enums;
+
+// DAl
+using DataAccessLayerCore.Enum;
+
+// idk
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Query;
 
-namespace BusinessLogicLayer.DTOs{
+namespace BusinessLogicLayerCore.DTOs{
     public class RegisterDTO{
 
         [Required(ErrorMessage = "Mail is required")]

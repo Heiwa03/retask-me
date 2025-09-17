@@ -1,4 +1,4 @@
-﻿using DataAccessLayer.Entities;
+﻿using DataAccessLayerCore.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using DataAccessLayer;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices.Swift;
 
-namespace DataAccessLayer.Seeders
+namespace DataAccessLayerCore.Seeders
 {
     public class TestDataSeeder
     {
