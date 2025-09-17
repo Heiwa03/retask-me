@@ -60,8 +60,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 
 
-// Register temporary login checker.
-builder.Services.AddScoped<ILoginChecker, TemporaryLoginChecker>();
+// Register DB-backed login checker.
+builder.Services.AddScoped<ILoginChecker, DbLoginChecker>();
 
 // Configure authentication with JWT Bearer.
 builder.Services.AddAuthentication(options =>

@@ -1,4 +1,4 @@
-// System dependency
+
 using Microsoft.EntityFrameworkCore;
 
 // Used namespaces from BL
