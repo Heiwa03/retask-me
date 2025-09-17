@@ -1,10 +1,10 @@
-﻿using BusinessLogicLayer.Services.Interfaces;
+﻿using BusinessLogicLayerCore.Services.Interfaces;
 
 // PLACEHOLDER TEMPORARY LOGIN CHECKER
 // MUST BE REMOVED ONCE DB IS READY
 // WARNING NOT FOR SENSIBLE PEOPLE. O_O !!!HARD CODED VALUES!!! O_O
 
-namespace BusinessLogicLayer.Services
+namespace BusinessLogicLayerCore.Services
 {
     public class TemporaryLoginChecker : ILoginChecker
     {

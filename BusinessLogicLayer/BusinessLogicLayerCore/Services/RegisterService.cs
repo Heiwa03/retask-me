@@ -2,18 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 
 // Used namespaces from BL
-using BusinessLogicLayer.Services.Interfaces;
-using BusinessLogicLayer.DTOs;
+using BusinessLogicLayerCore.Services.Interfaces;
+using BusinessLogicLayerCore.DTOs;
 
 // Used namespaces from HL
 using HelperLayer.Security;
 using HelperLayer.Security.Token;
 
 // Used namespaces from DAL
-using DataAccessLayer.Repositories.Interfaces;
-using DataAccessLayer.Entities;
+using DataAccessLayerCore.Repositories.Interfaces;
+using DataAccessLayerCore.Entities;
 
-namespace BusinessLogicLayer.Services
+namespace BusinessLogicLayerCore.Services
 {
     /// <summary>
     /// Service responsible for user registration.
@@ -48,7 +48,7 @@ namespace BusinessLogicLayer.Services
 
             // Validate password repeat
             CheckRepeatPassword(dto.Password, dto.RepeatPassword);
-
+            
             // Validate password strength
             CheckPasswordRequirements(dto.Password);
 

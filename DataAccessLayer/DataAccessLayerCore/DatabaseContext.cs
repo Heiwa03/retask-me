@@ -1,7 +1,7 @@
-﻿using DataAccessLayer.Entities;
+﻿using DataAccessLayerCore.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAccessLayer
+namespace DataAccessLayerCore
 {
     public partial class DatabaseContext(DbContextOptions<DatabaseContext> options) : DbContext(options)
     {
