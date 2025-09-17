@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HelperLayer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4125440ec9e2f184c679c75e25e69bd287792e68")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d68703759e816e33f9c6ee750ea88f55a64c52c5")]
 [assembly: System.Reflection.AssemblyProductAttribute("HelperLayer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HelperLayer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
