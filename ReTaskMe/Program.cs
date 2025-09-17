@@ -33,6 +33,7 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
     )
 );
 
+
 builder.Configuration.AddUserSecrets<Program>();
 var jwtPrivateKeyPem = builder.Configuration["JwtSecret:PrivateKeyPem"]; // optional path to private key .pem
 var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"]; // optional path to public key .pem
@@ -119,6 +120,12 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+    db.Database.Migrate(); 
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -126,10 +133,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
