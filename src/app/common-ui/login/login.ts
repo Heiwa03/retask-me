@@ -9,3 +9,6 @@ import { Component } from '@angular/core';
 export class Login {
 
 }
+
+export class LoginComponent {
+}

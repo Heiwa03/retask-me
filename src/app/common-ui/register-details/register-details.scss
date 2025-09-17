@@ -1,0 +1,129 @@
+/* Page */
+.screen {
+  min-height: 100vh;
+  background: #0f0f10;
+  display: grid;
+  place-items: start center;
+  padding-top: 36px;
+  color: #e5e7eb;
+}
+
+.title {
+  font-size: 38px;
+  font-weight: 800;
+  color: #fafafa;
+  margin: 0 0 18px 0;
+}
+
+/* Card */
+.card {
+  width: 540px;
+  display: grid;
+  gap: 18px;
+}
+
+/* Rows and inputs */
+.row { position: relative; }
+
+.input {
+  width: 100%;
+  height: 56px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 1px solid #26262d;
+  background: #1b1b20;
+  color: #e5e7eb;
+  outline: none;
+  font-size: 15px;
+}
+.input::placeholder { color: #6b7280; }
+.input:focus { border-color: #3b3b44; }
+
+/* One calendar icon: ascund indicatorul nativ și pun iconița custom */
+.date-input {
+  padding-right: 20px; /* loc pentru icon */
+}
+.date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;          /* ascund iconița nativă în Chromium */
+  display: none;
+}
+.date-input::-ms-clear { display: none; }
+
+/* Custom icon on the right */
+.row-icon .icon-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: none;
+  background: #26262d;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: #c9cbd3;
+}
+.row-icon .icon-btn:hover { background: #2e2e36; }
+
+/* Gender radios on the right */
+.row-radios .radios {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  gap: 16px;                 /* puțin mai mult spațiu */
+  background: #232329;
+  border: 1px solid #2d2d34;
+  border-radius: 10px;
+  padding: 4px 10px;
+}
+.radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;                  /* mut F și M câțiva px la dreapta */
+  font-size: 14px;
+  color: #d9dbe2;
+}
+.radio input { width: 16px; height: 16px; }
+.radio .radio-text { margin-left: 2px; }
+
+/* Submit button same width as inputs */
+.primary {
+  width: 100%;
+  display: block;
+  height: 54px;
+  border: 0;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #111827;
+  font-weight: 700;
+  cursor: pointer;
+}
+.primary:disabled { opacity: .6; cursor: not-allowed; }
+
+/* Footer centered */
+.legal {
+  margin: 10px 0 2px 0;
+  color: #b7bac4;
+  font-size: 13px;
+  line-height: 1.7;
+  text-align: center;        /* centrat */
+}
+.legal a { color: #d0d3dd; text-decoration: underline; }
+
+.login-line {
+  display: flex;
+  justify-content: center;   /* centrat */
+  align-items: center;
+  gap: 8px;
+  color: #b7bac4;
+  font-size: 14px;
+}
+.login-link {
+  color: #e5e7eb;
+  text-decoration: underline;  /* link, nu buton */
+}
+.login-link:hover { color: #ffffff; }
