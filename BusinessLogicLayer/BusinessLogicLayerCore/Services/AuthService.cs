@@ -1,4 +1,4 @@
-﻿using BusinessLogicLayer.Services;
+﻿using BusinessLogicLayerCore.Services;
 using BusinessLogicLayerCore.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
