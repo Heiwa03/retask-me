@@ -21,17 +21,14 @@ namespace BusinessLogicLayerCore.Services
     public class RegisterService : IRegisterService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IBaseRepository _baseRepository;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="RegisterService"/> class.
         /// </summary>
         /// <param name="userRepository">The user repository.</param>
         /// <param name="baseRepository">The base repository for database operations.</param>
-        public RegisterService(IUserRepository _userRepository, IBaseRepository _baseRepository)
+        public RegisterService(IUserRepository _userRepository)
         {
             this._userRepository = _userRepository;
-            this._baseRepository = _baseRepository;
         }
 
         /// <summary>
@@ -57,12 +54,12 @@ namespace BusinessLogicLayerCore.Services
 
             // Create user 
             User user = CreateUser(dto, hashedPassword);
-            _baseRepository.Add(user);
-            await _baseRepository.SaveChangesAsync();
+            _userRepository.Add(user); // base
+            await _userRepository.SaveChangesAsync(); // base
 
             // Create session
             UserSession userSession = CreateSession(user);
-            _baseRepository.Add(userSession);
+            _userRepository.Add(userSession); //base
             await SaveChanges();
         }
 
@@ -112,7 +109,7 @@ namespace BusinessLogicLayerCore.Services
         /// <param name="dto">The registration DTO.</param>
         /// <param name="hashedPassword">The hashed password.</param>
         /// <returns>The created <see cref="User"/> object.</returns>
-        internal User CreateUser(RegisterDTO dto, string hashedPassword)
+        internal static User CreateUser(RegisterDTO dto, string hashedPassword)
         {
             User user = new User
             {
@@ -130,7 +127,7 @@ namespace BusinessLogicLayerCore.Services
         /// </summary>
         /// <param name="user">The user.</param>
         /// <returns>The created <see cref="UserSession"/> object.</returns>
-        internal UserSession CreateSession(User user)
+        internal static UserSession CreateSession(User user)
         {
             string generatedRefreshToken = TokenHelper.GenerateRefreshToken();
 
@@ -158,7 +155,7 @@ namespace BusinessLogicLayerCore.Services
         {
             try
             {
-                await _baseRepository.SaveChangesAsync();
+                await _userRepository.SaveChangesAsync(); //base
             }
             catch (DbUpdateException ex)
             {

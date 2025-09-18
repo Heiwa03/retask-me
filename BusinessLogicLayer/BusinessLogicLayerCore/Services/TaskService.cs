@@ -4,21 +4,30 @@ using BusinessLogicLayerCore.DTOs;
 
 // DL
 using DataAccessLayerCore.Entities;
+using DataAccessLayerCore.Repositories.Interfaces;
+using DataAccessLayerCore.Enum;
 
 namespace BusinessLogicLayerCore.Services{
-    public class TaskService : ITaskService{
-      
+    public class TaskService(ITaskRepository taskRepository) : ITaskService{
+
+
       // Create Task
-       public async Task<TaskModel> CreateTask(TaskDTO dto, int userId){
-         TaskModel task = new TaskModel{
+      public async Task CreateAndSaveTask(TaskDTO dto, int userId) {
+         var task = new DailyTask {
+            Uuid = Guid.NewGuid(),
+            TaskId = 0,
             UserId = userId,
             Title = dto.Title,
             Description = dto.Description,
+            CreatedAt = DateTime.UtcNow,
             Deadline = dto.Deadline,
-            Priority = dto.Priority
+            Priority = dto.Priority,
+            Status = StatusTask.InProgress
             //BoardId = dto.BoardId,
          };
-         return task;
+
+          taskRepository.Add(task);
+          await taskRepository.SaveChangesAsync();
        }
 
 
