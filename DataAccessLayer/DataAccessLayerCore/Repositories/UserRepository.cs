@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.Repositories
+namespace DataAccessLayerCore.Repositories
 {
     public class UserRepository (DatabaseContext databaseContext) : BaseRepository(databaseContext), IUserRepository
     {

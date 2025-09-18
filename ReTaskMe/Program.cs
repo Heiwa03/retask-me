@@ -11,14 +11,14 @@ using System.Security.Cryptography.X509Certificates;
 
 
 // BL
-using BusinessLogicLayer.Services;
-using BusinessLogicLayer.Services.Interfaces;
+using BusinessLogicLayerCore.Services;
+using BusinessLogicLayerCore.Services.Interfaces;
 
 
 // DAL
-using DataAccessLayer.Repositories.Interfaces;
-using DataAccessLayer.Repositories;
-using DataAccessLayer;
+using DataAccessLayerCore.Repositories.Interfaces;
+using DataAccessLayerCore.Repositories;
+using DataAccessLayerCore;
 
 
 // ---- PROGRAM.CS ------
