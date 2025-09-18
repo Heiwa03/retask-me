@@ -4,9 +4,9 @@ using DataAccessLayerCore.Entities;
 
 
 namespace DataAccessLayerCore.Repositories.Interfaces{
-    public interface ITaskRepository{
-        Task<List<TaskModel>> GetTasksByUserIdAsync(int userId);
-        Task<List<TaskModel>> GetTasksByStatusAsync(int userId, StatusTask status);
+    public interface ITaskRepository : IBaseRepository{
+        Task<List<DailyTask>> GetTasksByUserIdAsync(int userId);
+        Task<List<DailyTask>> GetTasksByStatusAsync(int userId, StatusTask status);
         //Task<List<TaskModel>> GetTasksByBoardIdAsync(int boardId); Temporaty closed
     }
 }
