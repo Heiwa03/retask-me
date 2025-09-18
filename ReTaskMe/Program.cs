@@ -5,10 +5,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using BusinessLogicLayer.Services;
 using BusinessLogicLayer.Services.Interfaces;
-
 using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-
 using DataAccessLayer.Repositories.Interfaces;
 using DataAccessLayer.Repositories;
 using DataAccessLayer;
@@ -16,9 +13,8 @@ using DataAccessLayer;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("MariaDbConnection"),
-        new MySqlServerVersion(new Version(12, 0, 2)) 
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("AzureConnection")
     )
 );
 

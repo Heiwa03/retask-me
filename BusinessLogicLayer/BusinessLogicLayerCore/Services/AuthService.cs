@@ -13,7 +13,7 @@ namespace BusinessLogicLayer.Services
         private readonly SigningCredentials _signingCredentials;
         private readonly string? _issuer;
         private readonly string? _audience;
-        private static readonly Dictionary<string, string> _refreshTokenToUsername = new();
+        private static readonly Dictionary<string, string> _refreshTokenToEmail = new();
 
         public AuthService(ILoginChecker loginChecker, IConfiguration configuration, SigningCredentials signingCredentials)
         {
@@ -23,13 +23,13 @@ namespace BusinessLogicLayer.Services
             _audience = configuration["Authorization:Audience"];
         }
 
-        public Task<AuthResponse> LoginAsync(string username, string password)
+        public Task<AuthResponse> LoginAsync(string email, string password)
         {
-            if (_loginChecker.CheckCredentials(username, password))
+            if (_loginChecker.CheckCredentials(email, password))
             {
-                var token = TokenHelper.GenerateJwtToken(username, _signingCredentials, _issuer, _audience, 60);
+                var token = TokenHelper.GenerateJwtToken(email, _signingCredentials, _issuer, _audience, 60);
                 var refreshToken = TokenHelper.GenerateRefreshToken();
-                _refreshTokenToUsername[refreshToken] = username;
+                _refreshTokenToEmail[refreshToken] = email;
                 return Task.FromResult(new AuthResponse { Token = token, RefreshToken = refreshToken });
             }
 
@@ -42,16 +42,16 @@ namespace BusinessLogicLayer.Services
             {
                 return Task.FromResult<AuthResponse>(null);
             }
-            if (!_refreshTokenToUsername.TryGetValue(refreshToken, out var username))
+            if (!_refreshTokenToEmail.TryGetValue(refreshToken, out var email))
             {
                 return Task.FromResult<AuthResponse>(null);
             }
             // rotate refresh token
-            _refreshTokenToUsername.Remove(refreshToken);
+            _refreshTokenToEmail.Remove(refreshToken);
             var newRefreshToken = TokenHelper.GenerateRefreshToken();
-            _refreshTokenToUsername[newRefreshToken] = username;
+            _refreshTokenToEmail[newRefreshToken] = email;
 
-            var newAccessToken = TokenHelper.GenerateJwtToken(username, _signingCredentials, _issuer, _audience, 60);
+            var newAccessToken = TokenHelper.GenerateJwtToken(email, _signingCredentials, _issuer, _audience, 60);
             return Task.FromResult(new AuthResponse
             {
                 Token = newAccessToken,
