@@ -13,9 +13,9 @@ namespace BusinessLogicLayer.Services
             _userRepository = userRepository;
         }
 
-        public bool CheckCredentials(string username, string password)
+        public bool CheckCredentials(string email, string password)
         {
-            var user = _userRepository.GetUserByUsername(username).GetAwaiter().GetResult();
+            var user = _userRepository.GetUserByEmail(email).GetAwaiter().GetResult();
             if (user == null)
             {
                 return false;
