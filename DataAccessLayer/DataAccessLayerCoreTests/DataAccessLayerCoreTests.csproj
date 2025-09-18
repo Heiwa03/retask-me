@@ -1,12 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-<<<<<<< HEAD
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-=======
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -31,6 +24,5 @@
     <ItemGroup>
         <ProjectReference Include="..\DataAccessLayerCore\DataAccessLayerCore.csproj"/>
     </ItemGroup>
->>>>>>> data-access-implementation
 
 </Project>

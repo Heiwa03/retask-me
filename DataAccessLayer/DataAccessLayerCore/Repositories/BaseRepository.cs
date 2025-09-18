@@ -1,18 +1,11 @@
 ﻿// System
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-<<<<<<< HEAD
 
 // DAL
 using DataAccessLayerCore.Entities;
 using DataAccessLayerCore.Repositories.Interfaces;
 
-=======
-using DataAccessLayerCore;
-using DataAccessLayerCore.Entities;
-using DataAccessLayerCore.Repositories.Interfaces;
-
->>>>>>> data-access-implementation
 namespace DataAccessLayerCore.Repositories
 {
     public class BaseRepository(DatabaseContext databaseContext) : IBaseRepository
