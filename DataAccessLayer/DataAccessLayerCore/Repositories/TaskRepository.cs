@@ -25,7 +25,7 @@ namespace DataAccessLayerCore.Repositories
         /// <summary>
         /// Получить все задачи пользователя
         /// </summary>
-        public async Task<List<TaskModel>> GetTasksByUserIdAsync(int userId)
+        public async Task<List<DailyTask>> GetTasksByUserIdAsync(int userId)
         {
             return await _context.Tasks
                 .Where(t => t.UserId == userId)
@@ -35,7 +35,7 @@ namespace DataAccessLayerCore.Repositories
         /// <summary>
         /// Получить задачи по статусу
         /// </summary>
-        public async Task<List<TaskModel>> GetTasksByStatusAsync(int userId, StatusTask status)
+        public async Task<List<DailyTask>> GetTasksByStatusAsync(int userId, StatusTask status)
         {
             return await _context.Tasks
                 .Where(t => t.UserId == userId && t.Status == status)
