@@ -25,9 +25,9 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 builder.Configuration.AddUserSecrets<Program>();
 var jwtPrivateKeyPem = builder.Configuration["Jwt:PrivateKeyPem"]; // optional path to private key .pem
 var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"]; // optional path to public key .pem
+// Enforce RSA PEM only (no symmetric secret)
 var jwtIssuer = builder.Configuration["Authorization:Issuer"];
 var jwtAudience = builder.Configuration["Authorization:Audience"];
-// Enforce certificate/PEM for signing
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -50,7 +50,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
     }
     else
     {
-        throw new ApplicationException("JWT PEM is not configured. Provide Jwt:PrivateKeyPem (PEM). Optional Jwt:PublicKeyPem for validation.");
+        throw new ApplicationException("JWT signing is not configured. Provide Jwt:PrivateKeyPem (PEM).");
     }
 }
 
@@ -89,7 +89,7 @@ builder.Services.AddAuthentication(options =>
     }
     else
     {
-        throw new ApplicationException("JWT PEM is not configured. Provide Jwt:PublicKeyPem or Jwt:PrivateKeyPem (PEM).");
+        throw new ApplicationException("JWT validation key is not configured. Provide Jwt:PublicKeyPem or Jwt:PrivateKeyPem (PEM).");
     }
 
     options.TokenValidationParameters = new TokenValidationParameters
@@ -100,7 +100,8 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtIssuer,
         ValidAudience = jwtAudience,
-        IssuerSigningKey = issuerSigningKey
+        IssuerSigningKey = issuerSigningKey,
+        ClockSkew = TimeSpan.FromMinutes(2)
     };
 });
 
