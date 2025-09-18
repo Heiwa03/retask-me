@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿// Microsoft
 using Microsoft.EntityFrameworkCore;
 
@@ -7,11 +8,17 @@ using DataAccessLayerCore.Repositories.Interfaces;
 using DataAccessLayerCore;
 using DataAccessLayerCore.Repositories;
 
+=======
+﻿using Microsoft.EntityFrameworkCore;
+>>>>>>> data-access-implementation
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccessLayerCore;
+using DataAccessLayerCore.Entities;
+using DataAccessLayerCore.Repositories.Interfaces;
 
 namespace DataAccessLayerCore.Repositories
 {

@@ -1,12 +1,21 @@
+<<<<<<< HEAD
 ﻿using DataAccessLayerCore.Entities;
 using System;
+=======
+﻿using System;
+>>>>>>> data-access-implementation
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+<<<<<<< HEAD
 using DataAccessLayerCore;
+=======
+>>>>>>> data-access-implementation
 using System.Security.Cryptography;
 using System.Runtime.InteropServices.Swift;
+using DataAccessLayerCore;
+using DataAccessLayerCore.Entities;
 
 namespace DataAccessLayerCore.Seeders
 {
@@ -37,7 +46,7 @@ namespace DataAccessLayerCore.Seeders
         {
             if (_databaseContext.Users.Any())
             {
-                System.Console.WriteLine("DB already has data. No seeding.");
+                Console.WriteLine("DB already has data. No seeding.");
                 return;
             }
 

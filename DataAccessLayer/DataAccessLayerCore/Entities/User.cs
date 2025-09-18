@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 ﻿using DataAccessLayerCore.Entities;
 using Microsoft.EntityFrameworkCore;
+=======
+﻿using Microsoft.EntityFrameworkCore;
+>>>>>>> data-access-implementation
 using System.ComponentModel.DataAnnotations;
 
 namespace DataAccessLayerCore.Entities;
