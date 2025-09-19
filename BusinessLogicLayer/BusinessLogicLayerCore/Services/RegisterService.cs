@@ -1,4 +1,4 @@
-// System dependency
+
 using Microsoft.EntityFrameworkCore;
 
 // Used namespaces from BL
@@ -73,7 +73,7 @@ namespace BusinessLogicLayer.Services
         /// <exception cref="InvalidOperationException">Thrown if the mail is already taken.</exception>
         internal void CheckUniqueMail(string mail)
         {
-            if (_userRepository.IsUserNameOccupied(mail))
+            if (_userRepository.IsEmailOccupied(mail))
             {
                 throw new InvalidOperationException("Username already exists");
             }
