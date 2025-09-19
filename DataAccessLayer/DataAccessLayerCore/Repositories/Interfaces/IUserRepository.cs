@@ -14,7 +14,7 @@ namespace DataAccessLayerCore.Repositories.Interfaces
         /// </summary>
         /// <param name="username">The username to check.</param>
         /// <returns><c>true</c> if the username is occupied, <c>false</c> otherwise.</returns>
-        bool IsusernameOccupied(string username);
+        bool IsUsernameOccupied(string username);
 
         /// <summary>
         /// Retrieves a user from the database given an username.
