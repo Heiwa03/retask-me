@@ -19,7 +19,8 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 );
 
 builder.Configuration.AddUserSecrets<Program>();
-var jwtPrivateKeyPem = builder.Configuration["Jwt:PrivateKeyPem"]; // optional path to private key .pem
+//var jwtPrivateKeyPem = builder.Configuration["Jwt:PrivateKeyPem"]; // optional path to private key .pem
+var jwtPrivateKeyPem = builder.Configuration["JWT_SECRET_KEY"]; // Evironment variable declared in azure
 var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"]; // optional path to public key .pem
 // Enforce RSA PEM only (no symmetric secret)
 var jwtIssuer = builder.Configuration["Authorization:Issuer"];
