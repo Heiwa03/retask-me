@@ -1,129 +1,215 @@
-/* Page */
-.screen {
+/* Base typography */
+$font-family: 'Inter';
+$font-size-base: 12px;
+$font-weight-semibold: 600;
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+:host, body {
+  margin: 0;
+  display: block;
+  color: var(--text);
+  font-family: $font-family;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+}
+
+a { color: var(--text); text-underline-offset: 2px; }
+
+.page {
   min-height: 100vh;
-  background: #0f0f10;
   display: grid;
-  place-items: start center;
-  padding-top: 36px;
-  color: #e5e7eb;
+  place-items: center;
+  padding: 32px 16px;
+  background: var(--bg);
 }
 
-.title {
-  font-size: 38px;
-  font-weight: 800;
-  color: #fafafa;
-  margin: 0 0 18px 0;
-}
-
-/* Card */
 .card {
-  width: 540px;
-  display: grid;
-  gap: 18px;
+  width: 100%;
+  max-width: 520px;
+  background: var(--surface);
+  border-radius: 24px;
+  padding: 36px 28px 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+  color: var(--text);
 }
 
-/* Rows and inputs */
-.row { position: relative; }
+.card__title {
+  margin: 0 0 22px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 34px;
+  color: var(--text);
+}
+
+.field { position: relative; margin: 14px 0; }
+
+.input,
+.select,
+button,
+.calendar-icon,
+.input__placeholder,
+.legal,
+.alt {
+  font-family: $font-family;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+}
 
 .input {
   width: 100%;
   height: 56px;
-  padding: 0 16px;
+  border: 1px solid var(--border);
   border-radius: 14px;
-  border: 1px solid #26262d;
-  background: #1b1b20;
-  color: #e5e7eb;
+  padding: 0 16px;
+  background: var(--surface-2);  /* Light: GRI; Dark: #1f1f24 */
+  color: var(--text);            /* Light: aproape negru; Dark: deschis */
   outline: none;
-  font-size: 15px;
-}
-.input::placeholder { color: #6b7280; }
-.input:focus { border-color: #3b3b44; }
+  transition: border-color .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease;
 
-/* One calendar icon: ascund indicatorul nativ și pun iconița custom */
-.date-input {
-  padding-right: 20px; /* loc pentru icon */
-}
-.date-input::-webkit-calendar-picker-indicator {
-  opacity: 0;          /* ascund iconița nativă în Chromium */
-  display: none;
-}
-.date-input::-ms-clear { display: none; }
+  &::placeholder {
+    color: var(--muted);         /* gri vizibil */
+    font-family: $font-family;
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+  }
 
-/* Custom icon on the right */
-.row-icon .icon-btn {
+  &:focus {
+    border-color: #c7c9d1;
+    box-shadow: 0 0 0 4px rgba(99,102,241,0.12);
+  }
+}
+
+/* Select arrow */
+.select {
+  appearance: none;
+  padding-right: 40px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 22px) 22px,
+    calc(100% - 14px) 22px;
+  background-size: 8px 8px, 8px 8px;
+  background-repeat: no-repeat;
+}
+
+/* ===== Date of birth ===== */
+.field--dob { position: relative; }
+
+/* Custom placeholder for date */
+.input__placeholder {
   position: absolute;
-  right: 12px;
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  border: none;
-  background: #26262d;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  color: #c9cbd3;
+  color: var(--muted);
+  pointer-events: none;
+  transition: opacity .15s ease, visibility .15s ease;
 }
-.row-icon .icon-btn:hover { background: #2e2e36; }
+.input__placeholder.hidden { opacity: 0; visibility: hidden; }
 
-/* Gender radios on the right */
-.row-radios .radios {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: inline-flex;
-  gap: 16px;                 /* puțin mai mult spațiu */
-  background: #232329;
-  border: 1px solid #2d2d34;
-  border-radius: 10px;
-  padding: 4px 10px;
+/* Hide native picker icon, use our button */
+.input--date {
+  padding-right: 48px;
+  color: transparent;
+
+  &:focus,
+  &:valid { color: var(--text); }
+
+  &::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    width: 44px;
+    height: 100%;
+    cursor: pointer;
+    z-index: 1;
+  }
+  &::-moz-calendar-picker-indicator {
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    width: 44px;
+    height: 100%;
+    cursor: pointer;
+    z-index: 1;
+  }
+  &::-ms-calendar-picker-indicator { display: none; }
 }
-.radio {
-  display: inline-flex;
+
+/* Calendar icon */
+.calendar-icon {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 44px;
+  height: 56px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  display: flex;
   align-items: center;
-  gap: 8px;                  /* mut F și M câțiva px la dreapta */
-  font-size: 14px;
-  color: #d9dbe2;
-}
-.radio input { width: 16px; height: 16px; }
-.radio .radio-text { margin-left: 2px; }
+  justify-content: center;
+  cursor: pointer;
+  transition: color .15s ease;
+  z-index: 2;
 
-/* Submit button same width as inputs */
-.primary {
+  &:focus-visible { outline: 2px solid rgba(99,102,241,0.25); outline-offset: 2px; }
+  svg { width: 20px; height: 20px; }
+}
+
+/* Primary CTA (purple in both themes) */
+.cta {
+  margin-top: 12px;
+  margin-bottom: 8px;
   width: 100%;
-  display: block;
-  height: 54px;
+  height: 56px;
   border: 0;
   border-radius: 14px;
-  background: #ffffff;
-  color: #111827;
+  background: var(--primary);
+  color: #fff;
   font-weight: 700;
   cursor: pointer;
-}
-.primary:disabled { opacity: .6; cursor: not-allowed; }
+  transition: transform .04s ease, filter .2s ease;
 
-/* Footer centered */
+  &:active { transform: translateY(1px); }
+  &:disabled { opacity: .6; cursor: not-allowed; }
+}
+
 .legal {
-  margin: 10px 0 2px 0;
-  color: #b7bac4;
-  font-size: 13px;
-  line-height: 1.7;
-  text-align: center;        /* centrat */
-}
-.legal a { color: #d0d3dd; text-decoration: underline; }
+  margin: 18px 4px 14px;
+  color: var(--muted);
+  text-align: center;
 
-.login-line {
-  display: flex;
-  justify-content: center;   /* centrat */
-  align-items: center;
-  gap: 8px;
-  color: #b7bac4;
+  a { color: var(--text); }
+}
+
+.alt {
+  margin: 6px 0 0;
+  text-align: center;
+  color: var(--muted);
+
+  .alt__link { color: var(--text); font-weight: 700; }
+}
+
+/* Logout (adaptează la temă) */
+.logout-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  height: 36px;
+  padding: 0 24px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-weight: 600;
   font-size: 14px;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, transform .06s ease;
 }
-.login-link {
-  color: #e5e7eb;
-  text-decoration: underline;  /* link, nu buton */
-}
-.login-link:hover { color: #ffffff; }
+.logout-btn:hover { filter: brightness(0.98); }
+.logout-btn:active { transform: translateY(1px); }
+.logout-btn:focus-visible { outline: 0; box-shadow: 0 0 0 2px #3b3b44; }

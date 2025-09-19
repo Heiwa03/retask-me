@@ -1,22 +1,46 @@
-import { Component } from '@angular/core';
-import {ReactiveFormsModule} from '@angular/forms';
+import {Component, inject} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-register-details',
+  standalone: true,
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ],
   templateUrl: './register-details.html',
   styleUrl: './register-details.scss'
 })
 export class RegisterDetails {
-  form: any;
+  http = inject(HttpClient);
+  dob: string | null = null;
+  isDobFocused = false;
+  gender = '';
 
-  submit() {
-
+  openDobPicker(input: HTMLInputElement): void {
+    const anyInput = input as any;
+    if (typeof anyInput.showPicker === 'function') {
+      anyInput.showPicker();
+    } else {
+      input.focus();
+      input.click();
+    }
   }
 
-  openDatePicker(dobEl: HTMLInputElement) {
+  ngOnInit() {
+    const saved = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    const dark = saved ? saved === 'dark' : false; // default LIGHT
+    document.documentElement.classList.toggle('theme-dark', dark);
+    queueMicrotask(() => {
+      const chk = document.getElementById('themeSwitch') as HTMLInputElement | null;
+      if (chk) chk.checked = !dark; // checked = Light
+    });
+  }
 
+  onThemeToggle(e: Event) {
+    const isLight = (e.target as HTMLInputElement).checked;
+    document.documentElement.classList.toggle('theme-dark', !isLight);
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
   }
 }
