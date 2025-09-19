@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("AzureConnection")
+        builder.Configuration.GetConnectionString("Data__ConnectionString")
     )
 );
 
