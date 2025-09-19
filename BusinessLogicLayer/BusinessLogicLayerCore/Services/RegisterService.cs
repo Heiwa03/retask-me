@@ -10,8 +10,8 @@ using HelperLayer.Security;
 using HelperLayer.Security.Token;
 
 // Used namespaces from DAL
-using DataAccessLayer.Repositories.Interfaces;
-using DataAccessLayer.Entities;
+using DataAccessLayerCore.Entities;
+using DataAccessLayerCore.Repositories.Interfaces;
 
 namespace BusinessLogicLayer.Services
 {
@@ -73,7 +73,7 @@ namespace BusinessLogicLayer.Services
         /// <exception cref="InvalidOperationException">Thrown if the mail is already taken.</exception>
         internal void CheckUniqueMail(string mail)
         {
-            if (_userRepository.IsUserNameOccupied(mail))
+            if (_userRepository.IsUsernameOccupied(mail))
             {
                 throw new InvalidOperationException("Username already exists");
             }

@@ -1,14 +1,14 @@
-﻿using DataAccessLayer.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataAccessLayer;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices.Swift;
+using DataAccessLayerCore;
+using DataAccessLayerCore.Entities;
 
-namespace DataAccessLayer.Seeders
+namespace DataAccessLayerCore.Seeders
 {
     public class TestDataSeeder
     {
@@ -37,7 +37,7 @@ namespace DataAccessLayer.Seeders
         {
             if (_databaseContext.Users.Any())
             {
-                System.Console.WriteLine("DB already has data. No seeding.");
+                Console.WriteLine("DB already has data. No seeding.");
                 return;
             }
 
