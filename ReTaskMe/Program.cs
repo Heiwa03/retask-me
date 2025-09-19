@@ -105,14 +105,9 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+app.UseSwagger();
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-else
-{
-    app.UseSwagger();
     app.UseSwaggerUI();
 }
 
