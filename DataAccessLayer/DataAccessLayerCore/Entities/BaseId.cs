@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
-namespace DataAccessLayer.Entities
+namespace DataAccessLayerCore.Entities
 {
     public abstract class BaseId
     {
