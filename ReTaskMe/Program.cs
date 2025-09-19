@@ -14,13 +14,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("Data__ConnectionString")
+        Environment.GetEnvironmentVariable("Data__ConnectionString")
     )
 );
 
 builder.Configuration.AddUserSecrets<Program>();
 //var jwtPrivateKeyPem = builder.Configuration["Jwt:PrivateKeyPem"]; // optional path to private key .pem
-var jwtPrivateKeyPem = builder.Configuration.GetValue<string>("JWT_SECRET_KEY"); // Evironment variable declared in azure
+var jwtPrivateKeyPem = Environment.GetEnvironmentVariable("JWT_SECRET_KEY"); // Evironment variable declared in azure
 //var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"]; // optional path to public key .pem
 string? jwtPublicKeyPem = null;
 // Enforce RSA PEM only (no symmetric secret)
