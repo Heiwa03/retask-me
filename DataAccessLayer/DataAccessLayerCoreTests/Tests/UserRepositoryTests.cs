@@ -3,6 +3,8 @@ using DataAccessLayerCore.Entities;
 using DataAccessLayerCore.Repositories;
 using DataAccessLayerCoreTests.MockDbSet;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Moq;
 using Xunit;
 
@@ -24,6 +26,37 @@ namespace DataAccessLayerCoreTests
             _mockContext = new Mock<DatabaseContext>(mockOptions);
 
             _userRepository = new UserRepository(_mockContext.Object);
+        }
+
+        private static List<User> GetUserData()
+        {
+            return
+            [
+                new User
+                {
+                    Id = 1,
+                    Uuid = Guid.NewGuid(),
+                    isActive = true,
+                    CreatedDate = DateTime.Now,
+                    Username = "Penis@gmail.com",
+                    NormalizedUsername = "PENIS@GMAIL.COM",
+                    Password = "sdasdasdaawdasdasd"
+                }
+            ];
+        }
+
+        private static User GetSingleUserEntity()
+        {
+            return new User
+            {
+                Id = 1,
+                Uuid = Guid.NewGuid(),
+                isActive = true,
+                CreatedDate = DateTime.Now,
+                Username = "Penis@gmail.com",
+                NormalizedUsername = "PENIS@GMAIL.COM",
+                Password = "sdasdasdaawdasdasd"
+            };
         }
 
         [Fact]
@@ -100,69 +133,38 @@ namespace DataAccessLayerCoreTests
             Assert.Null(result);
         }
 
-        private static List<User> GetUserData()
-        {
-            return
-            [
-                new User
-                {
-                    Id = 1,
-                    Uuid = Guid.NewGuid(),
-                    isActive = true,
-                    CreatedDate = DateTime.Now,
-                    Username = "Penis@gmail.com",
-                    NormalizedUsername = "PENIS@GMAIL.COM",
-                    Password = "sdasdasdaawdasdasd"
-                }
-            ];
-        }
-
-        private static User GetSingleUserEntity()
-        {
-            return new User
-            {
-                Id = 1,
-                Uuid = Guid.NewGuid(),
-                isActive = true,
-                CreatedDate = DateTime.Now,
-                Username = "Penis@gmail.com",
-                NormalizedUsername = "PENIS@GMAIL.COM",
-                Password = "sdasdasdaawdasdasd"
-            };
-        }
-
         [Fact]
         public void Add_UserEntity_CallsDbContextSetAdd()
         {
             // Arrange
-            var users = new List<User> { };
+            var mockSet = new Mock<DbSet<User>>();
 
-            _mockContext.Setup(c => c.Set<User>()).Returns(users.AsDbSetMock().Object);
+            _mockContext.Setup(c => c.Set<User>()).Returns(mockSet.Object);
 
             // Act
             var repository = new UserRepository(_mockContext.Object);
-            repository.Add(_singleUser);
+            repository.Add(GetSingleUserEntity());
 
             // Assert
-            users.AsDbSetMock().Verify(m => m.Add(It.Is<User>(u => u.Username == GetSingleUserEntity().Username)), Times.Once);
+            mockSet.Verify(m => m.Add(It.IsAny<User>()), Times.Once);
         }
-        
+
         [Fact]
         public void Delete_UserEnity_CallsDbContextSetRemove()
         {
             // Arrange
-            var users = GetUserData();
+            var mockSet = new Mock<DbSet<User>>();
 
-            _mockContext.Setup(c => c.Set<User>()).Returns(users.AsDbSetMock().Object);
+            _mockContext.Setup(c => c.Set<User>()).Returns(mockSet.Object);
 
             // Act
             var repository = new UserRepository(_mockContext.Object);
             repository.Delete(_singleUser);
 
             // Assert
-            users.AsDbSetMock().Verify(m => m.Remove(It.Is<User>(u => u.Uuid == _singleUser.Uuid)), Times.Once);
+            mockSet.Verify(m => m.Remove(It.Is<User>(u => u.Uuid == _singleUser.Uuid)), Times.Once);
         }
-        /*
+
         [Fact]
         public async Task GetByIdAsync_WithValidId_ReturnsCorrectEntity()
         {
@@ -171,21 +173,13 @@ namespace DataAccessLayerCoreTests
             {
                 new User { Id = 1, Username = "test_user_1", Uuid = Guid.NewGuid(), Password = "p1", isActive = true, NormalizedUsername = "T1" },
                 new User { Id = 2, Username = "test_user_2", Uuid = Guid.NewGuid(), Password = "p2", isActive = true, NormalizedUsername = "T2" }
-            }.AsQueryable();
+            };
 
-            _fixture.MockSet.As<IAsyncEnumerable<User>>()
-                .Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
-                .Returns(new TestAsyncEnumerator<User>(users.GetEnumerator()));
+            var mockDbSet = users.AsDbSetMock();
 
-            _fixture.MockSet.As<IQueryable<User>>()
-                .Setup(m => m.Provider)
-                .Returns(new TestAsyncQueryProvider<User>(users.Provider));
+            _mockContext.Setup(c => c.Set<User>()).Returns(mockDbSet.Object);
 
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
-
-            var repository = new UserRepository(_fixture.MockContext.Object);
+            var repository = new UserRepository(_mockContext.Object);
 
             // Act
             var result = await repository.GetByIdAsync<User>(2);
@@ -195,7 +189,7 @@ namespace DataAccessLayerCoreTests
             Assert.Equal(2, result.Id);
             Assert.Equal("test_user_2", result.Username);
         }
-
+        
         [Fact]
         public void GetById_WithValidId_ReturnsCorrectEntity()
         {
@@ -204,14 +198,13 @@ namespace DataAccessLayerCoreTests
             {
                 new User { Id = 1, Username = "test_user_1", Uuid = Guid.NewGuid(), Password = "p1", NormalizedUsername = "T1" },
                 new User { Id = 2, Username = "test_user_2", Uuid = Guid.NewGuid(), Password = "p2", NormalizedUsername = "T2" }
-            }.AsQueryable();
+            };
 
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(users.Provider);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
+            var mockDbSet = users.AsDbSetMock();
 
-            var repository = new UserRepository(_fixture.MockContext.Object);
+            _mockContext.Setup(c => c.Set<User>()).Returns(mockDbSet.Object);
+
+            var repository = new UserRepository(_mockContext.Object);
 
             // Act
             var result = repository.GetById<User>(2);
@@ -229,14 +222,13 @@ namespace DataAccessLayerCoreTests
             var users = new List<User>
             {
                 new User { Id = 1, Username = "test_user_1", Uuid = Guid.NewGuid(), Password = "p1", NormalizedUsername = "T1" }
-            }.AsQueryable();
+            };
 
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(users.Provider);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
+            var mockDbSet = users.AsDbSetMock();
 
-            var repository = new UserRepository(_fixture.MockContext.Object);
+            _mockContext.Setup(c => c.Set<User>()).Returns(mockDbSet.Object);
+
+            var repository = new UserRepository(_mockContext.Object);
 
             // Act
             var result = repository.GetById<User>(99);
@@ -254,22 +246,13 @@ namespace DataAccessLayerCoreTests
             {
                 new User { Id = 1, Uuid = testGuid, Username = "test_user_1", Password = "p1", NormalizedUsername = "T1" },
                 new User { Id = 2, Uuid = Guid.NewGuid(), Username = "test_user_2", Password = "p2", NormalizedUsername = "T2" }
-            }.AsQueryable();
+            };
 
-            // Use the fixture's MockSet to configure async LINQ operations
-            _fixture.MockSet.As<IAsyncEnumerable<User>>()
-                .Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
-                .Returns(new TestAsyncEnumerator<User>(users.GetEnumerator()));
+            var mockDbSet = users.AsDbSetMock();
 
-            _fixture.MockSet.As<IQueryable<User>>()
-                .Setup(m => m.Provider)
-                .Returns(new TestAsyncQueryProvider<User>(users.Provider));
+            _mockContext.Setup(c => c.Set<User>()).Returns(mockDbSet.Object);
 
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
-
-            var repository = new UserRepository(_fixture.MockContext.Object);
+            var repository = new UserRepository(_mockContext.Object);
 
             // Act
             var result = await repository.GetByUuidAsync<User>(testGuid);
@@ -287,18 +270,13 @@ namespace DataAccessLayerCoreTests
             var users = new List<User>
             {
                 new User { Id = 1, Uuid = Guid.NewGuid(), Username = "test_user_1", Password = "p1", NormalizedUsername = "T1" }
-            }.AsQueryable();
+            };
 
-            _fixture.MockSet.As<IAsyncEnumerable<User>>()
-                .Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
-                .Returns(new TestAsyncEnumerator<User>(users.GetEnumerator()));
+            var mockDbSet = users.AsDbSetMock();
 
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(new TestAsyncQueryProvider<User>(users.Provider));
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
+            _mockContext.Setup(c => c.Set<User>()).Returns(mockDbSet.Object);
 
-            var repository = new UserRepository(_fixture.MockContext.Object);
+            var repository = new UserRepository(_mockContext.Object);
 
             // Act
             var result = await repository.GetByUuidAsync<User>(Guid.NewGuid());
@@ -316,14 +294,13 @@ namespace DataAccessLayerCoreTests
             {
                 new User { Id = 1, Uuid = testGuid, Username = "test_user_1", Password = "p1", NormalizedUsername = "T1" },
                 new User { Id = 2, Uuid = Guid.NewGuid(), Username = "test_user_2", Password = "p2", NormalizedUsername = "T2" }
-            }.AsQueryable();
+            };
 
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(users.Provider);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
+            var mockDbSet = users.AsDbSetMock();
 
-            var repository = new UserRepository(_fixture.MockContext.Object);
+            _mockContext.Setup(c => c.Set<User>()).Returns(mockDbSet.Object);
+
+            var repository = new UserRepository(_mockContext.Object);
 
             // Act
             var result = repository.GetByUuid<User>(testGuid);
@@ -341,14 +318,13 @@ namespace DataAccessLayerCoreTests
             var users = new List<User>
             {
                 new User { Id = 1, Uuid = Guid.NewGuid(), Username = "test_user_1", Password = "p1", NormalizedUsername = "T1" }
-            }.AsQueryable();
+            };
 
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(users.Provider);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
+            var mockDbSet = users.AsDbSetMock();
 
-            var repository = new UserRepository(_fixture.MockContext.Object);
+            _mockContext.Setup(c => c.Set<User>()).Returns(mockDbSet.Object);
+
+            var repository = new UserRepository(_mockContext.Object);
 
             // Act
             var result = repository.GetByUuid<User>(Guid.NewGuid());
@@ -356,7 +332,7 @@ namespace DataAccessLayerCoreTests
             // Assert
             Assert.Null(result);
         }
-
+        
         [Fact]
         public void Update_UserEntity_CallsDbContextSetUpdate()
         {
@@ -370,28 +346,34 @@ namespace DataAccessLayerCoreTests
                 Password = "new_password"
             };
 
-            var repository = new UserRepository(_fixture.MockContext.Object);
+            var mockDbSet = GetUserData().AsDbSetMock();
+
+            _mockContext.Setup(c => c.Set<User>()).Returns(mockDbSet.Object);
+
+            var repository = new UserRepository(_mockContext.Object);
 
             // Act
             repository.Update(userToUpdate);
 
             // Assert
-            // Verify that the Update method was called on the DbSet mock with the correct user entity.
-            _fixture.MockSet.Verify(m => m.Update(It.Is<User>(u => u.Id == 1 && u.Username == "updated_user")), Times.Once);
+            mockDbSet.Verify(m => m.Update(It.Is<User>(u => u.Id == 1 && u.Username == "updated_user")), Times.Once);
         }
-
+        
         [Fact]
         public void Update_WithNullEntity_ThrowsArgumentNullException()
         {
             User? nullUser = null;
-            var repository = new BaseRepository(_fixture.MockContext.Object);
+
+            var mockDbSet = GetUserData().AsDbSetMock();
+
+            _mockContext.Setup(c => c.Set<User>()).Returns(mockDbSet.Object);
+
+            var repository = new UserRepository(_mockContext.Object);
 
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() => repository.Update(nullUser!));
         }
 
-        
-        // I know this looks useless but let it be here
         [Fact]
         public async Task SaveChangesAsync_CallsDbContextSaveChangesAsyncAndReturnsCorrectValue()
         {
@@ -399,131 +381,73 @@ namespace DataAccessLayerCoreTests
             var expectedResult = 1;
 
             // Set up the mock context to return the expected result when SaveChangesAsync is called.
-            _fixture.MockContext.Setup(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            _mockContext.Setup(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expectedResult);
 
-            var repository = new UserRepository(_fixture.MockContext.Object);
+            var repository = new UserRepository(_mockContext.Object);
 
             // Act
             var result = await repository.SaveChangesAsync();
 
             // Assert
-            // 1. Verify that the returned value is the one we set up.
             Assert.Equal(expectedResult, result);
 
-            // 2. Verify that SaveChangesAsync was called exactly once on the mock context.
-            _fixture.MockContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
         public async Task BeginTransactionAsync_CallsBeginTransactionOnDatabaseAndReturnsTransaction()
         {
             // Arrange
-            // Mock the IDbContextTransaction object that is expected to be returned.
+            var options = new DbContextOptionsBuilder<DatabaseContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            var mockContext = new Mock<DatabaseContext>(options);
+            var mockDatabase = new Mock<DatabaseFacade>(mockContext.Object);
             var mockTransaction = new Mock<IDbContextTransaction>();
 
-            // Mock the Database property (DatabaseFacade) of the DbContext.
-            var mockDatabase = new Mock<DatabaseFacade>(_fixture.MockContext.Object);
-
-            // Set up the mock DatabaseFacade to return the mock transaction when BeginTransactionAsync is called.
-            mockDatabase.Setup(d => d.BeginTransactionAsync(It.IsAny<CancellationToken>()))
+            // Setup:
+            // Configure the mock database to return the mock transaction.
+            mockDatabase
+                .Setup(d => d.BeginTransactionAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(mockTransaction.Object);
 
-            // Set up the mock DbContext (from the fixture) to return the mock DatabaseFacade.
-            _fixture.MockContext.Setup(c => c.Database).Returns(mockDatabase.Object);
+            // Configure the mock context to return the mock database facade.
+            mockContext
+                .Setup(c => c.Database)
+                .Returns(mockDatabase.Object);
 
-            var repository = new UserRepository(_fixture.MockContext.Object);
+            var repository = new UserRepository(mockContext.Object);
 
             // Act
             var result = await repository.BeginTransactionAsync();
 
             // Assert
-            // 1. Verify that BeginTransactionAsync was called on the mock DatabaseFacade.
             mockDatabase.Verify(d => d.BeginTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
-
-            // 2. Verify that the returned object is the same mock transaction that was set up.
             Assert.Equal(mockTransaction.Object, result);
         }
 
         [Fact]
-        public void IsUserNameOccupied_WhenUsernameExists_ReturnsTrue()
+        public void IsUsernameOccupied_WhenUsernameExists_ReturnsTrue()
         {
             // Arrange
             var users = new List<User>
             {
                 new User { Id = 1, Username = "TestUser", NormalizedUsername = "TESTUSER", Password = "p1", Uuid = Guid.NewGuid() }
-            }.AsQueryable();
+            };
 
-            var repository = new UserRepository(_fixture.MockContext.Object);
+            var mockDbSet = users.AsDbSetMock();
 
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(users.Provider);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
+            _mockContext.Setup(c => c.Users).Returns(mockDbSet.Object);
+
+            var repository = new UserRepository(_mockContext.Object);
 
             // Act
-            var isOccupied = repository.IsUserNameOccupied("TestUser");
+            var isOccupied = repository.IsUsernameOccupied("TestUser");
 
             // Assert
             Assert.True(isOccupied);
         }
-        
-        [Fact]
-        public void IsUserNameOccupied_WhenUsernameDoesNotExist_ReturnsFalse()
-        {
-            // Arrange
-            var users = new List<User>
-            {
-                new User { Id = 1, Username = "ExistingUser", NormalizedUsername = "EXISTINGUSER", Password = "p1", Uuid = Guid.NewGuid() }
-            }.AsQueryable();
-
-            var repository = new UserRepository(_fixture.MockContext.Object);
-
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(users.Provider);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
-
-            // Act
-            var isOccupied = repository.IsUserNameOccupied("NonExistentUser");
-
-            // Assert
-            Assert.False(isOccupied);
-        }
-
-        [Fact]
-        public async Task GetUserByUsername_WhenUsernameExists_ReturnsUser()
-        {
-            // Arrange
-            var users = new List<User>
-            {
-                new User { Id = 1, Username = "TestUser", NormalizedUsername = "TESTUSER", Password = "p1", Uuid = Guid.NewGuid() }
-            }.AsQueryable();
-
-            // Configure the DbSet mock for asynchronous LINQ operations.
-            // This is the correct syntax for chaining the setup.
-            _fixture.MockSet.As<IAsyncEnumerable<User>>()
-                .Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
-                .Returns(new TestAsyncEnumerator<User>(users.GetEnumerator()));
-
-            _fixture.MockSet.As<IQueryable<User>>()
-                .Setup(m => m.Provider)
-                .Returns(new TestAsyncQueryProvider<User>(users.Provider));
-
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-            _fixture.MockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
-
-            _fixture.MockContext.Setup(m => m.Users).Returns(_fixture.MockSet.Object);
-
-            var repository = new UserRepository(_fixture.MockContext.Object);
-
-            // Act
-            var result = await repository.GetUserByUsername("testuser");
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal("TESTUSER", result.NormalizedUsername);
-        }*/
     }
 }

@@ -6,9 +6,9 @@ using System.Security.Cryptography.X509Certificates;
 using BusinessLogicLayer.Services;
 using BusinessLogicLayer.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using DataAccessLayer.Repositories.Interfaces;
-using DataAccessLayer.Repositories;
-using DataAccessLayer;
+using DataAccessLayerCore.Repositories.Interfaces;
+using DataAccessLayerCore.Repositories;
+using DataAccessLayerCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
