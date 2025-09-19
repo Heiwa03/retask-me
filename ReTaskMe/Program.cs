@@ -1,93 +1,83 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using BusinessLogicLayer.Services;
 using BusinessLogicLayer.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using DataAccessLayerCore.Repositories.Interfaces;
 using DataAccessLayerCore.Repositories;
 using DataAccessLayerCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ======================
+// Database configuration
+// ======================
+var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString");
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new ApplicationException("Database connection string is missing. Set Data__ConnectionString in App Settings.");
+}
+
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseSqlServer(
-        Environment.GetEnvironmentVariable("Data__ConnectionString")
-    )
+    options.UseSqlServer(connectionString)
 );
 
-builder.Configuration.AddUserSecrets<Program>();
-//var jwtPrivateKeyPem = builder.Configuration["Jwt:PrivateKeyPem"]; // optional path to private key .pem
-var jwtPrivateKeyPem = Environment.GetEnvironmentVariable("JWT_SECRET_KEY"); // Evironment variable declared in azure
-//var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"]; // optional path to public key .pem
-string? jwtPublicKeyPem = null;
-// Enforce RSA PEM only (no symmetric secret)
-var jwtIssuer = builder.Configuration["Authorization:Issuer"];
-var jwtAudience = builder.Configuration["Authorization:Audience"];
+// ======================
+// JWT configuration
+// ======================
+// In Azure App Settings adaugi variabila JWT_PRIVATE_KEY cu conținutul PEM
+var jwtPrivateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY");
+var jwtPublicKeyPem = Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY"); // optional
+var jwtIssuer = Environment.GetEnvironmentVariable("Authorization_Issuer");
+var jwtAudience = Environment.GetEnvironmentVariable("Authorization_Audience");
+
+if (string.IsNullOrWhiteSpace(jwtPrivateKeyPem))
+{
+    throw new ApplicationException("JWT signing key is not configured. Provide JWT_PRIVATE_KEY as PEM string.");
+}
+
+// Configure signing credentials (for issuing tokens)
+RSA rsa = RSA.Create();
+rsa.ImportFromPem(jwtPrivateKeyPem);
+var rsaKey = new RsaSecurityKey(rsa);
+var signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
+builder.Services.AddSingleton(signingCredentials);
+
+// ======================
+// Service registrations
+// ======================
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IBaseRepository, BaseRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRegisterService, RegisterService>();
+builder.Services.AddScoped<ILoginChecker, DbLoginChecker>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// The Scoped lifetime means a new instance is created for each HTTP request.
-builder.Services.AddScoped<IAuthService, AuthService>();
-
-{
-    SigningCredentials signingCredentials;
-
-    if (!string.IsNullOrWhiteSpace(jwtPrivateKeyPem) && File.Exists(jwtPrivateKeyPem))
-    {
-        RSA rsa = RSA.Create();
-        var privatePem = File.ReadAllText(jwtPrivateKeyPem);
-        rsa.ImportFromPem(privatePem);
-        var rsaKey = new RsaSecurityKey(rsa);
-        signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
-        builder.Services.AddSingleton(signingCredentials);
-    }
-    else
-    {
-        throw new ApplicationException("JWT signing is not configured. Provide Jwt:PrivateKeyPem (PEM).");
-    }
-}
-
-// Test reg
-builder.Services.AddScoped<IBaseRepository, BaseRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IRegisterService, RegisterService>();
-
-
-// Register DB-backed login checker.
-builder.Services.AddScoped<ILoginChecker, DbLoginChecker>();
-
-// Configure authentication with JWT Bearer.
+// ======================
+// Authentication setup
+// ======================
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-
 .AddJwtBearer(options =>
 {
     SecurityKey issuerSigningKey;
-    if (!string.IsNullOrWhiteSpace(jwtPublicKeyPem) && File.Exists(jwtPublicKeyPem))
+
+    if (!string.IsNullOrWhiteSpace(jwtPublicKeyPem))
     {
         RSA rsaPub = RSA.Create();
-        var pubPem = File.ReadAllText(jwtPublicKeyPem);
-        rsaPub.ImportFromPem(pubPem);
+        rsaPub.ImportFromPem(jwtPublicKeyPem);
         issuerSigningKey = new RsaSecurityKey(rsaPub);
-    }
-    else if (!string.IsNullOrWhiteSpace(jwtPrivateKeyPem) && File.Exists(jwtPrivateKeyPem))
-    {
-        RSA rsa = RSA.Create();
-        var privatePem = File.ReadAllText(jwtPrivateKeyPem);
-        rsa.ImportFromPem(privatePem);
-        issuerSigningKey = new RsaSecurityKey(rsa);
     }
     else
     {
-        throw new ApplicationException("JWT validation key is not configured. Provide Jwt:PublicKeyPem or Jwt:PrivateKeyPem (PEM).");
+        issuerSigningKey = rsaKey; // fallback la private key
     }
 
     options.TokenValidationParameters = new TokenValidationParameters
@@ -103,19 +93,22 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// ======================
+// Build and run app
+// ======================
 var app = builder.Build();
 
 app.UseSwagger();
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwaggerUI();
-}
+app.UseSwaggerUI(); // ✅ activ în production
 
 app.UseHttpsRedirection();
-app.UseCors(configurePolicy => configurePolicy
+
+app.UseCors(policy => policy
     .WithOrigins("http://localhost:7180", "http://localhost:4200", "http://localhost:5017")
     .AllowAnyHeader()
-    .AllowAnyMethod());
+    .AllowAnyMethod()
+);
+
 app.UseAuthentication();
 app.UseAuthorization();
 
