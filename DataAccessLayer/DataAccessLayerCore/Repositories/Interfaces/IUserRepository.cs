@@ -1,23 +1,23 @@
-﻿using DataAccessLayer.Entities;
+﻿using DataAccessLayerCore.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.Repositories.Interfaces
+namespace DataAccessLayerCore.Repositories.Interfaces
 {
     public interface IUserRepository : IBaseRepository
     {
         /// <summary>
-        /// Checks if a username is occupied.
+        /// Checks if an username is occupied.
         /// </summary>
         /// <param name="username">The username to check.</param>
         /// <returns><c>true</c> if the username is occupied, <c>false</c> otherwise.</returns>
-        bool IsUserNameOccupied(string username);
+        bool IsUsernameOccupied(string username);
 
         /// <summary>
-        /// Retrieves a user from the database given a username.
+        /// Retrieves a user from the database given an username.
         /// </summary>
         /// <param name="username">The username of the user to retrieve.</param>
         /// <returns>
