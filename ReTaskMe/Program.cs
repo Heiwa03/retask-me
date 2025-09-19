@@ -40,13 +40,15 @@ var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"]; // optional pat
 var jwtIssuer = builder.Configuration["Authorization:Issuer"];
 var jwtAudience = builder.Configuration["Authorization:Audience"];
 
+
 // Enforce certificate/PEM for signing
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // The Scoped lifetime means a new instance is created for each HTTP request.
-builder.Services.AddScoped<IAuthService, AuthService>();
+
+//builder.Services.AddScoped<IAuthService, AuthService>();
 
 {
     SigningCredentials signingCredentials;
@@ -66,13 +68,22 @@ builder.Services.AddScoped<IAuthService, AuthService>();
     }
 }
 
+
+
+
 // Test reg
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+
+
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 
+builder.Services.AddScoped<IUserService, UserService>();
+
+
 // Register temporary login checker.
-builder.Services.AddScoped<ILoginChecker, TemporaryLoginChecker>();
+//builder.Services.AddScoped<ILoginChecker, TemporaryLoginChecker>();
 
 // Configure authentication with JWT Bearer.
 builder.Services.AddAuthentication(options =>
@@ -115,9 +126,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Task
+builder.Services.AddScoped<ITaskService, TaskService>();
 
-// APP runner
 
+// App runner
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
