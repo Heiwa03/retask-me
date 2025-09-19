@@ -3,7 +3,7 @@ name: Deploy ReTaskMe to Azure
 on:
   push:
     branches:
-      - main
+      - devel
 
 jobs:
   build-and-deploy:
