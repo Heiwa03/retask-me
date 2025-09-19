@@ -5,8 +5,6 @@ using Microsoft.EntityFrameworkCore;
 // DAL
 using DataAccessLayerCore.Entities;
 using DataAccessLayerCore.Repositories.Interfaces;
-using DataAccessLayerCore.Enum;
-
 
 
 namespace DataAccessLayerCore.Repositories
@@ -15,8 +13,7 @@ namespace DataAccessLayerCore.Repositories
     {
         private readonly DatabaseContext _context;
 
-        public TaskRepository(DatabaseContext context) : base(context)
-        {
+        public TaskRepository(DatabaseContext context) : base(context){
             _context = context;
         }
 
@@ -25,22 +22,29 @@ namespace DataAccessLayerCore.Repositories
         /// <summary>
         /// Получить все задачи пользователя
         /// </summary>
-        public async Task<List<DailyTask>> GetTasksByUserIdAsync(int userId)
+        public async Task<List<DailyTask>> GetTasksByUserIdAsync(long userId)
         {
             return await _context.Tasks
                 .Where(t => t.UserId == userId)
                 .ToListAsync();
         }
 
+        // найти юзера и таск
+        public async Task<DailyTask?> GetTaskByUserAndIdAsync(long userId, long taskId)
+        {
+            return await _context.Tasks
+                .FirstOrDefaultAsync(t => t.UserId == userId && t.Id == taskId);
+        }
+
         /// <summary>
         /// Получить задачи по статусу
         /// </summary>
-        public async Task<List<DailyTask>> GetTasksByStatusAsync(int userId, StatusTask status)
-        {
-            return await _context.Tasks
-                .Where(t => t.UserId == userId && t.Status == status)
-                .ToListAsync();
-        }
+        // public async Task<List<DailyTask>> GetTasksByStatusAsync(long userId, StatusTask status)
+        // {
+        //     return await _context.Tasks
+        //         .Where(t => t.UserId == userId && t.Status == status)
+        //         .ToListAsync();
+        // }
 
         /// <summary>
         /// Получить задачи по бордеру

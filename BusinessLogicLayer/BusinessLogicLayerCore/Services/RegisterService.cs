@@ -68,7 +68,7 @@ namespace BusinessLogicLayerCore.Services
         /// </summary>
         /// <param name="mail">The mail to check.</param>
         /// <exception cref="InvalidOperationException">Thrown if the mail is already taken.</exception>
-        internal void CheckUniqueMail(string mail)
+        public void CheckUniqueMail(string mail) // for now
         {
             if (_userRepository.IsUserNameOccupied(mail))
             {
