@@ -3,7 +3,7 @@ name: Deploy ReTaskMe to Azure
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   build-and-deploy:
@@ -18,13 +18,17 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
+    - name: Azure Login with Service Principal
+      uses: azure/login@v1
+      with:
+        creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}", "clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}", "tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+
     - name: Publish Application
       run: dotnet publish ReTaskMe.sln -c Release -o ./publish-output
 
     - name: Deploy to Azure App Service
       uses: azure/webapps-deploy@v2
       with:
-        app-name: 'retaskme' 
-        slot-name: 'production' 
+        app-name: 'retaskme'
+        slot-name: 'production'
         package: './publish-output'
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
