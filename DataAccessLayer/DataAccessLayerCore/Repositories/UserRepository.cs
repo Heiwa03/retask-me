@@ -15,25 +15,25 @@ namespace DataAccessLayerCore.Repositories
         private readonly DatabaseContext _databaseContext = databaseContext;
 
         /// <summary>
-        /// Checks if an email is occupied.
+        /// Checks if an username is occupied.
         /// </summary>
-        /// <param name="email">The email to check.</param>
-        /// <returns><c>true</c> if the email is occupied, <c>false</c> otherwise.</returns>
-        public bool IsEmailOccupied(string email)
+        /// <param name="username">The username to check.</param>
+        /// <returns><c>true</c> if the username is occupied, <c>false</c> otherwise.</returns>
+        public bool IsUsernameOccupied(string username)
         {
-            return _databaseContext.Users.Any(x => x.NormalizedUsername == email.ToUpper());
+            return _databaseContext.Users.Any(x => x.NormalizedUsername == username.ToUpper());
         }
 
         /// <summary>
-        /// Retrieves a user from the database given an email.
+        /// Retrieves a user from the database given an username.
         /// </summary>
-        /// <param name="email">The email of the user to retrieve.</param>
+        /// <param name="username">The username of the user to retrieve.</param>
         /// <returns>
         /// The user object if found in the database, otherwise null.
         /// </returns>
-        public async Task<User?> GetUserByEmail(string email)
+        public async Task<User?> GetUserByUsername(string username)
         {
-            var user = await _databaseContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.NormalizedUsername == email.ToUpper());
+            var user = await _databaseContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.NormalizedUsername == username.ToUpper());
 
             return user;
         }
