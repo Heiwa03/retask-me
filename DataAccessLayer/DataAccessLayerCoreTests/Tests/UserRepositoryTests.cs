@@ -16,6 +16,7 @@ namespace DataAccessLayerCoreTests
         
         // Here you can setup any of the data
         private readonly List<User> _users = GetUserData();
+        private readonly User _singleUser = GetSingleUserEntity();
 
         public UserRepositoryTests() 
         {
@@ -116,30 +117,37 @@ namespace DataAccessLayerCoreTests
             ];
         }
 
-        /*[Fact]
-        public void Add_AddEntity_CallsDbContextSetAdd()
+        private static User GetSingleUserEntity()
+        {
+            return new User
+            {
+                Id = 1,
+                Uuid = Guid.NewGuid(),
+                isActive = true,
+                CreatedDate = DateTime.Now,
+                Username = "Penis@gmail.com",
+                NormalizedUsername = "PENIS@GMAIL.COM",
+                Password = "sdasdasdaawdasdasd"
+            };
+        }
+
+        [Fact]
+        public void Add_UserEntity_CallsDbContextSetAdd()
         {
             // Arrange
-            var testUser = new User
-            {
-                Uuid = Guid.NewGuid(),
-                Username = "ivan.revenko@isa.utm.md",
-                NormalizedUsername = "IVAN.REVENKO@ISA.UTM.MD",
-                Password = "password123"
-            };
-            
-            _mockContext.Setup(x => x.)
+            var testUser = GetSingleUserEntity();
+            var users = new List<User> { };
 
-            _fixture.MockContext.Setup(c => c.Set<User>()).Returns(_fixture.MockSet.Object);
+            _mockContext.Setup(c => c.Set<User>()).Returns(users.AsDbSetMock().Object);
 
             // Act
-            var repository = new UserRepository(_fixture.MockContext.Object);
+            var repository = new UserRepository(_mockContext.Object);
             repository.Add(testUser);
 
             // Assert
-            _fixture.MockSet.Verify(m => m.Add(It.Is<User>(u => u.Username == "ivan.revenko@isa.utm.md")), Times.Once);
+            users.AsDbSetMock().Verify(m => m.Add(It.Is<User>(u => u.Username == GetSingleUserEntity().Username)), Times.Once);
         }
-
+        /*
         [Fact]
         public void Delete_UserEnity_CallsDbContextSetRemove()
         {
