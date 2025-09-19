@@ -26,7 +26,6 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 // ======================
 // JWT configuration
 // ======================
-// In Azure App Settings adaugi variabila JWT_PRIVATE_KEY cu conținutul PEM
 var jwtPrivateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY");
 var jwtPublicKeyPem = Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY"); // optional
 var jwtIssuer = Environment.GetEnvironmentVariable("Authorization_Issuer");
@@ -37,7 +36,7 @@ if (string.IsNullOrWhiteSpace(jwtPrivateKeyPem))
     throw new ApplicationException("JWT signing key is not configured. Provide JWT_PRIVATE_KEY as PEM string.");
 }
 
-// Configure signing credentials (for issuing tokens)
+// Configure signing credentials
 RSA rsa = RSA.Create();
 rsa.ImportFromPem(jwtPrivateKeyPem);
 var rsaKey = new RsaSecurityKey(rsa);
@@ -94,12 +93,21 @@ builder.Services.AddAuthentication(options =>
 });
 
 // ======================
+// Configure port for Azure
+// ======================
+var port = Environment.GetEnvironmentVariable("WEBSITES_PORT") ?? "8080";
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(int.Parse(port));
+});
+
+// ======================
 // Build and run app
 // ======================
 var app = builder.Build();
 
 app.UseSwagger();
-app.UseSwaggerUI(); // ✅ activ în production
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
