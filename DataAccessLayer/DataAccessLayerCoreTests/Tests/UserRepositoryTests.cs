@@ -135,41 +135,34 @@ namespace DataAccessLayerCoreTests
         public void Add_UserEntity_CallsDbContextSetAdd()
         {
             // Arrange
-            var testUser = GetSingleUserEntity();
             var users = new List<User> { };
 
             _mockContext.Setup(c => c.Set<User>()).Returns(users.AsDbSetMock().Object);
 
             // Act
             var repository = new UserRepository(_mockContext.Object);
-            repository.Add(testUser);
+            repository.Add(_singleUser);
 
             // Assert
             users.AsDbSetMock().Verify(m => m.Add(It.Is<User>(u => u.Username == GetSingleUserEntity().Username)), Times.Once);
         }
-        /*
+        
         [Fact]
         public void Delete_UserEnity_CallsDbContextSetRemove()
         {
             // Arrange
-            var testUser = new User
-            {
-                Uuid = Guid.NewGuid(),
-                Username = "ivan.revenko@isa.utm.md",
-                NormalizedUsername = "IVAN.REVENKO@ISA.UTM.MD",
-                Password = "password123"
-            };
+            var users = GetUserData();
 
-            _fixture.MockContext.Setup(c => c.Set<User>()).Returns(_fixture.MockSet.Object);
+            _mockContext.Setup(c => c.Set<User>()).Returns(users.AsDbSetMock().Object);
 
             // Act
-            var repository = new UserRepository(_fixture.MockContext.Object);
-            repository.Delete(testUser);
+            var repository = new UserRepository(_mockContext.Object);
+            repository.Delete(_singleUser);
 
             // Assert
-            _fixture.MockSet.Verify(m => m.Remove(It.Is<User>(u => u.Uuid == testUser.Uuid)), Times.Once);
+            users.AsDbSetMock().Verify(m => m.Remove(It.Is<User>(u => u.Uuid == _singleUser.Uuid)), Times.Once);
         }
-
+        /*
         [Fact]
         public async Task GetByIdAsync_WithValidId_ReturnsCorrectEntity()
         {
