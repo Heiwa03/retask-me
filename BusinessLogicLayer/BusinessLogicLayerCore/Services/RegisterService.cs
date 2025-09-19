@@ -73,7 +73,7 @@ namespace BusinessLogicLayer.Services
         /// <exception cref="InvalidOperationException">Thrown if the mail is already taken.</exception>
         internal void CheckUniqueMail(string mail)
         {
-            if (_userRepository.IsEmailOccupied(mail))
+            if (_userRepository.IsUsernameOccupied(mail))
             {
                 throw new InvalidOperationException("Username already exists");
             }

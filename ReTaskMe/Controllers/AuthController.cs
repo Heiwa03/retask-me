@@ -4,7 +4,7 @@ using BusinessLogicLayer.Services.Interfaces;
 using BusinessLogicLayer.DTOs;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using DataAccessLayer;
+using DataAccessLayerCore;
 
 namespace AuthBackend.Controllers
 {
