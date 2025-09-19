@@ -11,6 +11,17 @@ using DataAccessLayerCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // ======================
+// Configure port for Azure
+// ======================
+var portEnv = Environment.GetEnvironmentVariable("WEBSITES_PORT");
+var port = string.IsNullOrWhiteSpace(portEnv) ? 8080 : int.Parse(portEnv);
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(port);
+});
+
+// ======================
 // Database configuration
 // ======================
 var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString");
@@ -36,7 +47,6 @@ if (string.IsNullOrWhiteSpace(jwtPrivateKeyPem))
     throw new ApplicationException("JWT signing key is not configured. Provide JWT_PRIVATE_KEY as PEM string.");
 }
 
-// Configure signing credentials
 RSA rsa = RSA.Create();
 rsa.ImportFromPem(jwtPrivateKeyPem);
 var rsaKey = new RsaSecurityKey(rsa);
@@ -93,23 +103,15 @@ builder.Services.AddAuthentication(options =>
 });
 
 // ======================
-// Configure port for Azure
-// ======================
-var port = Environment.GetEnvironmentVariable("WEBSITES_PORT") ?? "8080";
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(int.Parse(port));
-});
-
-// ======================
-// Build and run app
+// Build app
 // ======================
 var app = builder.Build();
 
+// ======================
+// Middleware
+// ======================
 app.UseSwagger();
 app.UseSwaggerUI();
-
-app.UseHttpsRedirection();
 
 app.UseCors(policy => policy
     .WithOrigins("http://localhost:7180", "http://localhost:4200", "http://localhost:5017")
@@ -120,6 +122,12 @@ app.UseCors(policy => policy
 app.UseAuthentication();
 app.UseAuthorization();
 
+// ======================
+// Map controllers
+// ======================
 app.MapControllers();
 
+// ======================
+// Run app
+// ======================
 app.Run();
