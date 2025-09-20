@@ -18,5 +18,17 @@ namespace ReTaskMe.Controllers;
 
             return Ok(new { message = "Task created successfully" });
         }
+
+        // TODO
+        // [HttpPost("deleteTask")]
+
+        // [HttpPost("updateTask")]
+
+        // [HttpPost("sortTasksByStatus")]
+
+        // [HttpPost("sortTasksByDeadline")]
+
+        // [HttpPost("filterTasksByDeadline")]
+
     }
 

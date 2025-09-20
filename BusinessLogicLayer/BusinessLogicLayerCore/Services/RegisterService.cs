@@ -82,7 +82,7 @@ namespace BusinessLogicLayerCore.Services
         /// <param name="password">The original password.</param>
         /// <param name="repeatPassword">The repeated password.</param>
         /// <exception cref="InvalidOperationException">Thrown if passwords do not match.</exception>
-        internal void CheckRepeatPassword(string password, string repeatPassword)
+        public void CheckRepeatPassword(string password, string repeatPassword)
         {
             if (!PasswordHelper.ValidateRegisterData(password, repeatPassword))
             {
@@ -95,7 +95,7 @@ namespace BusinessLogicLayerCore.Services
         /// </summary>
         /// <param name="password">The password to check.</param>
         /// <exception cref="InvalidOperationException">Thrown if the password is not strong.</exception>
-        internal void CheckPasswordRequirements(string password)
+        public void CheckPasswordRequirements(string password)
         {
             if (!PasswordHelper.IsPasswordStrong(password))
             {
@@ -109,7 +109,7 @@ namespace BusinessLogicLayerCore.Services
         /// <param name="dto">The registration DTO.</param>
         /// <param name="hashedPassword">The hashed password.</param>
         /// <returns>The created <see cref="User"/> object.</returns>
-        internal static User CreateUser(RegisterDTO dto, string hashedPassword)
+        public static User CreateUser(RegisterDTO dto, string hashedPassword)
         {
             User user = new User
             {
@@ -127,7 +127,7 @@ namespace BusinessLogicLayerCore.Services
         /// </summary>
         /// <param name="user">The user.</param>
         /// <returns>The created <see cref="UserSession"/> object.</returns>
-        internal static UserSession CreateSession(User user)
+        public static UserSession CreateSession(User user)
         {
             string generatedRefreshToken = TokenHelper.GenerateRefreshToken();
 
@@ -151,7 +151,7 @@ namespace BusinessLogicLayerCore.Services
         /// </summary>
         /// <returns>A task representing the asynchronous operation.</returns>
         /// <exception cref="DbUpdateException">Thrown if an error occurs during saving.</exception>
-        internal async Task SaveChanges()
+        public async Task SaveChanges()
         {
             try
             {
