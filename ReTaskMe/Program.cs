@@ -60,35 +60,7 @@ if (string.IsNullOrWhiteSpace(privateKeyPem))
     throw new ApplicationException("JWT signing key is not configured. Provide JWT_PRIVATE_KEY or Jwt:PrivateKeyPem file.");
 }
 
-// ======================
-// DEBUG PATCH: Log environment variables and DB connectivity
-// ======================
-Console.WriteLine("=== DEBUG ENVIRONMENT VARIABLES ===");
-Console.WriteLine($"Data__ConnectionString: {(string.IsNullOrEmpty(connectionString) ? "NOT SET" : "SET")}");
-Console.WriteLine($"JWT_PRIVATE_KEY: {(string.IsNullOrEmpty(privateKeyPem) ? "NOT SET" : $"SET ({privateKeyPem.Length} chars)")}");
-Console.WriteLine($"JWT_PUBLIC_KEY: {(string.IsNullOrEmpty(publicKeyPem) ? "NOT SET" : $"SET ({publicKeyPem.Length} chars)")}");
-Console.WriteLine($"Authorization_Issuer: {(string.IsNullOrEmpty(jwtIssuer) ? "NOT SET" : jwtIssuer)}");
-Console.WriteLine($"Authorization_Audience: {(string.IsNullOrEmpty(jwtAudience) ? "NOT SET" : jwtAudience)}");
-Console.WriteLine("=== END DEBUG ===");
-
-try
-{
-    using var testDb = new DatabaseContext(
-        new DbContextOptionsBuilder<DatabaseContext>()
-            .UseSqlServer(connectionString)
-            .Options
-    );
-    bool canConnect = testDb.Database.CanConnect();
-    Console.WriteLine($"Database connection: {(canConnect ? "OK" : "FAILED")}");
-}
-catch (Exception ex)
-{
-    Console.WriteLine("Database connection FAILED: " + ex.Message);
-}
-
-// ======================
 // Import private key
-// ======================
 RSA rsaPrivate = RSA.Create();
 rsaPrivate.ImportFromPem(privateKeyPem.ToCharArray());
 var rsaKey = new RsaSecurityKey(rsaPrivate);
