@@ -8,6 +8,9 @@ using DataAccessLayerCore.Repositories.Interfaces;
 using DataAccessLayerCore.Repositories;
 using DataAccessLayerCore;
 
+// ======================
+// Create builder
+// ======================
 var builder = WebApplication.CreateBuilder(args);
 
 // ======================
@@ -35,21 +38,32 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 );
 
 // ======================
-// JWT configuration
+// JWT configuration with fallback (env or local file)
 // ======================
-var jwtPrivateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY");
-var jwtPublicKeyPem = Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY"); // optional
-var jwtIssuer = Environment.GetEnvironmentVariable("Authorization_Issuer");
-var jwtAudience = Environment.GetEnvironmentVariable("Authorization_Audience");
+string? privateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY");
+string? publicKeyPem = Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY"); // optional
+string? jwtIssuer = Environment.GetEnvironmentVariable("Authorization_Issuer");
+string? jwtAudience = Environment.GetEnvironmentVariable("Authorization_Audience");
 
-if (string.IsNullOrWhiteSpace(jwtPrivateKeyPem))
+// Fallback local file (development)
+if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
-    throw new ApplicationException("JWT signing key is not configured. Provide JWT_PRIVATE_KEY as PEM string.");
+    var pemPath = builder.Configuration["Jwt:PrivateKeyPem"];
+    if (!string.IsNullOrEmpty(pemPath) && File.Exists(pemPath))
+    {
+        privateKeyPem = File.ReadAllText(pemPath);
+    }
 }
 
-RSA rsa = RSA.Create();
-rsa.ImportFromPem(jwtPrivateKeyPem);
-var rsaKey = new RsaSecurityKey(rsa);
+if (string.IsNullOrWhiteSpace(privateKeyPem))
+{
+    throw new ApplicationException("JWT signing key is not configured. Provide JWT_PRIVATE_KEY or Jwt:PrivateKeyPem file.");
+}
+
+// Import private key
+RSA rsaPrivate = RSA.Create();
+rsaPrivate.ImportFromPem(privateKeyPem.ToCharArray());
+var rsaKey = new RsaSecurityKey(rsaPrivate);
 var signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
 builder.Services.AddSingleton(signingCredentials);
 
@@ -78,15 +92,15 @@ builder.Services.AddAuthentication(options =>
 {
     SecurityKey issuerSigningKey;
 
-    if (!string.IsNullOrWhiteSpace(jwtPublicKeyPem))
+    if (!string.IsNullOrWhiteSpace(publicKeyPem))
     {
         RSA rsaPub = RSA.Create();
-        rsaPub.ImportFromPem(jwtPublicKeyPem);
+        rsaPub.ImportFromPem(publicKeyPem.ToCharArray());
         issuerSigningKey = new RsaSecurityKey(rsaPub);
     }
     else
     {
-        issuerSigningKey = rsaKey; // fallback la private key
+        issuerSigningKey = rsaKey; // fallback la cheia privată
     }
 
     options.TokenValidationParameters = new TokenValidationParameters
