@@ -1,14 +1,13 @@
 import {Component, inject, signal} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import {Login} from './common-ui/login/login';
-import {RegisterDetails} from './common-ui/register-details/register-details';
+// Standalone pages are routed; no need to import here
 import {ForgotPasswordService} from './data/services/forgot-password';
 import {JsonPipe} from '@angular/common';
 // import {ForgotPassword} from './common-ui/forgot-password/';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Login, RegisterDetails, JsonPipe],
+  imports: [RouterOutlet, JsonPipe],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

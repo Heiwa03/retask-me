@@ -1,0 +1,125 @@
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand__icon">✔</span>
+      <span class="brand__name">RetaskMe</span>
+    </div>
+
+    <div class="search">
+      <input class="search__input" placeholder="Search..." />
+    </div>
+
+    <nav class="menu">
+      <a class="menu__item menu__item--active">Dashboard</a>
+      <a class="menu__item">Tasks</a>
+      <a class="menu__item">Calendar</a>
+      <a class="menu__item">Maps</a>
+    </nav>
+
+    <div class="lists">
+      <div class="lists__title">Lists / Tags</div>
+      <div class="tag"><span class="dot dot--blue"></span>Personal</div>
+      <div class="tag"><span class="dot dot--pink"></span>Work</div>
+      <div class="tag"><span class="dot dot--green"></span>Improvement</div>
+    </div>
+
+    <div class="theme">
+      <button class="theme__btn">Light</button>
+      <button class="theme__btn">Dark</button>
+    </div>
+  </aside>
+
+  <main class="content">
+    <header class="header">
+      <div>
+        <h1 class="greeting">Good Morning, Amelia!</h1>
+        <div class="sub">How do you feel today? 🙂</div>
+      </div>
+      <div class="user">
+        <div class="user__name">Amelia Yeldiz</div>
+        <div class="user__role">Welcome back</div>
+        <div class="header__actions">
+          <div class="theme-switch">
+            <input id="dashThemeSwitch" type="checkbox" class="theme-switch__chk" (change)="onThemeToggle($event)" checked>
+            <label for="dashThemeSwitch" class="theme-switch__label">
+              <span class="theme-switch__opt theme-switch__opt--light">
+                <svg class="theme-switch__icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="5" fill="currentColor"/>
+                  <g stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                    <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                  </g>
+                </svg>
+                Light
+              </span>
+              <span class="theme-switch__opt theme-switch__opt--dark">
+                <svg class="theme-switch__icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="currentColor"/>
+                </svg>
+                Dark
+              </span>
+              <span class="theme-switch__thumb"></span>
+            </label>
+          </div>
+          <button class="logout-btn" (click)="logout()">Log out</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="stats">
+      <div class="stat">
+        <div class="stat__title">Active tasks</div>
+        <div class="stat__value">5</div>
+      </div>
+      <div class="stat">
+        <div class="stat__title">Completed</div>
+        <div class="stat__value">3</div>
+      </div>
+      <div class="stat">
+        <div class="stat__title">Overdue</div>
+        <div class="stat__value">2</div>
+      </div>
+    </section>
+
+    <section class="tasks">
+      <div class="tasks__header">
+        <h2 class="tasks__title">Today Tasks</h2>
+        <div class="tasks__actions">
+          <button class="btn">Focus Mode</button>
+          <button class="btn">AI Assist</button>
+        </div>
+      </div>
+
+      <ul class="tasklist">
+        <li class="task">
+          <span class="checkbox"></span>
+          <span class="task__title">Create design for app</span>
+          <span class="task__time">07:00 - 09:00</span>
+        </li>
+        <li class="task">
+          <span class="checkbox"></span>
+          <span class="task__title">Create UML diagram for Task Management module</span>
+          <span class="task__time">07:00 - 09:00</span>
+        </li>
+        <li class="task">
+          <span class="checkbox"></span>
+          <span class="task__title">Integrate Dark Mode toggle in header</span>
+          <span class="task__time">07:00 - 09:00</span>
+        </li>
+        <li class="task">
+          <span class="checkbox"></span>
+          <span class="task__title">Go grocery shopping</span>
+          <span class="task__time">07:00 - 09:00</span>
+        </li>
+        <li class="task">
+          <span class="checkbox"></span>
+          <span class="task__title">Do 30 minutes of workout</span>
+          <span class="task__time">07:00 - 09:00</span>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <button class="fab" aria-label="Add task">+</button>
+</div>
+
+

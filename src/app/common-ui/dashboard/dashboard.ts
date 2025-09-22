@@ -1,20 +1,16 @@
-import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { inject } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../data/services/auth.service';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule],
-  templateUrl: './login.html',
-  styleUrl: './login.scss'
+  imports: [CommonModule, RouterModule],
+  templateUrl: './dashboard.html',
+  styleUrl: './dashboard.scss'
 })
-export class Login {
-  email = '';
-  password = '';
+export class Dashboard {
   private auth = inject(AuthService);
   private router = inject(Router);
 
@@ -23,7 +19,7 @@ export class Login {
     const dark = saved ? saved === 'dark' : false;
     document.documentElement.classList.toggle('theme-dark', dark);
     queueMicrotask(() => {
-      const chk = document.getElementById('loginThemeSwitch') as HTMLInputElement | null;
+      const chk = document.getElementById('dashThemeSwitch') as HTMLInputElement | null;
       if (chk) chk.checked = !dark; // checked = Light
     });
   }
@@ -34,11 +30,10 @@ export class Login {
     localStorage.setItem('theme', isLight ? 'light' : 'dark');
   }
 
-  onSubmit() {
-    this.auth.login();
-    this.router.navigateByUrl('/dashboard');
+  logout() {
+    this.auth.logout();
+    this.router.navigateByUrl('/login');
   }
 }
 
-export class LoginComponent {
-}
+
