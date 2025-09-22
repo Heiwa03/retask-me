@@ -17,6 +17,22 @@ export class Register {
   password = '';
   confirmPassword = '';
 
+  ngOnInit() {
+    const saved = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    const dark = saved ? saved === 'dark' : false;
+    document.documentElement.classList.toggle('theme-dark', dark);
+    queueMicrotask(() => {
+      const chk = document.getElementById('registerThemeSwitch') as HTMLInputElement | null;
+      if (chk) chk.checked = !dark; // checked = Light
+    });
+  }
+
+  onThemeToggle(e: Event) {
+    const isLight = (e.target as HTMLInputElement).checked;
+    document.documentElement.classList.toggle('theme-dark', !isLight);
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+
   onSubmit() {
     const [firstName, ...rest] = this.fullName.trim().split(' ');
     const lastName = rest.join(' ');
