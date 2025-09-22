@@ -8,6 +8,8 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from './data/services/auth.service';
 import { Dashboard } from './common-ui/dashboard/dashboard';
+import { RootGate } from './common-ui/root-gate/root-gate';
+import { NotFound } from './common-ui/not-found/not-found';
 
 const AuthGuard = () => {
   const auth = inject(AuthService);
@@ -26,12 +28,13 @@ const GuestGuard = () => {
 };
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: '', component: RootGate, pathMatch: 'full' },
   { path: 'login', component: Login, canActivate: [GuestGuard] },
   { path: 'register', component: Register, canActivate: [GuestGuard] },
   { path: 'forgot-password', component: ForgotPassword, canActivate: [GuestGuard] },
   { path: 'register-details', component: RegisterDetails, canActivate: [GuestGuard] },
-  { path: 'dashboard', component: Dashboard, canActivate: [AuthGuard] }
+  { path: 'dashboard', component: Dashboard, canActivate: [AuthGuard] },
+  { path: '**', component: NotFound }
 ];
 
 @NgModule({
