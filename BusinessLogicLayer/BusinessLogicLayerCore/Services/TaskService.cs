@@ -5,24 +5,23 @@ using BusinessLogicLayerCore.DTOs;
 // DL
 using DataAccessLayerCore.Entities;
 using DataAccessLayerCore.Repositories.Interfaces;
-using DataAccessLayerCore.Enum;
 
 
 namespace BusinessLogicLayerCore.Services;
     public class TaskService(ITaskRepository _taskRepository) : ITaskService{
 
       // Create Task
-      public async Task CreateAndSaveTask(TaskDTO dto, long userId) {
+      public async Task CreateAndSaveTask(TaskDTO dto, Guid uuid) {
          var task = new DailyTask {
             Uuid = Guid.NewGuid(),
-            TaskId = 1,
-            UserId = userId,
+            TaskUid = Guid.NewGuid(),
+            UserUid = uuid,
             Title = dto.Title,
             Description = dto.Description,
             CreatedAt = DateTime.UtcNow,
             Deadline = dto.Deadline,
             Priority = dto.Priority,
-            Status = StatusTask.InProgress
+            Status = dto.Status
          };
 
           _taskRepository.Add(task);
@@ -30,33 +29,33 @@ namespace BusinessLogicLayerCore.Services;
       }
 
       // Reed one
-      public async Task<DailyTask> GetTask(long userId, long taskId){
-          var task = await _taskRepository.GetTaskByUserAndIdAsync(userId, taskId);
+      public async Task<DailyTask> GetTask(Guid uuid, Guid tuid){
+          var task = await _taskRepository.GetTaskByUserUidAsync(uuid, tuid);
 
           if (task == null){
-              throw new KeyNotFoundException($"Task {taskId} for user {userId} not found");
+              throw new KeyNotFoundException($"Task {tuid} for user {uuid} not found");
           }
 
           return task;
       }
 
       // Reed all
-      public async Task<List<DailyTask>> GetAllTasks(long userId, long taskId){
-          var tasks = await _taskRepository.GetTasksByUserIdAsync(userId);
+      public async Task<List<DailyTask>> GetAllTasks(Guid uuid, Guid tuid){
+          var tasks = await _taskRepository.GetTasksByUserUidAsync(uuid);
 
           if (tasks == null || tasks.Count == 0){
-              throw new KeyNotFoundException($"No tasks found for user {userId}");
+              throw new KeyNotFoundException($"No tasks found for user {uuid}");
           }
 
           return tasks;
       }
 
-      //Delete tasks
-      public async Task DeleteTask(long userId, long taskId){
-          var task = await _taskRepository.GetTaskByUserAndIdAsync(userId, taskId);
+      //Delete task
+      public async Task DeleteTask(Guid uuid, Guid tuid){
+          var task = await _taskRepository.GetTaskByUserUidAsync(uuid, tuid);
 
           if (task == null){
-              throw new KeyNotFoundException($"Task {taskId} for user {userId} not found");
+              throw new KeyNotFoundException($"Task {tuid} for user {uuid} not found");
           }
 
           _taskRepository.Delete(task);
@@ -64,11 +63,11 @@ namespace BusinessLogicLayerCore.Services;
       }
 
       // Update
-      public async Task UpdateTask(TaskDTO dto, long userId, long taskId){
-          var task = await _taskRepository.GetTaskByUserAndIdAsync(userId, taskId);
+      public async Task UpdateTask(TaskDTO dto, Guid uuid, Guid tuid){
+          var task = await _taskRepository.GetTaskByUserUidAsync(uuid, tuid);
 
           if (task == null){
-              throw new KeyNotFoundException($"Task {taskId} for user {userId} not found");
+              throw new KeyNotFoundException($"Task {tuid} for user {uuid} not found");
           }
 
           UpdateTaskForm(task, dto);
@@ -76,7 +75,7 @@ namespace BusinessLogicLayerCore.Services;
           await _taskRepository.SaveChangesAsync();
       }
 
-      public void UpdateTaskForm(DailyTask task, TaskDTO dto){
+      private static void UpdateTaskForm(DailyTask task, TaskDTO dto){
           task.Title = dto.Title;
           task.Description = dto.Description;
           task.Deadline = dto.Deadline;

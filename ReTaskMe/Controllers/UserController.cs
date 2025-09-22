@@ -1,34 +1,39 @@
 using Microsoft.AspNetCore.Mvc;
 using BusinessLogicLayerCore.Services.Interfaces;
 using BusinessLogicLayerCore.DTOs;
-using System.Security.Claims;
-using BusinessLogicLayerCore.Services;
-using ReTaskMe.Models.Response;
 
 namespace ReTaskMe.Controllers;
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController(IUserService userService) : ControllerBase{
-
+    public class UserController(IUserService userService) : BaseController {
         private readonly IUserService _userService = userService;
 
         [HttpPost("createTask")]
-        public async Task<IActionResult> ActionCreateTask([FromBody] TaskDTO dto, [FromQuery] long userId){
-            await _userService.CreateTask(dto, userId);
-
+        public async Task<IActionResult> ActionCreateTask([FromBody] TaskDTO dto){
+            await _userService.CreateTask(dto, UserGuid ?? new Guid("")); // THIS
             return Ok(new { message = "Task created successfully" });
         }
 
-        // TODO
-        // [HttpPost("deleteTask")]
+        [HttpPost("updateTask/{taskId:long}")]
+        public async Task<IActionResult> ActionUpdateTask([FromBody] TaskDTO dto, long taskId){
+            await _userService.UpdateTask(dto, UserGuid ?? new Guid(""), taskId);
+            return Ok(new { message = "Task updated successfully" });
+        }
 
-        // [HttpPost("updateTask")]
+        [HttpDelete("deleteTask/{taskId:long}")]
+        public async Task<IActionResult> ActionDeleteTask(long taskId){
+            await _userService.DeleteTask(UserGuid ?? new Guid(""), taskId);
+            return Ok(new { message = $"Task {taskId} deleted successfully" });
+        }
 
-        // [HttpPost("sortTasksByStatus")]
+        [HttpGet("task/{taskId:long}")]
+        public async Task<IActionResult> ActionGetTask(long taskId){
+            var task = await _userService.GetTask(UserGuid ?? new Guid(""), taskId);
 
-        // [HttpPost("sortTasksByDeadline")]
+            if (task == null)
+                return NotFound(new { message = $"Task {taskId} not found" });
 
-        // [HttpPost("filterTasksByDeadline")]
-
+            return Ok(task); 
+        }
     }
 
