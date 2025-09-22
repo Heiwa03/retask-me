@@ -18,22 +18,21 @@ namespace DataAccessLayerCore.Repositories
         }
 
         // Специфичные методы для TaskModel
-
         /// <summary>
         /// Получить все задачи пользователя
         /// </summary>
-        public async Task<List<DailyTask>> GetTasksByUserIdAsync(long userId)
+        public async Task<List<DailyTask>> GetTasksByUserUidAsync(Guid uuid)
         {
             return await _context.Tasks
-                .Where(t => t.UserId == userId)
+                .Where(t => t.Uuid == uuid)
                 .ToListAsync();
         }
-
+        
         // найти юзера и таск
-        public async Task<DailyTask?> GetTaskByUserAndIdAsync(long userId, long taskId)
+        public async Task<DailyTask?> GetTaskByUserUidAsync(Guid uuid, Guid tuid)
         {
             return await _context.Tasks
-                .FirstOrDefaultAsync(t => t.UserId == userId && t.Id == taskId);
+                .FirstOrDefaultAsync(t => t.Uuid == uuid && t.TaskUid == tuid);
         }
 
         /// <summary>

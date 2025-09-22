@@ -7,10 +7,10 @@ using DataAccessLayerCore.Entities;
 namespace BusinessLogicLayerCore.Services.Interfaces{
     public interface ITaskService{
         // 1. Main method for register
-        Task CreateAndSaveTask(TaskDTO dto, long userId);
-        Task<List<DailyTask>> GetAllTasks(long userId, long taskId);
-        Task<DailyTask> GetTask(long userId, long taskId);
-        Task DeleteTask(long userId, long taskId);
-        Task UpdateTask(TaskDTO dto, long userId, long taskId);
+        Task CreateAndSaveTask(TaskDTO dto, Guid uuid);
+        Task<List<DailyTask>> GetAllTasks(Guid uuid, Guid tuid);
+        Task<DailyTask> GetTask(Guid uuid, Guid tuid);
+        Task DeleteTask(Guid uuid, Guid tuid);
+        Task UpdateTask(TaskDTO dto, Guid uuid, Guid tuid);
     }
 }

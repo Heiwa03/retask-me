@@ -29,14 +29,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Database
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("AzureSqlConnection")
+        builder.Configuration.GetValue<string>("AzureSqlConnection") ?? throw new InvalidOperationException(), b => 
+        {
+            b.MigrationsAssembly("ReTaskMe");
+            b.CommandTimeout(60);
+        }
     )
 );
 
 
 builder.Configuration.AddUserSecrets<Program>();
-var jwtPrivateKeyPem = builder.Configuration["JwtSecret:PrivateKeyPem"]; // optional path to private key .pem
-var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"]; // optional path to public key .pem
+var jwtPrivateKeyPem = builder.Configuration["JwtSecret:PrivateKeyPem"]; 
+var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"]; 
 var jwtIssuer = builder.Configuration["Authorization:Issuer"];
 var jwtAudience = builder.Configuration["Authorization:Audience"];
 

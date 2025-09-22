@@ -2,29 +2,38 @@
 
 using BusinessLogicLayerCore.DTOs;
 using BusinessLogicLayerCore.Services.Interfaces;
+using DataAccessLayerCore.Entities;
 
 namespace BusinessLogicLayerCore.Services;
 
     public class UserService(ITaskService _taskService) : IUserService {
-        public async Task CreateTask(TaskDTO dto, long userId){
-            await _taskService.CreateAndSaveTask(dto, userId);
+
+        // Delegete to taskServ
+        public async Task CreateTask(TaskDTO dto, Guid userUid){
+            await _taskService.CreateAndSaveTask(dto, userUid);
         }
 
-        public async Task GetTask(long userId, long taskId){
-            await _taskService.GetTask(userId, taskId);
+        public async Task<DailyTask> GetTask(Guid userUid, Guid taskUid){
+            return await _taskService.GetTask(userUid, taskUid);
         }
 
-        public async Task GetAllTasks(long userId, long taskId){
-            await _taskService.GetAllTasks(userId, taskId);
+        public async Task<List<DailyTask>> GetAllTasks(Guid userUid, Guid taskUid){
+            return await _taskService.GetAllTasks(userUid, taskUid);
         }
 
-        public async Task UpdateTask(TaskDTO dto, long userId, long taskId){
-            await _taskService.UpdateTask(dto, userId, taskId);
+        public async Task UpdateTask(TaskDTO dto, Guid userUid, Guid taskUid){
+            await _taskService.UpdateTask(dto, userUid, taskUid);
         }
 
-        public async Task DeleteTask(long userId, long taskId){
-            await _taskService.DeleteTask(userId, taskId);
+        public async Task DeleteTask(Guid userUid, Guid taskUid){
+            await _taskService.DeleteTask(userUid, taskUid);
         }
+
+        // Delegete to profServ
+
+        // public async Task<RegisterDTO> GetUserProfile(){
+        //     var profile = 
+        // }
     }
     
         
