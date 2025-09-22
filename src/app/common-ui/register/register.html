@@ -2,11 +2,11 @@
   <div class="login-card">
     <h2 class="title">Sign up for Retask_ME</h2>
 
-    <form>
-      <input type="text" placeholder="Full Name" required />
-      <input type="email" placeholder="Email" required />
-      <input type="password" placeholder="Password" required />
-      <input type="password" placeholder="Confirm Password" required />
+    <form (ngSubmit)="onSubmit()" #f="ngForm">
+      <input type="text" name="fullName" [(ngModel)]="fullName" placeholder="Full Name" required />
+      <input type="email" name="email" [(ngModel)]="email" placeholder="Email" required />
+      <input type="password" name="password" [(ngModel)]="password" placeholder="Password" required />
+      <input type="password" name="confirmPassword" [(ngModel)]="confirmPassword" placeholder="Confirm Password" required />
 
       <button type="submit" class="btn primary">Sign up</button>
 
