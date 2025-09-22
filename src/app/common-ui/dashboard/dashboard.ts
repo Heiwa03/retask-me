@@ -13,6 +13,10 @@ import { AuthService } from '../../data/services/auth.service';
 export class Dashboard {
   private auth = inject(AuthService);
   private router = inject(Router);
+  isProfileOpen = false;
+  userAvatar = 'https://via.placeholder.com/40x40/6366f1/ffffff?text=AY'; // Default avatar
+  userName = 'Amelia Yeldiz';
+  userEmail = 'amelia@retaskme.com';
 
   ngOnInit() {
     const saved = localStorage.getItem('theme') as 'light' | 'dark' | null;
@@ -33,6 +37,14 @@ export class Dashboard {
   logout() {
     this.auth.logout();
     this.router.navigateByUrl('/login');
+  }
+
+  toggleProfile() {
+    this.isProfileOpen = !this.isProfileOpen;
+  }
+
+  closeProfile() {
+    this.isProfileOpen = false;
   }
 }
 
