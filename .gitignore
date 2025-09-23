@@ -47,7 +47,6 @@ bld/
 
 # Ignore local appsettings files
 appsettings.Development.json
-appsettings.*.local.json
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
