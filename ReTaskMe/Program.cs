@@ -12,6 +12,7 @@ using DataAccessLayerCore.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // --- Database ---
@@ -21,8 +22,12 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 
 // --- JWT Authentication ---
 builder.Configuration.AddUserSecrets<Program>();
-var jwtPrivateKeyPem = builder.Configuration["Jwt:PrivateKeyPem"];
-var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"];
+builder.Configuration.AddEnvironmentVariables();
+
+var jwtPrivateKeyPem = builder.Configuration["Jwt:PrivateKeyPem"]
+                       ?? Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY_PEM");
+var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"]
+                      ?? Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY_PEM");
 var jwtIssuer = builder.Configuration["Authorization:Issuer"];
 var jwtAudience = builder.Configuration["Authorization:Audience"];
 
@@ -46,9 +51,11 @@ builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILoginChecker, DbLoginChecker>();
 
-// --- Email configuration ---
-var mailConnectionString = builder.Configuration["Email:ConnectionString"];
-var mailSenderAddress = builder.Configuration["Email:SenderAddress"];
+// Email
+var mailConnectionString = builder.Configuration["Email:ConnectionString"]
+                           ?? Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING");
+var mailSenderAddress = builder.Configuration["Email:SenderAddress"]
+                        ?? Environment.GetEnvironmentVariable("EMAIL_SENDER_ADDRESS");
 
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
 {
