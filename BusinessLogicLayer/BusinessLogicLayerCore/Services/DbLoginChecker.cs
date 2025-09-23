@@ -1,5 +1,5 @@
 using BusinessLogicLayer.Services.Interfaces;
-using DataAccessLayer.Repositories.Interfaces;
+using DataAccessLayerCore.Repositories.Interfaces;
 using HelperLayer.Security;
 
 namespace BusinessLogicLayer.Services

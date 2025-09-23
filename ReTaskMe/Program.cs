@@ -1,91 +1,93 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using BusinessLogicLayer.Services;
-using BusinessLogicLayer.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using DataAccessLayer.Repositories.Interfaces;
-using DataAccessLayer.Repositories;
-using DataAccessLayer;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
+using BusinessLogicLayer.Services;
+using DataAccessLayerCore;
+using DataAccessLayerCore.Repositories;
+using HelperLayer.Security;
+using Azure.Communication.Email;
+using BusinessLogicLayer.Services.Interfaces;
+using DataAccessLayerCore.Repositories.Interfaces;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// --- Database ---
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("AzureConnection")
-    )
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureConnection"))
 );
 
+// --- JWT Authentication ---
 builder.Configuration.AddUserSecrets<Program>();
-var jwtPrivateKeyPem = builder.Configuration["Jwt:PrivateKeyPem"]; // optional path to private key .pem
-var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"]; // optional path to public key .pem
-// Enforce RSA PEM only (no symmetric secret)
+var jwtPrivateKeyPem = builder.Configuration["Jwt:PrivateKeyPem"];
+var jwtPublicKeyPem = builder.Configuration["Jwt:PublicKeyPem"];
 var jwtIssuer = builder.Configuration["Authorization:Issuer"];
 var jwtAudience = builder.Configuration["Authorization:Audience"];
 
+SigningCredentials signingCredentials;
+if (!string.IsNullOrWhiteSpace(jwtPrivateKeyPem) && File.Exists(jwtPrivateKeyPem))
+{
+    var rsa = RSA.Create();
+    rsa.ImportFromPem(File.ReadAllText(jwtPrivateKeyPem));
+    signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
+    builder.Services.AddSingleton(signingCredentials);
+}
+else
+{
+    throw new ApplicationException("JWT signing key not configured");
+}
+
+// --- Repositories & Services ---
+builder.Services.AddScoped<IBaseRepository, BaseRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRegisterService, RegisterService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ILoginChecker, DbLoginChecker>();
+
+// --- Email configuration ---
+var mailConnectionString = builder.Configuration["Email:ConnectionString"];
+var mailSenderAddress = builder.Configuration["Email:SenderAddress"];
+
+if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
+{
+    builder.Services.AddSingleton(sp =>
+    {
+        var client = new EmailClient(mailConnectionString);
+        return new EmailHelper(client, mailSenderAddress);
+    });
+}
+
+// --- Controllers & Swagger ---
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// The Scoped lifetime means a new instance is created for each HTTP request.
-builder.Services.AddScoped<IAuthService, AuthService>();
-
-{
-    SigningCredentials signingCredentials;
-
-    if (!string.IsNullOrWhiteSpace(jwtPrivateKeyPem) && File.Exists(jwtPrivateKeyPem))
-    {
-        RSA rsa = RSA.Create();
-        var privatePem = File.ReadAllText(jwtPrivateKeyPem);
-        rsa.ImportFromPem(privatePem);
-        var rsaKey = new RsaSecurityKey(rsa);
-        signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
-        builder.Services.AddSingleton(signingCredentials);
-    }
-    else
-    {
-        throw new ApplicationException("JWT signing is not configured. Provide Jwt:PrivateKeyPem (PEM).");
-    }
-}
-
-// Test reg
-builder.Services.AddScoped<IBaseRepository, BaseRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IRegisterService, RegisterService>();
-
-
-// Register DB-backed login checker.
-builder.Services.AddScoped<ILoginChecker, DbLoginChecker>();
-
-// Configure authentication with JWT Bearer.
+// --- JWT Bearer ---
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-
 .AddJwtBearer(options =>
 {
     SecurityKey issuerSigningKey;
     if (!string.IsNullOrWhiteSpace(jwtPublicKeyPem) && File.Exists(jwtPublicKeyPem))
     {
-        RSA rsaPub = RSA.Create();
-        var pubPem = File.ReadAllText(jwtPublicKeyPem);
-        rsaPub.ImportFromPem(pubPem);
+        var rsaPub = RSA.Create();
+        rsaPub.ImportFromPem(File.ReadAllText(jwtPublicKeyPem));
         issuerSigningKey = new RsaSecurityKey(rsaPub);
     }
     else if (!string.IsNullOrWhiteSpace(jwtPrivateKeyPem) && File.Exists(jwtPrivateKeyPem))
     {
-        RSA rsa = RSA.Create();
-        var privatePem = File.ReadAllText(jwtPrivateKeyPem);
-        rsa.ImportFromPem(privatePem);
+        var rsa = RSA.Create();
+        rsa.ImportFromPem(File.ReadAllText(jwtPrivateKeyPem));
         issuerSigningKey = new RsaSecurityKey(rsa);
     }
     else
     {
-        throw new ApplicationException("JWT validation key is not configured. Provide Jwt:PublicKeyPem or Jwt:PrivateKeyPem (PEM).");
+        throw new ApplicationException("JWT validation key not configured");
     }
 
     options.TokenValidationParameters = new TokenValidationParameters
@@ -103,6 +105,7 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+// --- Middleware ---
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -110,10 +113,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
