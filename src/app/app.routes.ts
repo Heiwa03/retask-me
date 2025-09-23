@@ -4,13 +4,15 @@ import { LoginComponent } from './common-ui/login/login';
 import { RegisterComponent } from "./common-ui/register/register";
 import {ForgotPassword} from './common-ui/forgot-password/forgot-password';
 import {RegisterDetails} from './common-ui/register-details/register-details';
+import {Dashboard} from './common-ui/dashboard/dashboard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/register-details', pathMatch: 'full' },
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPassword },
-  { path: 'register-details', component: RegisterDetails }
+  { path: 'register-details', component: RegisterDetails },
+  { path: 'dashboard', component: Dashboard }
 ];
 
 @NgModule({

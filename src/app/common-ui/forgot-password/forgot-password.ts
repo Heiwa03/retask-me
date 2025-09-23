@@ -13,11 +13,11 @@ export class ForgotPassword {
   email = new FormControl('');
 
   ngOnInit() {
-    const saved = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    const saved = localStorage.getItem('theme') as 'light' | 'dark';
     const dark = saved ? saved === 'dark' : false; // default LIGHT
     document.documentElement.classList.toggle('theme-dark', dark);
     queueMicrotask(() => {
-      const chk = document.getElementById('fpThemeSwitch') as HTMLInputElement | null;
+      const chk = document.getElementById('fpThemeSwitch') as HTMLInputElement;
       if (chk) chk.checked = !dark; // checked = Light
     });
   }

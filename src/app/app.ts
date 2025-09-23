@@ -8,6 +8,7 @@ import {JsonPipe} from '@angular/common';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   imports: [RouterOutlet, Login, RegisterDetails, JsonPipe],
   templateUrl: './app.html',
   styleUrl: './app.scss'
@@ -16,7 +17,7 @@ export class App {
   protected readonly title = signal('ReTask_Me');
 
   forgotPassService = inject(ForgotPasswordService); //instanta a service-ului
-  resultForgotPass: any = null;
+  resultForgotPass: any;
   theme?: string;
 
   constructor() {
@@ -25,9 +26,5 @@ export class App {
         this.resultForgotPass = val;
         console.log('forgot-password test:', val);
       });
-  }
-
-  toggleTheme() {
-
-  }
+   }
 }
