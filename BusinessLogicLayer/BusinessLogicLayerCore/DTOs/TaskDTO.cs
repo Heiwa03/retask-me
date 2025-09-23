@@ -12,5 +12,6 @@ namespace BusinessLogicLayerCore.DTOs{
         public DateTime? Deadline { get; set; }
         public StatusTask Status { get; set; }
         public PriorityTask Priority { get; set; }
+        
     }
 }

@@ -14,4 +14,5 @@ public class User : BaseId
     [StringLength(50)] public string? FirstName { get; set; }
     [StringLength(50)] public string? LastName { get; set; }
     public int Gender {get; set; }
+    public bool IsVerified { get; set; } = false;
 }
