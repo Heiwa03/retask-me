@@ -35,12 +35,12 @@ jobs:
 
       - name: Restore & Build Backend
         run: |
-          dotnet restore ./ReTaskMe.sln
-          dotnet build ./ReTaskMe.sln --configuration Release --no-restore
+          dotnet restore ./ReTaskMe/ReTaskMe.sln
+          dotnet build ./ReTaskMe/ReTaskMe.sln --configuration Release --no-restore
 
       - name: Run Backend Tests
         run: |
-          dotnet test ./ReTaskMe.sln --configuration Release --no-build
+          dotnet test ./ReTaskMe/ReTaskMe.sln --configuration Release --no-build
 
       - name: Azure Login with Service Principal
         uses: azure/login@v1
