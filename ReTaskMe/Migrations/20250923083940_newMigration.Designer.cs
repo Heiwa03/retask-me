@@ -4,6 +4,7 @@ using DataAccessLayerCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ReTaskMe.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250923083940_newMigration")]
+    partial class newMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,12 +33,14 @@ namespace ReTaskMe.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("Deadline")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
@@ -43,29 +48,20 @@ namespace ReTaskMe.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("TaskUuid")
+                    b.Property<Guid>("TaskUid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<Guid>("UserUuid")
+                    b.Property<Guid>("UserUid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("Uuid")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Tasks");
                 });
@@ -84,9 +80,6 @@ namespace ReTaskMe.Migrations
 
                     b.Property<int>("Gender")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsVerified")
-                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(50)
@@ -151,17 +144,6 @@ namespace ReTaskMe.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserSessions");
-                });
-
-            modelBuilder.Entity("DataAccessLayerCore.Entities.DailyTask", b =>
-                {
-                    b.HasOne("DataAccessLayerCore.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("DataAccessLayerCore.Entities.UserSession", b =>

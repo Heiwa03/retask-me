@@ -15,13 +15,9 @@ namespace ReTaskMe.Controllers;
             }
         }
 
-        protected Guid? TaskGuid{
+        protected Guid? TestUserGuid{
             get{
-                var idString = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-                if (idString == null) return null;
-
-                return Guid.Parse(idString);
+                return Guid.Parse("BD2526E1-C0F9-48F4-B16C-537FD27795AF");
             }
         }
     }
