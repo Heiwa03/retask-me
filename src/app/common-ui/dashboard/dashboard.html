@@ -24,8 +24,8 @@
     </div>
 
     <div class="theme">
-      <button class="theme__btn">Light</button>
-      <button class="theme__btn">Dark</button>
+      <button class="theme__btn" (click)="setLightTheme()">Light</button>
+      <button class="theme__btn" (click)="setDarkTheme()">Dark</button>
     </div>
   </aside>
 
@@ -137,41 +137,90 @@
         <h2 class="tasks__title">Today Tasks</h2>
         <div class="tasks__actions">
           <button class="btn">Focus Mode</button>
-          <button class="btn">AI Assist</button>
+          <button class="btn" (click)="toggleAIAssist()">AI Assist</button>
         </div>
       </div>
 
       <ul class="tasklist">
-        <li class="task">
-          <span class="checkbox"></span>
-          <span class="task__title">Create design for app</span>
-          <span class="task__time">07:00 - 09:00</span>
-        </li>
-        <li class="task">
-          <span class="checkbox"></span>
-          <span class="task__title">Create UML diagram for Task Management module</span>
-          <span class="task__time">07:00 - 09:00</span>
-        </li>
-        <li class="task">
-          <span class="checkbox"></span>
-          <span class="task__title">Integrate Dark Mode toggle in header</span>
-          <span class="task__time">07:00 - 09:00</span>
-        </li>
-        <li class="task">
-          <span class="checkbox"></span>
-          <span class="task__title">Go grocery shopping</span>
-          <span class="task__time">07:00 - 09:00</span>
-        </li>
-        <li class="task">
-          <span class="checkbox"></span>
-          <span class="task__title">Do 30 minutes of workout</span>
-          <span class="task__time">07:00 - 09:00</span>
+        <li class="task" *ngFor="let task of tasks" [class.task--completed]="task.completed">
+          <span class="checkbox" (click)="toggleTask(task.id)"></span>
+          <div class="task__content">
+            <span class="task__title">{{ task.title }}</span>
+            <div class="task__meta">
+              <span class="priority" [class]="getPriorityClass(task.priority)">{{ getPriorityLabel(task.priority) }}</span>
+              <span class="task__time">{{ task.time }}</span>
+            </div>
+          </div>
+          <div class="task__actions">
+            <button class="task__action" (click)="editTask(task.id)" title="Edit">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="task__action task__action--delete" (click)="deleteTask(task.id)" title="Delete">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <polyline points="3,6 5,6 21,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
         </li>
       </ul>
     </section>
   </main>
 
   <button class="fab" aria-label="Add task">+</button>
+
+  <!-- AI Assist Sidebar -->
+  <div class="ai-assist" [class.ai-assist--open]="isAIAssistOpen" (clickOutside)="closeAIAssist()">
+    <div class="ai-assist__content">
+      <div class="ai-assist__header">
+        <h2 class="ai-assist__title">
+          AI Assist
+          <span class="ai-assist__stars">✨✨</span>
+        </h2>
+        <button class="ai-assist__close" (click)="closeAIAssist()">×</button>
+      </div>
+      
+      <p class="ai-assist__subtitle">Your shortcut to ideas, tasks, and solutions.</p>
+      
+      <div class="ai-assist__greeting">
+        <h3>Hi, {{ userName.split(' ')[0] }}</h3>
+        <h4>How can I help you today?</h4>
+        <div class="ai-assist__stars-large">✨✨</div>
+      </div>
+      
+      <div class="ai-assist__suggestions">
+        <button class="suggestion-btn" (click)="useSuggestion('Help me break down this task into smaller steps')">Help me break down this task into smaller steps</button>
+        <button class="suggestion-btn" (click)="useSuggestion('Generate a checklist for my daily goals')">Generate a checklist for my daily goals</button>
+        <button class="suggestion-btn" (click)="useSuggestion('Show me an example of a task')">Show me an example of a task</button>
+      </div>
+      
+      <div class="ai-assist__response" *ngIf="aiResponse">
+        <div class="ai-assist__response-content">
+          {{ aiResponse }}
+        </div>
+      </div>
+      
+      <div class="ai-assist__input">
+        <input 
+          type="text" 
+          placeholder="Write something.." 
+          class="ai-assist__input-field"
+          [(ngModel)]="aiMessage"
+          (keyup.enter)="sendAIMessage()"
+          [disabled]="isAILoading">
+        <button class="ai-assist__send" (click)="sendAIMessage()" [disabled]="isAILoading">
+          <svg *ngIf="!isAILoading" width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div *ngIf="isAILoading" class="ai-assist__loading">...</div>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 
