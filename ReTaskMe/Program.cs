@@ -128,7 +128,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseCors(policy => policy
-    .WithOrigins("http://localhost:7180", "http://localhost:4200", "http://localhost:5017")
+    .AllowAnyOrigin()
     .AllowAnyHeader()
     .AllowAnyMethod()
 );
