@@ -17,8 +17,8 @@ namespace BusinessLogicLayerCore.Services;
             return await _taskService.GetTask(userUid, taskUid);
         }
 
-        public async Task<List<DailyTask>> GetAllTasks(Guid userUid, Guid taskUid){
-            return await _taskService.GetAllTasks(userUid, taskUid);
+        public async Task<List<DailyTask>> GetAllTasks(Guid userUid){
+            return await _taskService.GetAllTasks(userUid);
         }
 
         public async Task UpdateTask(TaskDTO dto, Guid userUid, Guid taskUid){

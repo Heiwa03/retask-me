@@ -32,7 +32,7 @@ namespace DataAccessLayerCore.Repositories
         public async Task<DailyTask?> GetTaskByUserUidAsync(Guid uuid, Guid tuid)
         {
             return await _context.Tasks
-                .FirstOrDefaultAsync(t => t.Uuid == uuid && t.TaskUid == tuid);
+                .FirstOrDefaultAsync(t => t.Uuid == uuid && t.Uuid == tuid);
         }
 
         /// <summary>

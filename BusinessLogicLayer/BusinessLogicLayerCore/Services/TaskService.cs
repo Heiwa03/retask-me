@@ -8,17 +8,24 @@ using DataAccessLayerCore.Repositories.Interfaces;
 
 
 namespace BusinessLogicLayerCore.Services;
-    public class TaskService(ITaskRepository _taskRepository) : ITaskService{
+    public class TaskService(ITaskRepository _taskRepository, IUserRepository _userRepository) : ITaskService{
 
       // Create Task
       public async Task CreateAndSaveTask(TaskDTO dto, Guid uuid) {
+        var user = await _userRepository.GetByUuidAsync<User>(uuid);
+
+        if(user == null){
+            throw new KeyNotFoundException($"Create task error: User {uuid} not found");
+        }
+
          var task = new DailyTask {
             Uuid = Guid.NewGuid(),
-            TaskUid = Guid.NewGuid(),
-            UserUid = uuid,
+            UserId = user.Id,
+            UserUuid = uuid,
+            User = user,
+
             Title = dto.Title,
             Description = dto.Description,
-            CreatedAt = DateTime.UtcNow,
             Deadline = dto.Deadline,
             Priority = dto.Priority,
             Status = dto.Status
@@ -40,7 +47,7 @@ namespace BusinessLogicLayerCore.Services;
       }
 
       // Reed all
-      public async Task<List<DailyTask>> GetAllTasks(Guid uuid, Guid tuid){
+      public async Task<List<DailyTask>> GetAllTasks(Guid uuid){
           var tasks = await _taskRepository.GetTasksByUserUidAsync(uuid);
 
           if (tasks == null || tasks.Count == 0){
@@ -63,7 +70,7 @@ namespace BusinessLogicLayerCore.Services;
       }
 
       // Update
-      public async Task UpdateTask(TaskDTO dto, Guid uuid, Guid tuid){
+      public async Task<DailyTask> UpdateTask(TaskDTO dto, Guid uuid, Guid tuid){
           var task = await _taskRepository.GetTaskByUserUidAsync(uuid, tuid);
 
           if (task == null){
@@ -73,6 +80,8 @@ namespace BusinessLogicLayerCore.Services;
           UpdateTaskForm(task, dto);
           _taskRepository.Update(task);
           await _taskRepository.SaveChangesAsync();
+
+          return task;
       }
 
       private static void UpdateTaskForm(DailyTask task, TaskDTO dto){
