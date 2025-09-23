@@ -49,29 +49,29 @@ namespace BusinessLogicLayerCore.Services
             return new AuthResponse();
         }
 
-        public Task<AuthResponse> RefreshAsync(string username){ // THIS by me
-            var existsUser = userRepository.GetUserByUsername(username) ?? throw new Exception("Someting went wrong."); // THIS
+        // public Task<AuthResponse> RefreshAsync(string username){ // THIS by me
+        //     var existsUser = userRepository.GetUserByUsername(username) ?? throw new Exception("Someting went wrong."); // THIS
 
-            if (string.IsNullOrWhiteSpace(refreshToken))
-            {
-                return Task.FromResult<AuthResponse>(null);
-            }
-            if (!_refreshTokenToUsername.TryGetValue(refreshToken, out var username))
-            {
-                return Task.FromResult<AuthResponse>(null);
-            }
-            // rotate refresh token
-            _refreshTokenToUsername.Remove(refreshToken);
-            var newRefreshToken = GenerateRefreshToken();
-            _refreshTokenToUsername[newRefreshToken] = username;
+        //     if (string.IsNullOrWhiteSpace(refreshToken))
+        //     {
+        //         return Task.FromResult<AuthResponse>(null);
+        //     }
+        //     if (!_refreshTokenToUsername.TryGetValue(refreshToken, out var username))
+        //     {
+        //         return Task.FromResult<AuthResponse>(null);
+        //     }
+        //     // rotate refresh token
+        //     _refreshTokenToUsername.Remove(refreshToken);
+        //     var newRefreshToken = GenerateRefreshToken();
+        //     _refreshTokenToUsername[newRefreshToken] = username;
 
-            var newAccessToken = GenerateJwtToken(Uuid);
-            return Task.FromResult(new AuthResponse
-            {
-                Token = newAccessToken,
-                RefreshToken = newRefreshToken
-            });
-        }
+        //     var newAccessToken = GenerateJwtToken(Uuid);
+        //     return Task.FromResult(new AuthResponse
+        //     {
+        //         Token = newAccessToken,
+        //         RefreshToken = newRefreshToken
+        //     });
+        // }
 
         private string GenerateJwtToken(Guid userUuid)
         {
