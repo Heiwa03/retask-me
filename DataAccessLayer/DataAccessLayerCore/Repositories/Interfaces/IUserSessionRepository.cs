@@ -27,13 +27,6 @@ namespace DataAccessLayerCore.Repositories.Interfaces
         Task<UserSession?> GetSessionByJwtIdAsync(string jwtId);
 
         /// <summary>
-        /// Adds a new user session to the database asynchronously.
-        /// </summary>
-        /// <param name="session">The UserSession entity to add.</param>
-        /// <returns>A Task representing the asynchronous operation.</returns>
-        Task AddSessionAsync(UserSession session);
-
-        /// <summary>
         /// Marks a refresh token as redeemed and updates the session with a new JWT ID.
         /// </summary>
         /// <param name="refreshToken">The refresh token to be redeemed.</param>
