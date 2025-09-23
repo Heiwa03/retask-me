@@ -50,7 +50,7 @@ jobs:
       - name: Build Docker Image
         run: |
           SHORT_SHA=${GITHUB_SHA::8}
-          docker build -f ./Dockerfile \
+          docker build -f ./ReTaskMe/Dockerfile \
             -t ${{ env.REGISTRY_BACKEND }}:latest \
             -t ${{ env.REGISTRY_BACKEND }}:$SHORT_SHA .
 
