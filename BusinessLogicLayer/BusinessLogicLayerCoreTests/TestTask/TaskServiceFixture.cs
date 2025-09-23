@@ -23,8 +23,8 @@ namespace BusinessLogicLayerCoreTests.TestTask{
         }
         // Variabiles for user and tasks ID
         public static class Globals{
-            public static long userId = 100;
-            public static long taskId = 1;
+            public static Guid userUid = Guid.NewGuid();
+            public static Guid taskUid = Guid.NewGuid();
         }
 
         // TaskDTO test model
@@ -43,9 +43,9 @@ namespace BusinessLogicLayerCoreTests.TestTask{
         // DailtyTask test model
         public static DailyTask DailyTask1(){
             DailyTask dailyTask = new DailyTask {
-                Id = Globals.taskId,
+                TaskUid = Globals.taskUid,
                 Uuid = Guid.NewGuid(),
-                UserId = Globals.userId,
+                UserUid= Globals.userUid,
                 Title = "Title",
                 Description = "Desript",
                 Status = StatusTask.New,
@@ -59,7 +59,7 @@ namespace BusinessLogicLayerCoreTests.TestTask{
         // TEST
         [Fact]
         public async Task CreateAndSaveTask_SucceedStatus() {
-            long userId = 100;
+            Guid userUid = Guid.NewGuid();
 
             TaskDTO task = Task();
 
@@ -67,11 +67,11 @@ namespace BusinessLogicLayerCoreTests.TestTask{
                 .Setup(x => x.Add(It.Is<DailyTask>(t => t.Title == task.Title)))
                 .Verifiable();
 
-            await taskService.CreateAndSaveTask(task, userId);
+            await taskService.CreateAndSaveTask(task, userUid);
 
             _taskRepository.Verify(r => r.Add(It.Is<DailyTask>(t =>
                 t.Title == task.Title &&
-                t.UserId == userId
+                t.UserUid == userUid
             )), Times.Once);
 
             _taskRepository.Verify(r => r.SaveChangesAsync(), Times.Once);
@@ -82,29 +82,29 @@ namespace BusinessLogicLayerCoreTests.TestTask{
             DailyTask dailyTask = DailyTask1();
 
             _taskRepository
-                .Setup(r => r.GetTaskByUserAndIdAsync(Globals.userId, Globals.taskId))
+                .Setup(r => r.GetTaskByUserUidAsync(Globals.userUid, Globals.taskUid))
                 .ReturnsAsync(dailyTask);
 
             // Act
-            var result = await taskService.GetTask(Globals.userId, Globals.taskId);
+            var result = await taskService.GetTask(Globals.userUid, Globals.taskUid);
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal(dailyTask.Id, result.Id);
-            Assert.Equal(dailyTask.UserId, result.UserId);
+            Assert.Equal(dailyTask.UserUid, result.UserUid);
             Assert.Equal(dailyTask.Title, result.Title);
 
-            _taskRepository.Verify(r => r.GetTaskByUserAndIdAsync(Globals.userId, Globals.taskId), Times.Once);
+            _taskRepository.Verify(r => r.GetTaskByUserUidAsync(Globals.userUid, Globals.taskUid), Times.Once);
         }
 
         [Fact]
         public async Task GetTask_ShouldThrow_WhenNotFound() {
             _taskRepository
-                .Setup(r => r.GetTaskByUserAndIdAsync(Globals.userId, Globals.taskId))
+                .Setup(r => r.GetTaskByUserUidAsync(Globals.userUid, Globals.taskUid))
                 .ReturnsAsync((DailyTask?)null);
 
             await Assert.ThrowsAsync<KeyNotFoundException>(
-                () => taskService.GetTask(Globals.userId, Globals.taskId)
+                () => taskService.GetTask(Globals.userUid, Globals.userUid)
             );
         }
 
@@ -113,25 +113,25 @@ namespace BusinessLogicLayerCoreTests.TestTask{
             List<DailyTask> dailyTasks = new List<DailyTask> { DailyTask1() };
 
             _taskRepository
-                .Setup(r => r.GetTasksByUserIdAsync(Globals.userId))
+                .Setup(r => r.GetTasksByUserUidAsync(Globals.userUid))
                 .ReturnsAsync(dailyTasks);
 
-            var result = await taskService.GetAllTasks(Globals.userId, Globals.taskId);
+            var result = await taskService.GetAllTasks(Globals.userUid, Globals.taskUid);
 
             Assert.NotEmpty(result);
             Assert.Equal(dailyTasks.Count, result.Count);
 
-            _taskRepository.Verify(r => r.GetTasksByUserIdAsync(Globals.userId), Times.Once);
+            _taskRepository.Verify(r => r.GetTasksByUserUidAsync(Globals.userUid), Times.Once);
         }
 
         [Fact]
         public async Task GetAllTasks_ShouldThrow_WhenNoTasksFound() {
             _taskRepository
-                .Setup(r => r.GetTasksByUserIdAsync(Globals.userId))
+                .Setup(r => r.GetTasksByUserUidAsync(Globals.userUid))
                 .ReturnsAsync(new List<DailyTask>());
 
             await Assert.ThrowsAsync<KeyNotFoundException>(
-                () => taskService.GetAllTasks(Globals.userId, Globals.taskId)
+                () => taskService.GetAllTasks(Globals.userUid, Globals.taskUid)
             );
         }
 
@@ -140,10 +140,10 @@ namespace BusinessLogicLayerCoreTests.TestTask{
             DailyTask dailyTask = DailyTask1();
 
             _taskRepository
-                .Setup(r => r.GetTaskByUserAndIdAsync(Globals.userId, Globals.taskId))
+                .Setup(r => r.GetTaskByUserUidAsync(Globals.userUid, Globals.taskUid))
                 .ReturnsAsync(dailyTask);
 
-            await taskService.DeleteTask(Globals.userId, Globals.taskId);
+            await taskService.DeleteTask(Globals.userUid, Globals.taskUid);
 
             _taskRepository.Verify(r => r.Delete(dailyTask), Times.Once);
             _taskRepository.Verify(r => r.SaveChangesAsync(), Times.Once);
@@ -152,11 +152,11 @@ namespace BusinessLogicLayerCoreTests.TestTask{
         [Fact]
         public async Task DeleteTask_ShouldThrow_WhenNotFound() {
             _taskRepository
-                .Setup(r => r.GetTaskByUserAndIdAsync(Globals.userId, Globals.taskId))
+                .Setup(r => r.GetTaskByUserUidAsync(Globals.userUid, Globals.taskUid))
                 .ReturnsAsync((DailyTask?)null);
 
             await Assert.ThrowsAsync<KeyNotFoundException>(
-                () => taskService.DeleteTask(Globals.userId, Globals.taskId)
+                () => taskService.DeleteTask(Globals.userUid, Globals.taskUid)
             );
         }
 
@@ -167,10 +167,10 @@ namespace BusinessLogicLayerCoreTests.TestTask{
             dto.Title = "Updated title";
 
             _taskRepository
-                .Setup(r => r.GetTaskByUserAndIdAsync(Globals.userId, Globals.taskId))
+                .Setup(r => r.GetTaskByUserUidAsync(Globals.userUid, Globals.taskUid))
                 .ReturnsAsync(dailyTask);
 
-            await taskService.UpdateTask(dto, Globals.userId, Globals.taskId);
+            await taskService.UpdateTask(dto, Globals.userUid, Globals.taskUid);
 
             _taskRepository.Verify(r => r.Update(It.Is<DailyTask>(t =>
                 t.Title == "Updated title"
@@ -184,11 +184,11 @@ namespace BusinessLogicLayerCoreTests.TestTask{
             TaskDTO dto = Task();
 
             _taskRepository
-                .Setup(r => r.GetTaskByUserAndIdAsync(Globals.userId, Globals.taskId))
+                .Setup(r => r.GetTaskByUserUidAsync(Globals.userUid, Globals.taskUid))
                 .ReturnsAsync((DailyTask?)null);
 
             await Assert.ThrowsAsync<KeyNotFoundException>(
-                () => taskService.UpdateTask(dto, Globals.userId, Globals.taskId)
+                () => taskService.UpdateTask(dto, Globals.userUid, Globals.taskUid)
             );
         }
     }

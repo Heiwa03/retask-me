@@ -15,23 +15,23 @@ namespace ReTaskMe.Controllers;
         }
 
         [HttpPost("updateTask/{taskId:long}")]
-        public async Task<IActionResult> ActionUpdateTask([FromBody] TaskDTO dto, long taskId){
-            await _userService.UpdateTask(dto, UserGuid ?? new Guid(""), taskId);
+        public async Task<IActionResult> ActionUpdateTask([FromBody] TaskDTO dto, Guid taskUid){
+            await _userService.UpdateTask(dto, UserGuid ?? new Guid(""), taskUid);
             return Ok(new { message = "Task updated successfully" });
         }
 
         [HttpDelete("deleteTask/{taskId:long}")]
-        public async Task<IActionResult> ActionDeleteTask(long taskId){
-            await _userService.DeleteTask(UserGuid ?? new Guid(""), taskId);
-            return Ok(new { message = $"Task {taskId} deleted successfully" });
+        public async Task<IActionResult> ActionDeleteTask(Guid taskUid){
+            await _userService.DeleteTask(UserGuid ?? new Guid(""), taskUid);
+            return Ok(new { message = $"Task {taskUid} deleted successfully" });
         }
 
         [HttpGet("task/{taskId:long}")]
-        public async Task<IActionResult> ActionGetTask(long taskId){
-            var task = await _userService.GetTask(UserGuid ?? new Guid(""), taskId);
+        public async Task<IActionResult> ActionGetTask(Guid taskUid){
+            var task = await _userService.GetTask(UserGuid ?? new Guid(""), taskUid);
 
             if (task == null)
-                return NotFound(new { message = $"Task {taskId} not found" });
+                return NotFound(new { message = $"Task {taskUid} not found" });
 
             return Ok(task); 
         }

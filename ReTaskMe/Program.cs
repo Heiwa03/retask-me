@@ -29,7 +29,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Database
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetValue<string>("AzureSqlConnection") ?? throw new InvalidOperationException(), b => 
+        builder.Configuration.GetValue<string>("ConnectionStrings:AzureSqlConnection") ?? throw new InvalidOperationException(), b => 
         {
             b.MigrationsAssembly("ReTaskMe");
             b.CommandTimeout(60);
