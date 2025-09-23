@@ -13,8 +13,8 @@ env:
   RESOURCE_GROUP_NAME: 'retaskme'
   BACKEND_APP_NAME: 'retaskme'
 
-  REGISTRY: '${{ secrets.DOCKER_REGISTRY_SERVER_URL }}'
-  REGISTRY_BACKEND: '${{ secrets.DOCKER_REGISTRY_SERVER_URL }}/retaskme-app'
+  REGISTRY: ${{ secrets.DOCKER_REGISTRY_SERVER_URL }}
+  REGISTRY_BACKEND: ${{ secrets.DOCKER_REGISTRY_SERVER_URL }}/retaskme-app
 
   BUILD_NUMBER: ${{ github.run_number }}
   BRANCH_NAME: 'devel'
