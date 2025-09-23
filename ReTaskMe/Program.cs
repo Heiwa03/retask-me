@@ -76,6 +76,17 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<ILoginChecker, DbLoginChecker>();
 
+// ======================
+// CORS Policy Creation
+// ======================
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name:"FrontEndUI", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200/").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+    });
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -121,11 +132,7 @@ builder.Services.AddAuthentication(options =>
 // ======================
 var app = builder.Build();
 
-app.UseCors(policy => policy
-    .AllowAnyOrigin()
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-);
+app.UseCors("FrontEndUI");
 // ======================
 // Middleware
 // ======================
