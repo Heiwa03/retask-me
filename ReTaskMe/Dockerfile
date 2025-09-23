@@ -23,7 +23,7 @@ WORKDIR /src
 
 # Copy project files (for caching restore layers)
 COPY ["ReTaskMe/ReTaskMe.csproj", "ReTaskMe/"]
-COPY ["BusinessLogicLayerCore/BusinessLogicLayerCore.csproj", "BusinessLogicLayerCore/"]
+COPY ["BusinessLogicLayer/BusinessLogicLayerCore/BusinessLogicLayerCore.csproj", "BusinessLogicLayerCore/"]
 COPY ["DataAccessLayer/DataAccessLayerCore/DataAccessLayerCore.csproj", "DataAccessLayerCore/"]
 COPY ["HelperLayer/HelperLayer.csproj", "HelperLayer/"]
 
@@ -48,4 +48,5 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 ENTRYPOINT ["dotnet", "ReTaskMe.dll"]
+
 
