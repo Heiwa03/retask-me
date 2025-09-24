@@ -1,8 +1,8 @@
-using BusinessLogicLayer.Services.Interfaces;
+using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore.Repositories.Interfaces;
 using HelperLayer.Security;
 
-namespace BusinessLogicLayer.Services
+namespace BusinessLogicLayerCore.Services
 {
     public class DbLoginChecker : ILoginChecker
     {

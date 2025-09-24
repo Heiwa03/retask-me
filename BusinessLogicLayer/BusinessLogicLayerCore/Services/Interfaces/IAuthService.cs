@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace BusinessLogicLayer.Services.Interfaces
+namespace BusinessLogicLayerCore.Services.Interfaces
 {
     public class AuthResponse
     {

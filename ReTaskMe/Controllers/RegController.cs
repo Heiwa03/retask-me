@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using BusinessLogicLayer.Services.Interfaces;
-using BusinessLogicLayer.DTOs;
+using BusinessLogicLayerCore.Services.Interfaces;
+using BusinessLogicLayerCore.DTOs;
 using System.Threading.Tasks;
 
 namespace AuthBackend.Controllers

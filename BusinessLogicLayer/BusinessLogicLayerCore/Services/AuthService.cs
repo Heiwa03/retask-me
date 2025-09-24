@@ -1,9 +1,9 @@
-﻿using BusinessLogicLayer.Services;
-using BusinessLogicLayer.Services.Interfaces;
+﻿using BusinessLogicLayerCore.Services;
+using BusinessLogicLayerCore.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using HelperLayer.Security.Token;
-namespace BusinessLogicLayer.Services
+namespace BusinessLogicLayerCore.Services
 {
     public class AuthService : IAuthService
     {

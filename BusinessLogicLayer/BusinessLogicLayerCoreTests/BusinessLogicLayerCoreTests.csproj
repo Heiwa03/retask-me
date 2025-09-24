@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\HelperLayer\HelperLayer.csproj" />
     <ProjectReference Include="..\BusinessLogicLayerCore\BusinessLogicLayerCore.csproj" />
   </ItemGroup>
 

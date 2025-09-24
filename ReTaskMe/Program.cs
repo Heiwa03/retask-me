@@ -2,15 +2,16 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
-using BusinessLogicLayer.Services;
+using BusinessLogicLayerCore.Services;
 using DataAccessLayerCore;
 using DataAccessLayerCore.Repositories;
 using HelperLayer.Security;
 using Azure.Communication.Email;
-using BusinessLogicLayer.Services.Interfaces;
+using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using BusinessLogicLayer.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -64,6 +65,7 @@ if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpa
         var client = new EmailClient(mailConnectionString);
         return new EmailHelper(client, mailSenderAddress);
     });
+    builder.Services.AddScoped<IEmailService, EmailService>();
 }
 
 // --- Controllers & Swagger ---

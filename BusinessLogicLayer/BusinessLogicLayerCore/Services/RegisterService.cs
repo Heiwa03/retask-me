@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 
 // BL namespaces
-using BusinessLogicLayer.Services.Interfaces;
-using BusinessLogicLayer.DTOs;
+using BusinessLogicLayerCore.Services.Interfaces;
+using BusinessLogicLayerCore.DTOs;
 
 // HL namespaces
 using HelperLayer.Security;
@@ -15,7 +15,7 @@ using BusinessLogicLayerCore.Templates;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 
-namespace BusinessLogicLayer.Services
+namespace BusinessLogicLayerCore.Services
 {
     /// <summary>
     /// Service responsible for user registration and email verification.
@@ -24,20 +24,20 @@ namespace BusinessLogicLayer.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IBaseRepository _baseRepository;
-        private readonly EmailHelper _emailHelper;
+        private readonly IEmailService _emailService;
         private readonly SigningCredentials _signingCredentials;
         private readonly string _frontendUrl;
 
         public RegisterService(
             IUserRepository userRepository,
             IBaseRepository baseRepository,
-            EmailHelper emailHelper,
+            IEmailService emailService,
             SigningCredentials signingCredentials,
             IConfiguration configuration)
         {
             _userRepository = userRepository;
             _baseRepository = baseRepository;
-            _emailHelper = emailHelper;
+            _emailService = emailService;
             _signingCredentials = signingCredentials;
             _frontendUrl = configuration["Frontend:BaseUrl"] ?? throw new ArgumentNullException("Frontend:BaseUrl missing");
         }
@@ -86,14 +86,13 @@ namespace BusinessLogicLayer.Services
             string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
 
             // 8?? Send verification email
-            await _emailHelper.SendEmailAsync(
+            await _emailService.SendEmailAsync(
                 new List<string> { dto.Mail },
                 "Verify Your Email",
                 htmlContent
             );
         }
 
-        #region Internal helpers
 
         internal void CheckUniqueMail(string mail)
         {
@@ -156,6 +155,5 @@ namespace BusinessLogicLayer.Services
             }
         }
 
-        #endregion
     }
 }

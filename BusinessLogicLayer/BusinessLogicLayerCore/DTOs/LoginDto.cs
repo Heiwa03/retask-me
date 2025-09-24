@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BusinessLogicLayer.DTOs
+namespace BusinessLogicLayerCore.DTOs
 {
     public class LoginDto
     {
