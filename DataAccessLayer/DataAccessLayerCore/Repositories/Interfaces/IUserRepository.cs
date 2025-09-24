@@ -14,7 +14,7 @@ namespace DataAccessLayerCore.Repositories.Interfaces
         /// </summary>
         /// <param name="email">The email to check.</param>
         /// <returns><c>true</c> if the email is occupied, <c>false</c> otherwise.</returns>
-        bool IsEmailOccupied(string email);
+        bool IsUsernameOccupied(string email);
 
         /// <summary>
         /// Retrieves a user from the database given an email.
@@ -23,7 +23,7 @@ namespace DataAccessLayerCore.Repositories.Interfaces
         /// <returns>
         /// The user object if found in the database, otherwise null.
         /// </returns>
-        Task<User?> GetUserByEmail(string email);
+        Task<User?> GetUserByUsername(string email);
 
         /// <summary>
         /// Retrieves a user session by the provided refresh token.

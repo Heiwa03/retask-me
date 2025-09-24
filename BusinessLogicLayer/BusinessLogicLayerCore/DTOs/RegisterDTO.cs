@@ -1,7 +1,7 @@
 
-
+// System
 using System.ComponentModel.DataAnnotations;
-using BusinessLogicLayerCore.Enums;
+using DataAccessLayerCore.Enum;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Query;
 
