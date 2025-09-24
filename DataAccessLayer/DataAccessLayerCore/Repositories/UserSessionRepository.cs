@@ -28,7 +28,7 @@ namespace DataAccessLayerCore.Repositories
                 .FirstOrDefaultAsync(s => s.JwtId == jwtId && s.isActive);
         }
 
-        public async Task RedeemRefreshTokenAsync(string refreshToken, string jwtId)
+        public async Task<bool> RedeemRefreshTokenAsync(string refreshToken, string jwtId)
         {
             var session = await _databaseContext.Set<UserSession>()
                 .FirstOrDefaultAsync(s => s.RefreshToken == refreshToken);
@@ -36,22 +36,21 @@ namespace DataAccessLayerCore.Repositories
             if (session != null)
             {
                 session.Redeemed = true;
-                session.isActive = false;
+                //session.isActive = false;
                 session.JwtId = jwtId;
                 _databaseContext.Set<UserSession>().Update(session);
+                return true;
             }
+            return false;
         }
 
         public async Task RemoveSessionByUserIdAsync(long userId)
         {
-            var sessions = await _databaseContext.Set<UserSession>()
+            await _databaseContext.Set<UserSession>()
                 .Where(s => s.UserId == userId)
-                .ToListAsync();
-
-            if (sessions.Any())
-            {
-                _databaseContext.Set<UserSession>().RemoveRange(sessions);
-            }
+                .ExecuteUpdateAsync(s => s.SetProperty(
+                    session => session.isActive,
+                    session => false));
         }
     }
 }
