@@ -64,6 +64,7 @@ if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpa
         return new EmailHelper(client, mailSenderAddress);
     });
 }
+
 // Fallback local file (development)
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
@@ -73,7 +74,6 @@ if (string.IsNullOrWhiteSpace(privateKeyPem))
         privateKeyPem = File.ReadAllText(pemPath);
     }
 }
-
 
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
@@ -95,7 +95,6 @@ builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<ILoginChecker, DbLoginChecker>();
-
 
 // ======================
 // CORS Policy Creation
@@ -147,7 +146,6 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.FromMinutes(2)
     };
 });
-
 
 // ======================
 // Build app
