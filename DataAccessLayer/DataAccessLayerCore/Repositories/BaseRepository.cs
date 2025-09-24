@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// System
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using DataAccessLayer.Entities;
-using DataAccessLayer.Repositories.Interfaces;
 
-namespace DataAccessLayer.Repositories
+// DAL
+using DataAccessLayerCore.Entities;
+using DataAccessLayerCore.Repositories.Interfaces;
+
+namespace DataAccessLayerCore.Repositories
 {
     public class BaseRepository(DatabaseContext databaseContext) : IBaseRepository
     {
@@ -100,6 +103,12 @@ namespace DataAccessLayer.Repositories
         /// <exception cref="ArgumentNullException">Thrown if the entity is null.</exception>
         public void Update<TEntity>(TEntity entity) where TEntity : BaseId
         {
+            // The explicit null check
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             databaseContext.Set<TEntity>().Update(entity);
         }
 

@@ -1,38 +1,45 @@
-﻿using Microsoft.EntityFrameworkCore;
-using DataAccessLayer.Entities;
-using DataAccessLayer.Repositories.Interfaces;
+﻿// Microsoft
+using Microsoft.EntityFrameworkCore;
+
+// DAL
+using DataAccessLayerCore.Entities;
+using DataAccessLayerCore.Repositories.Interfaces;
+using DataAccessLayerCore;
+using DataAccessLayerCore.Repositories;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.Repositories
+
+namespace DataAccessLayerCore.Repositories
 {
     public class UserRepository (DatabaseContext databaseContext) : BaseRepository(databaseContext), IUserRepository
     {
         private readonly DatabaseContext _databaseContext = databaseContext;
 
         /// <summary>
-        /// Checks if a username is occupied.
+        /// Checks if an email is occupied.
         /// </summary>
-        /// <param name="username">The username to check.</param>
-        /// <returns><c>true</c> if the username is occupied, <c>false</c> otherwise.</returns>
-        public bool IsUserNameOccupied(string username)
+        /// <param name="email">The email to check.</param>
+        /// <returns><c>true</c> if the email is occupied, <c>false</c> otherwise.</returns>
+        public bool IsEmailOccupied(string email)
         {
-            return _databaseContext.Users.Any(x => x.NormalizedUsername == username.ToUpper());
+            return _databaseContext.Users.Any(x => x.NormalizedUsername == email.ToUpper());
         }
 
         /// <summary>
-        /// Retrieves a user from the database given a username.
+        /// Retrieves a user from the database given an email.
         /// </summary>
-        /// <param name="username">The username of the user to retrieve.</param>
+        /// <param name="email">The email of the user to retrieve.</param>
         /// <returns>
         /// The user object if found in the database, otherwise null.
         /// </returns>
-        public async Task<User?> GetUserByUsername(string username)
+        public async Task<User?> GetUserByEmail(string email)
         {
-            var user = await _databaseContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.NormalizedUsername == username.ToUpper());
+            var user = await _databaseContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.NormalizedUsername == email.ToUpper());
 
             return user;
         }
