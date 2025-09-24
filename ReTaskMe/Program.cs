@@ -1,3 +1,4 @@
+// Microsoft Packages
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -73,6 +74,7 @@ if (string.IsNullOrWhiteSpace(privateKeyPem))
     }
 }
 
+
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
     throw new ApplicationException("JWT signing key is not configured. Provide JWT_PRIVATE_KEY or Jwt:PrivateKeyPem file.");
@@ -93,6 +95,7 @@ builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<ILoginChecker, DbLoginChecker>();
+
 
 // ======================
 // CORS Policy Creation
@@ -144,6 +147,7 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.FromMinutes(2)
     };
 });
+
 
 // ======================
 // Build app

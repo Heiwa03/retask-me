@@ -1,4 +1,4 @@
-﻿namespace BusinessLogicLayer.Services.Interfaces
+﻿namespace BusinessLogicLayerCore.Services.Interfaces
 {
     public interface ILoginChecker
     {

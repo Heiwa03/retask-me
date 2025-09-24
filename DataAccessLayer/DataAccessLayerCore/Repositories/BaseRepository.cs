@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// System
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using DataAccessLayerCore;
+
+// DAL
 using DataAccessLayerCore.Entities;
 using DataAccessLayerCore.Repositories.Interfaces;
 

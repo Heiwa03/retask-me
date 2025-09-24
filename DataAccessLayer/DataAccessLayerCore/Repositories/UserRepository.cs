@@ -1,12 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// Microsoft
+using Microsoft.EntityFrameworkCore;
+
+// DAL
+using DataAccessLayerCore.Entities;
+using DataAccessLayerCore.Repositories.Interfaces;
+using DataAccessLayerCore;
+using DataAccessLayerCore.Repositories;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataAccessLayerCore;
-using DataAccessLayerCore.Entities;
-using DataAccessLayerCore.Repositories.Interfaces;
+
 
 namespace DataAccessLayerCore.Repositories
 {

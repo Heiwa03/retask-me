@@ -15,7 +15,7 @@ using BusinessLogicLayerCore.Templates;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 
-namespace BusinessLogicLayer.Services
+namespace BusinessLogicLayerCore.Services
 {
     /// <summary>
     /// Service responsible for user registration and email verification.
@@ -23,6 +23,7 @@ namespace BusinessLogicLayer.Services
     public class RegisterService : IRegisterService
     {
         private readonly IUserRepository _userRepository;
+
         private readonly IBaseRepository _baseRepository;
         private readonly EmailHelper _emailHelper;
         private readonly SigningCredentials _signingCredentials;
@@ -50,6 +51,7 @@ namespace BusinessLogicLayer.Services
             // Validate input
             CheckUniqueMail(dto.Mail);
             CheckRepeatPassword(dto.Password, dto.RepeatPassword);
+
             CheckPasswordRequirements(dto.Password);
 
             //  Hash password
@@ -57,12 +59,12 @@ namespace BusinessLogicLayer.Services
 
             // Create user
             User user = CreateUser(dto, hashedPassword);
-            _baseRepository.Add(user);
-            await _baseRepository.SaveChangesAsync();
+            _userRepository.Add(user); // base
+            await _userRepository.SaveChangesAsync(); // base
 
             // Create session
             UserSession userSession = CreateSession(user);
-            _baseRepository.Add(userSession);
+            _userRepository.Add(userSession); //base
             await SaveChanges();
 
             // Generate JWT verification token (1h expiry)
@@ -101,17 +103,20 @@ namespace BusinessLogicLayer.Services
                 throw new InvalidOperationException("Email already exists");
         }
 
+
         internal void CheckRepeatPassword(string password, string repeatPassword)
         {
             if (!PasswordHelper.ValidateRegisterData(password, repeatPassword))
                 throw new InvalidOperationException("Passwords do not match");
         }
 
+
         internal void CheckPasswordRequirements(string password)
         {
             if (!PasswordHelper.IsPasswordStrong(password))
                 throw new InvalidOperationException("Password is not strong enough");
         }
+
 
         internal User CreateUser(RegisterDTO dto, string hashedPassword)
         {
@@ -125,6 +130,7 @@ namespace BusinessLogicLayer.Services
                 IsVerified = false // Ensure email not verified initially
             };
         }
+
 
         internal UserSession CreateSession(User user)
         {
@@ -144,11 +150,12 @@ namespace BusinessLogicLayer.Services
             };
         }
 
+
         internal async Task SaveChanges()
         {
             try
             {
-                await _baseRepository.SaveChangesAsync();
+                await _userRepository.SaveChangesAsync(); //base
             }
             catch (DbUpdateException ex)
             {
