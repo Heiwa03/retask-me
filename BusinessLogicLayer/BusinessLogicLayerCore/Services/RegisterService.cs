@@ -1,164 +1,161 @@
-
 using Microsoft.EntityFrameworkCore;
 
-// Used namespaces from BL
+// BL namespaces
 using BusinessLogicLayer.Services.Interfaces;
 using BusinessLogicLayer.DTOs;
 
-// Used namespaces from HL
+// HL namespaces
 using HelperLayer.Security;
 using HelperLayer.Security.Token;
 
-// Used namespaces from DAL
-using DataAccessLayerCore.Entities;
+// DAL namespaces
 using DataAccessLayerCore.Repositories.Interfaces;
+using DataAccessLayerCore.Entities;
+using BusinessLogicLayerCore.Templates;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration;
 
-namespace BusinessLogicLayer.Services
+namespace BusinessLogicLayerCore.Services
 {
     /// <summary>
-    /// Service responsible for user registration.
+    /// Service responsible for user registration and email verification.
     /// </summary>
     public class RegisterService : IRegisterService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IBaseRepository _baseRepository;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RegisterService"/> class.
-        /// </summary>
-        /// <param name="userRepository">The user repository.</param>
-        /// <param name="baseRepository">The base repository for database operations.</param>
-        public RegisterService(IUserRepository _userRepository, IBaseRepository _baseRepository)
+        private readonly IBaseRepository _baseRepository;
+        private readonly EmailHelper _emailHelper;
+        private readonly SigningCredentials _signingCredentials;
+        private readonly string _frontendUrl;
+
+        public RegisterService(
+            IUserRepository userRepository,
+            IBaseRepository baseRepository,
+            EmailHelper emailHelper,
+            SigningCredentials signingCredentials,
+            IConfiguration configuration)
         {
-            this._userRepository = _userRepository;
-            this._baseRepository = _baseRepository;
+            _userRepository = userRepository;
+            _baseRepository = baseRepository;
+            _emailHelper = emailHelper;
+            _signingCredentials = signingCredentials;
+            _frontendUrl = configuration["Frontend:BaseUrl"] ?? throw new ArgumentNullException("Frontend:BaseUrl missing");
         }
 
         /// <summary>
-        /// Main method for registering a user.
-        /// Checks username uniqueness, password strength, password match,
-        /// hashes the password, creates the user and session.
+        /// Registers a new user and sends verification email.
         /// </summary>
-        /// <param name="dto">The registration DTO containing user data.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
         public async Task RegisterUser(RegisterDTO dto)
         {
-            // Check if mail is unique
+            // Validate input
             CheckUniqueMail(dto.Mail);
-
-            // Validate password repeat
             CheckRepeatPassword(dto.Password, dto.RepeatPassword);
 
-            // Validate password strength
             CheckPasswordRequirements(dto.Password);
 
-            // Hashing Password with BCrypt
+            //  Hash password
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
 
-            // Create user 
+            // Create user
             User user = CreateUser(dto, hashedPassword);
-            _baseRepository.Add(user);
-            await _baseRepository.SaveChangesAsync();
+            _userRepository.Add(user); // base
+            await _userRepository.SaveChangesAsync(); // base
 
             // Create session
             UserSession userSession = CreateSession(user);
-            _baseRepository.Add(userSession);
+            _userRepository.Add(userSession); //base
             await SaveChanges();
+
+            // Generate JWT verification token (1h expiry)
+            string token = TokenHelper.GenerateJwtToken(
+                user.NormalizedUsername, // or Email if added
+                _signingCredentials,
+                issuer: null,
+                audience: null,
+                expiresMinutes: 60
+            );
+
+            // Build verification link
+            string verificationLink = $"{_frontendUrl}/verify-email?token={token}";
+
+            // Build email content (Unicode-safe)
+            string bodyContent = "<p>Hi,</p>" +
+                                 "<p>Please click the link below to verify your email:</p>" +
+                                 $"<p><a href='{verificationLink}'>Verify Email</a></p>" +
+                                 "<p>If you did not register, ignore this email.</p>";
+
+            string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
+
+            // Send verification email
+            await _emailHelper.SendEmailAsync(
+                new List<string> { dto.Mail },
+                "Verify Your Email",
+                htmlContent
+            );
         }
 
-        /// <summary>
-        /// Checks if the mail is unique.
-        /// </summary>
-        /// <param name="mail">The mail to check.</param>
-        /// <exception cref="InvalidOperationException">Thrown if the mail is already taken.</exception>
+        #region Internal helpers
+
         internal void CheckUniqueMail(string mail)
         {
-            if (_userRepository.IsUsernameOccupied(mail))
-            {
-                throw new InvalidOperationException("Username already exists");
-            }
+            if (_userRepository.IsEmailOccupied(mail))
+                throw new InvalidOperationException("Email already exists");
         }
 
-        /// <summary>
-        /// Checks that the repeated password matches the original password.
-        /// </summary>
-        /// <param name="password">The original password.</param>
-        /// <param name="repeatPassword">The repeated password.</param>
-        /// <exception cref="InvalidOperationException">Thrown if passwords do not match.</exception>
+
         internal void CheckRepeatPassword(string password, string repeatPassword)
         {
             if (!PasswordHelper.ValidateRegisterData(password, repeatPassword))
-            {
-                throw new InvalidOperationException("Password does not match");
-            }
+                throw new InvalidOperationException("Passwords do not match");
         }
 
-        /// <summary>
-        /// Checks the strength of the password.
-        /// </summary>
-        /// <param name="password">The password to check.</param>
-        /// <exception cref="InvalidOperationException">Thrown if the password is not strong.</exception>
+
         internal void CheckPasswordRequirements(string password)
         {
             if (!PasswordHelper.IsPasswordStrong(password))
-            {
-                throw new InvalidOperationException("Password is not strong");
-            }
+                throw new InvalidOperationException("Password is not strong enough");
         }
 
-        /// <summary>
-        /// Creates a <see cref="User"/> object.
-        /// </summary>
-        /// <param name="dto">The registration DTO.</param>
-        /// <param name="hashedPassword">The hashed password.</param>
-        /// <returns>The created <see cref="User"/> object.</returns>
+
         internal User CreateUser(RegisterDTO dto, string hashedPassword)
         {
-            User user = new User
+            return new User
             {
                 Id = 0,
                 Uuid = Guid.NewGuid(),
                 Username = dto.Mail,
                 NormalizedUsername = dto.Mail.ToUpperInvariant(),
-                Password = hashedPassword
+                Password = hashedPassword,
+                IsVerified = false // Ensure email not verified initially
             };
-            return user;
         }
 
-        /// <summary>
-        /// Creates a <see cref="UserSession"/> object for the user.
-        /// </summary>
-        /// <param name="user">The user.</param>
-        /// <returns>The created <see cref="UserSession"/> object.</returns>
+
         internal UserSession CreateSession(User user)
         {
-            string generatedRefreshToken = TokenHelper.GenerateRefreshToken();
+            string refreshToken = TokenHelper.GenerateRefreshToken();
 
-            UserSession userSession = new UserSession
+            return new UserSession
+
             {
                 Id = 0,
                 Uuid = user.Uuid,
                 User = user,
                 UserId = user.Id,
-                RefreshToken = generatedRefreshToken,
+                RefreshToken = refreshToken,
                 JwtId = user.Uuid.ToString(),
                 RefreshTokenExpiration = DateTime.UtcNow.AddDays(7),
                 Redeemed = false
             };
-
-            return userSession;
         }
 
-        /// <summary>
-        /// Saves changes in the database asynchronously.
-        /// </summary>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        /// <exception cref="DbUpdateException">Thrown if an error occurs during saving.</exception>
+
         internal async Task SaveChanges()
         {
             try
             {
-                await _baseRepository.SaveChangesAsync();
+                await _userRepository.SaveChangesAsync(); //base
             }
             catch (DbUpdateException ex)
             {
@@ -166,5 +163,8 @@ namespace BusinessLogicLayer.Services
                 throw;
             }
         }
+
+        #endregion
+
     }
 }

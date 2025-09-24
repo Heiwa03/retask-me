@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BusinessLogicLayer.DTOs
+namespace BusinessLogicLayerCore.DTOs
 {
     public class LoginDto
     {
-        [Required]
+        [Required(ErrorMessage = "Email is required")]
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Password is required")]
+
         public string Password { get; set; }
     }
 }

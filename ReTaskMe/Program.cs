@@ -1,3 +1,4 @@
+// Microsoft Packages
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +8,10 @@ using BusinessLogicLayer.Services.Interfaces;
 using DataAccessLayerCore.Repositories.Interfaces;
 using DataAccessLayerCore.Repositories;
 using DataAccessLayerCore;
+using HelperLayer.Security;
+using Azure.Communication.Email;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 // ======================
 // Create builder
@@ -45,6 +50,21 @@ string? publicKeyPem = Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY"); // 
 string? jwtIssuer = Environment.GetEnvironmentVariable("Authorization_Issuer");
 string? jwtAudience = Environment.GetEnvironmentVariable("Authorization_Audience");
 
+// Email
+var mailConnectionString = builder.Configuration["Email:ConnectionString"]
+                           ?? Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING");
+var mailSenderAddress = builder.Configuration["Email:SenderAddress"]
+                        ?? Environment.GetEnvironmentVariable("EMAIL_SENDER_ADDRESS");
+
+if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
+{
+    builder.Services.AddSingleton(sp =>
+    {
+        var client = new EmailClient(mailConnectionString);
+        return new EmailHelper(client, mailSenderAddress);
+    });
+}
+
 // Fallback local file (development)
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
@@ -75,6 +95,17 @@ builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<ILoginChecker, DbLoginChecker>();
+
+// ======================
+// CORS Policy Creation
+// ======================
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name:"FrontEndUI", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200/").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+    });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -121,18 +152,13 @@ builder.Services.AddAuthentication(options =>
 // ======================
 var app = builder.Build();
 
+app.UseCors("FrontEndUI");
 // ======================
 // Middleware
 // ======================
 app.UseSwagger();
 app.UseSwaggerUI();
-
-app.UseCors(policy => policy
-    .WithOrigins("http://localhost:7180", "http://localhost:4200", "http://localhost:5017")
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-);
-
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
