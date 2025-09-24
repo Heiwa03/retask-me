@@ -1,5 +1,4 @@
-﻿using BusinessLogicLayer.Services.Interfaces;
-using BusinessLogicLayerCore.Services.Interfaces;
+﻿using BusinessLogicLayerCore.Services.Interfaces;
 using HelperLayer.Security;
 using System.Collections.Generic;
 using System.Threading.Tasks;

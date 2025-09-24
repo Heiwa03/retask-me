@@ -14,7 +14,7 @@ namespace DataAccessLayerCore.Repositories.Interfaces
         /// </summary>
         /// <param name="email">The email to check.</param>
         /// <returns><c>true</c> if the email is occupied, <c>false</c> otherwise.</returns>
-        bool IsEmailOccupied(string email);
+        bool IsUsernameOccupied(string email);
 
         /// <summary>
         /// Retrieves a user from the database given an email.

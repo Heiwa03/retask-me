@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using HelperLayer.Security.Token;
+using DataAccessLayerCore.Repositories.Interfaces;
 namespace BusinessLogicLayer.Services
 {
     public class AuthService(IUserRepository userRepository, ILoginChecker loginChecker,IConfiguration configuration, SigningCredentials signingCredentials) : IAuthService

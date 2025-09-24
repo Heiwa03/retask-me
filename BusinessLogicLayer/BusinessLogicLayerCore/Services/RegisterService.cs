@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 
 // BL namespaces
-using BusinessLogicLayer.Services.Interfaces;
-using BusinessLogicLayer.DTOs;
+using BusinessLogicLayerCore.Services.Interfaces;
+using BusinessLogicLayerCore.DTOs;
 
 // HL namespaces
 using HelperLayer.Security;
@@ -99,7 +99,7 @@ namespace BusinessLogicLayerCore.Services
 
         internal void CheckUniqueMail(string mail)
         {
-            if (_userRepository.IsEmailOccupied(mail))
+            if (_userRepository.IsUsernameOccupied(mail))
                 throw new InvalidOperationException("Email already exists");
         }
 

@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using BusinessLogicLayer.DTOs;
-using BusinessLogicLayer.Services.Interfaces;
+using BusinessLogicLayerCore.DTOs;
+using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore;
 using BusinessLogicLayerCore.Templates;
 using HelperLayer.Security.Token;

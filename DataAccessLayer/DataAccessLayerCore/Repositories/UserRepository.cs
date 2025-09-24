@@ -25,7 +25,7 @@ namespace DataAccessLayerCore.Repositories
         /// </summary>
         /// <param name="email">The email to check.</param>
         /// <returns><c>true</c> if the email is occupied, <c>false</c> otherwise.</returns>
-        public bool IsEmailOccupied(string email)
+        public bool IsUsernameOccupied (string email)
         {
             return _databaseContext.Users.Any(x => x.NormalizedUsername == email.ToUpper());
         }
@@ -37,7 +37,7 @@ namespace DataAccessLayerCore.Repositories
         /// <returns>
         /// The user object if found in the database, otherwise null.
         /// </returns>
-        public async Task<User?> GetUserByEmail(string email)
+        public async Task<User?> GetUserByUsername(string email)
         {
             var user = await _databaseContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.NormalizedUsername == email.ToUpper());
 
