@@ -1,7 +1,7 @@
 :host { display: block; }
 *, *::before, *::after { box-sizing: border-box; }
 
-/* Layout */
+/* ========== Layout ========== */
 .app-shell {
   display: flex;
   height: 100dvh;
@@ -10,6 +10,8 @@
   background: var(--bg);
   color: var(--text);
 }
+.app-shell.is-blurred { filter: blur(2px); pointer-events: none; }
+
 .sidebar {
   width: 280px;
   background: var(--surface);
@@ -32,7 +34,7 @@
   color: var(--text);
 }
 
-/* Brand */
+/* ========== Brand ========== */
 .brand { display: flex; align-items: center; gap: 10px; }
 .brand__badge{
   width: 34px; height: 34px; display: grid; place-items: center;
@@ -40,7 +42,7 @@
 }
 .brand__name{ font-size: 18px; font-weight: 700; color: var(--text); }
 
-/* Search */
+/* ========== Search ========== */
 .search { position: relative; width: 100%; }
 .search__input{
   width: 100%;
@@ -59,10 +61,10 @@
   transform: translateY(-50%); color: var(--muted); font-size:16px;
 }
 
-/* Titluri */
+/* ========== Titluri ========== */
 .section-title{ margin: 10px 0 6px; font-size: 13px; font-weight: 700; color: var(--text); }
 
-/* Meniu */
+/* ========== Meniu ========== */
 .menu{ display: grid; gap: 8px; }
 .menu__item{
   height: 44px;
@@ -76,7 +78,7 @@
 .menu__item:hover{ filter: brightness(.95); }
 .menu__icon{ font-size:16px; }
 
-/* Lists / Tags */
+/* ========== Lists / Tags ========== */
 .lists__header{ display:flex; justify-content:space-between; align-items:center; }
 .btn-icon{
   width:28px; height:28px; border-radius:50%;
@@ -96,10 +98,10 @@
 .dot--pink{ background:#ef476f; }
 .dot--green{ background:#22c55e; }
 
-/* Footer jos */
+/* ========== Footer ========== */
 .sidebar-footer { margin-top: auto; }
 
-/* Toggle Light/Dark din sidebar */
+/* ========== Theme toggle ========== */
 .theme-toggle{
   position: relative;
   display: grid;
@@ -148,7 +150,7 @@
 .theme-toggle #segLight:checked ~ label[for="segDark"],
 .theme-toggle #segDark:checked  ~ label[for="segLight"] { color: var(--muted); }
 
-/* Carduri și meniuri */
+/* ========== Carduri ========== */
 .greeting-card,
 .tasks-card,
 .stat-card,
@@ -162,10 +164,7 @@
 
 /* Greeting */
 .greeting-card{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
   padding: 18px 20px;
   box-shadow: 0 2px 10px rgba(16,24,40,.06);
   margin-bottom: 16px;
@@ -219,7 +218,7 @@
 .user-card__toggle:checked ~ .user-card__menu{ opacity: 1; transform: translateY(0); pointer-events: auto; }
 .user-card__toggle:checked + .user-card__main .user-card__chev::before{ transform: rotate(135deg); }
 
-/* Stats */
+/* ========== Stats ========== */
 .stats-grid{
   display: grid;
   grid-template-columns: repeat(3, minmax(220px, 1fr));
@@ -230,7 +229,7 @@
 .stat-title{ font-size: 20px; font-weight: 800; line-height: 1.05; margin: 0 0 6px 0; color: var(--text); }
 .stat-value{ font-size: 18px; font-weight: 800; line-height: 1; margin: 0; color: var(--text); }
 
-/* Tasks */
+/* ========== Tasks ========== */
 .tasks-card{
   border-radius: 16px;
   padding: 18px 20px;
@@ -253,7 +252,7 @@
 }
 .btn .i{ margin-right: 8px; }
 
-/* buton secundar pe gri deschis în Light, se inversează pe hover */
+/* secundar */
 .btn-secondary{
   background: var(--surface-2);
   border: 1px solid var(--border);
@@ -294,7 +293,7 @@
 .task__chk:checked + .checkbox::after{ opacity: 1; }
 .task__chk:checked ~ .task-text{ text-decoration: line-through; opacity:.7; }
 
-/* Task right */
+/* right */
 .task-time { color: var(--text); font-weight:700; }
 .task-ops  { display:flex; align-items:center; gap:12px; color: var(--text); }
 .task-ops .ico{ background:transparent; border:0; cursor:pointer; font-size:16px; padding:4px; color: var(--text); }
@@ -329,45 +328,48 @@
   padding:6px; display:grid; gap:4px; z-index:9999; color: var(--text);
 }
 .prio__item{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  height:36px;
-  padding:0 10px;
-  border:0;
-  background: var(--surface);
-  border-radius:8px;
-  font-weight:700;
-  color: var(--text);
-  cursor:pointer;
+  display:flex; align-items:center; gap:8px;
+  height:36px; padding:0 10px; border:0; background: var(--surface);
+  border-radius:8px; font-weight:700; color: var(--text); cursor:pointer;
 }
 .prio__item .dot{ width:10px; height:10px; border-radius:50%; flex:0 0 10px; }
 .dot--high{ background:#f59e0b; }
 .dot--med { background:#3b82f6; }
 .dot--low { background:#22c55e; }
-
 .prio__item:hover{ background: var(--surface-2); }
 
-/* Nu tăia meniul */
+/* overflow safe */
 .tasks-card, .task-row, .task-ops { overflow: visible; }
 
-/* Add task button */
+/* FAB */
 .btn-addTask{
   position: fixed;
-  right: 24px; bottom: 24px;
-  width: 56px; height: 56px;
+  bottom: 24px;
+  right: 24px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  border: 0;
-  background: var(--primary);
-  color: #fff;
-  font-size: 28px;
-  line-height: 56px;
-  text-align: center;
-  box-shadow: 0 10px 18px rgba(109,74,255,.35);
+  border: none;
+  background: #8b5cf6;
+  color: white;
+  font-size: 32px;
+  font-weight: bold;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-addTask:hover { transform: scale(1.1); box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+
+.page.is-blurred {
+  filter: blur(3px);
+  pointer-events: none;
+  user-select: none;
 }
 
-/* Responsive */
+/* ========== Responsive ========== */
 @media (max-width: 1180px){
   .stats-grid{ grid-template-columns: 1fr; }
   .task-row{ grid-template-columns: 1fr auto; }

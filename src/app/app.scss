@@ -1,3 +1,25 @@
 body{
   font-family: "Inter Semi Bold", serif;
+  background:var(--bg); color:var(--text);
+}
+
+:root{
+  --bg:#f8fafc;
+  --surface:#ffffff;
+  --surface-2:#f3f4f6;
+  --text:#0f172a;              /* text în Light = aproape negru */
+  --muted:#64748b;
+  --primary:#8b5cf6;
+  --border:#e5e7eb;
+}
+
+html.theme-dark{
+  --bg:#0b0e14;
+  --surface:#11141b;
+  --surface-2:#151a22;
+  --text:#f1f5f9;              /* text în Dark = alb */
+  --muted:#9aa5b4;
+  --primary:#7c66ff;
+  --border:#23262d;
+  color-scheme: dark;
 }

@@ -1,68 +1,69 @@
-<div class="app-shell">
-  <aside class="sidebar">
-    <!-- Brand -->
-    <div class="brand">
-      <span class="brand__badge">✔</span>
-      <span class="brand__name">RetaskMe</span>
-    </div>
-
-    <!-- Search -->
-    <div class="search">
-      <input class="search__input" type="text" placeholder="Search..." />
-      <span class="search__icon" aria-hidden="true">🔍</span>
-    </div>
-
-    <!-- Main Menu -->
-    <nav class="menu">
-      <h3 class="section-title">Main Menu</h3>
-      <button class="menu__item"><span class="menu__icon">▦</span><span>Dashboard</span></button>
-      <button class="menu__item"><span class="menu__icon">✔</span><span>Task-uri</span></button>
-      <button class="menu__item"><span class="menu__icon">📅</span><span>Calendar</span></button>
-      <button class="menu__item"><span class="menu__icon">🌍</span><span>Maps</span></button>
-    </nav>
-
-    <!-- Lists / Tags -->
-    <section class="lists">
-      <div class="lists__header">
-        <h3 class="section-title">Lists / Tags</h3>
-        <button class="btn-icon" aria-label="Adaugă listă">＋</button>
+<div class="page" [class.is-blurred]="isAddOpen">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <!-- Brand -->
+      <div class="brand">
+        <span class="brand__badge">✔</span>
+        <span class="brand__name">RetaskMe</span>
       </div>
-      <ul class="tag-list" aria-label="tags">
-        <li class="tag-item"><span class="dot dot--blue"></span><span>Personal</span></li>
-        <li class="tag-item"><span class="dot dot--pink"></span><span>Work</span></li>
-        <li class="tag-item"><span class="dot dot--green"></span><span>Improvement</span></li>
-      </ul>
-    </section>
 
-    <!-- Light/Dark jos, sub Lists/Tags -->
-    <div class="sidebar-footer">
-      <div class="theme-toggle" role="tablist" aria-label="Theme">
-        <input type="radio" id="segLight" name="themeSeg"
-               [checked]="selected==='Light'" (change)="setLight()">
-        <input type="radio" id="segDark"  name="themeSeg"
-               [checked]="selected==='Dark'"  (change)="setDark()">
-
-        <span class="theme-thumb" aria-hidden="true"></span>
-
-        <label class="theme-opt" for="segLight">
-          <span class="icon">☀️</span>
-          <span>Light</span>
-        </label>
-
-        <label class="theme-opt" for="segDark">
-          <span class="icon">🌙</span>
-          <span>Dark</span>
-        </label>
+      <!-- Search -->
+      <div class="search">
+        <input class="search__input" type="text" placeholder="Search..." />
+        <span class="search__icon" aria-hidden="true">🔍</span>
       </div>
-    </div>
-  </aside>
 
-  <main class="content">
-    <section class="greeting-card">
-      <div class="greet-left">
-        <h2 class="greet-title">Good Morning, Amelia!</h2>
-        <p class="greet-sub">How do you feel today? 😊</p>
+      <!-- Main Menu -->
+      <nav class="menu">
+        <h3 class="section-title">Main Menu</h3>
+        <button class="menu__item"><span class="menu__icon">▦</span><span>Dashboard</span></button>
+        <button class="menu__item"><span class="menu__icon">✔</span><span>Task-uri</span></button>
+        <button class="menu__item"><span class="menu__icon">📅</span><span>Calendar</span></button>
+        <button class="menu__item"><span class="menu__icon">🌍</span><span>Maps</span></button>
+      </nav>
+
+      <!-- Lists / Tags -->
+      <section class="lists">
+        <div class="lists__header">
+          <h3 class="section-title">Lists / Tags</h3>
+          <button class="btn-icon" aria-label="Adaugă listă">＋</button>
+        </div>
+        <ul class="tag-list" aria-label="tags">
+          <li class="tag-item"><span class="dot dot--blue"></span><span>Personal</span></li>
+          <li class="tag-item"><span class="dot dot--pink"></span><span>Work</span></li>
+          <li class="tag-item"><span class="dot dot--green"></span><span>Improvement</span></li>
+        </ul>
+      </section>
+
+      <!-- Light / Dark -->
+      <div class="sidebar-footer">
+        <div class="theme-toggle" role="tablist" aria-label="Theme">
+          <input type="radio" id="segLight" name="themeSeg"
+                 [checked]="selected==='Light'" (change)="setLight()">
+          <input type="radio" id="segDark"  name="themeSeg"
+                 [checked]="selected==='Dark'"  (change)="setDark()">
+
+          <span class="theme-thumb" aria-hidden="true"></span>
+
+          <label class="theme-opt" for="segLight">
+            <span class="icon">☀️</span>
+            <span>Light</span>
+          </label>
+
+          <label class="theme-opt" for="segDark">
+            <span class="icon">🌙</span>
+            <span>Dark</span>
+          </label>
+        </div>
       </div>
+    </aside>
+
+    <main class="content">
+      <section class="greeting-card">
+        <div class="greet-left">
+          <h2 class="greet-title">Good Morning, Amelia!</h2>
+          <p class="greet-sub">How do you feel today? 😊</p>
+        </div>
 
         <div class="user-card">
           <input type="checkbox" id="userMenu" class="user-card__toggle" />
@@ -89,89 +90,98 @@
             <button class="user-card__item user-card__item--danger" role="menuitem">↩ Logout</button>
           </div>
         </div>
-    </section>
+      </section>
 
-    <section class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-title">Taskuri active</div>
-        <div class="stat-value">5</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-title">Taskuri finalizate</div>
-        <div class="stat-value">3</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-title">Taskuri în întârziere</div>
-        <div class="stat-value">2</div>
-      </div>
-    </section>
-
-    <section class="tasks-card">
-      <div class="tasks-header">
-        <h3 class="tasks-title">Today Tasks</h3>
-        <div class="tasks-actions">
-          <button class="btn btn-secondary"><span class="i">⏱️</span> Focus Mode</button>
-          <button class="btn btn-secondary"><span class="i">✨</span> AI Assist</button>
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-title">Taskuri active</div>
+          <div class="stat-value">5</div>
         </div>
-      </div>
+        <div class="stat-card">
+          <div class="stat-title">Taskuri finalizate</div>
+          <div class="stat-value">3</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Taskuri în întârziere</div>
+          <div class="stat-value">2</div>
+        </div>
+      </section>
 
-      <ul class="task-list">
-        <li class="task-row" *ngFor="let t of tasks; let i = index">
-          <!-- checkbox + text -->
-          <label class="task-left task">
-            <input type="checkbox"
-                   class="task__chk"
-                   [checked]="t.done"
-                   (change)="toggleDone(i, $event)" />
-            <span class="checkbox" aria-hidden="true"></span>
-            <span class="task-text">{{ t.title }}</span>
-          </label>
-
-          <!-- time -->
-          <div class="task-time">{{ t.time }}</div>
-
-          <!-- ops: PRIORITY + edit/delete -->
-          <div class="task-ops">
-            <div class="prio">
-              <button type="button"
-                      class="prio__pill"
-                      [class.is-open]="openIdx === i"
-                      (click)="$event.stopPropagation(); togglePrio(i)">
-                <span class="prio__dot" [ngClass]="dotClass(t.prio)"></span>
-                <span class="prio__text">{{ t.prio || 'Set Priority' }}</span>
-                <span class="prio__chev" aria-hidden="true"></span>
-              </button>
-
-              <ul class="prio__menu"
-                  *ngIf="openIdx === i"
-                  role="menu"
-                  (click)="$event.stopPropagation()">
-                <li>
-                  <button type="button" class="prio__item" (click)="setPrio(i,'High')">
-                    <span class="dot dot--high"></span>
-                    <span>High</span>
-                  </button>
-                </li>
-                <li>
-                  <button type="button" class="prio__item" (click)="setPrio(i,'Medium')">
-                    <span class="dot dot--med"></span>
-                    <span>Medium</span>
-                  </button>
-                </li>
-                <li>
-                  <button type="button" class="prio__item" (click)="setPrio(i,'Low')">
-                    <span class="dot dot--low"></span>
-                    <span>Low</span>
-                  </button>
-                </li>
-              </ul>
-            </div>
-            <button class="ico" aria-label="edit">✎</button>
-            <button class="ico" aria-label="delete">🗑️</button>
+      <section class="tasks-card">
+        <div class="tasks-header">
+          <h3 class="tasks-title">Today Tasks</h3>
+          <div class="tasks-actions">
+            <button class="btn btn-secondary"><span class="i">⏱️</span> Focus Mode</button>
+            <button class="btn btn-secondary"><span class="i">✨</span> AI Assist</button>
           </div>
-        </li>
-      </ul>
-    </section>
-    <button class="btn-addTask" aria-label="add">+</button>
-  </main>
+        </div>
+
+        <ul class="task-list">
+          <li class="task-row" *ngFor="let t of tasks; let i = index">
+            <!-- checkbox + text -->
+            <label class="task-left task">
+              <input type="checkbox"
+                     class="task__chk"
+                     [checked]="t.done"
+                     (change)="toggleDone(i, $event)" />
+              <span class="checkbox" aria-hidden="true"></span>
+              <span class="task-text">{{ t.title }}</span>
+            </label>
+
+            <!-- time -->
+            <div class="task-time">{{ t.time }}</div>
+
+            <!-- ops: PRIORITY + edit/delete -->
+            <div class="task-ops">
+              <div class="prio">
+                <button type="button"
+                        class="prio__pill"
+                        [class.is-open]="openIdx === i"
+                        (click)="$event.stopPropagation(); togglePrio(i)">
+                  <span class="prio__dot" [ngClass]="dotClass(t.prioUI)"></span>
+                  <span class="prio__text">{{ t.prioUI || 'Set Priority' }}</span>
+                  <span class="prio__chev" aria-hidden="true"></span>
+                </button>
+
+                <ul class="prio__menu"
+                    *ngIf="openIdx === i"
+                    role="menu"
+                    (click)="$event.stopPropagation()">
+                  <li>
+                    <button type="button" class="prio__item" (click)="setPrio(i,'High')">
+                      <span class="dot dot--high"></span>
+                      <span>High</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="prio__item" (click)="setPrio(i,'Medium')">
+                      <span class="dot dot--med"></span>
+                      <span>Medium</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="prio__item" (click)="setPrio(i,'Low')">
+                      <span class="dot dot--low"></span>
+                      <span>Low</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <button class="ico" aria-label="edit">✎</button>
+              <button class="ico" aria-label="delete">🗑️</button>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <button class="btn-addTask btn-primary" (click)="openAddTask()">+</button>
+    </main>
+  </div>
 </div>
+
+<!-- Modal = SIBLING (nu e blurat) -->
+<app-add-task-modal
+  [open]="isAddOpen"
+  (closed)="closeAddTask()"
+  (submitted)="saveTask($event)">
+</app-add-task-modal>

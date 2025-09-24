@@ -1,0 +1,106 @@
+<!-- Modal overlay shown only when open=true -->
+<div
+  class="modal"
+  *ngIf="open"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="taskTitle"
+  (click)="closed.emit()"
+>
+  <div class="modal__backdrop"></div>
+
+  <!-- Panel -->
+  <div
+    class="sheet"
+    tabindex="0"
+    (click)="$event.stopPropagation()"
+    (keydown.escape)="closed.emit()"
+  >
+    <div class="sheet__header">
+      <h2 id="taskTitle" class="sheet__title">Add new task</h2>
+      <button type="button" class="sheet__close" (click)="closed.emit()">×</button>
+    </div>
+
+    <div class="sheet__body">
+      <form class="form-card" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <!-- Task name -->
+        <div class="field">
+          <label class="field__label">Task name</label>
+          <input type="text" formControlName="title" placeholder="Task name..." />
+          <div class="hint" *ngIf="form.get('title')?.invalid && form.get('title')?.touched">
+            Please enter a title (min. 2 characters).
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="field">
+          <label class="field__label">Description</label>
+          <textarea formControlName="desc" placeholder="Description..."></textarea>
+        </div>
+
+        <!-- Date / Time -->
+        <div class="grid-2">
+          <div class="field">
+            <label class="field__label">Due date</label>
+            <input type="date" formControlName="dueDate" />
+          </div>
+          <div class="field">
+            <label class="field__label">Due time</label>
+            <input type="time" formControlName="dueTime" />
+          </div>
+        </div>
+
+        <!-- Tag / Priority -->
+        <div class="grid-2">
+          <div class="field">
+            <label class="field__label">Tag</label>
+            <select>
+              <option value="personal">Personal</option>
+              <option value="work">Work</option>
+              <option value="improvement">Improvement</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="field__label">Priority</label>
+            <select formControlName="prio">
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="subtasks">
+          <div class="subtasks__head">
+            <label class="field__label" style="margin:0">Subtasks</label>
+            <button type="button" class="icon-btn" (click)="addSubtask()">＋</button>
+          </div>
+
+          <div formArrayName="subtasks">
+            <div class="subtasks__list">
+              <div
+                class="subtask"
+                *ngFor="let s of subtasks.controls; let i = index"
+                [formGroupName]="i"
+              >
+                <input type="checkbox" class="subtask__chk" formControlName="done" />
+                <input
+                  type="text"
+                  class="subtask__text"
+                  formControlName="text"
+                  placeholder="Subtask..."
+                />
+                <button type="button" class="subtask__remove" (click)="removeSubtask(i)">×</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary btn-block" type="submit" [disabled]="form.invalid">
+          Create
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
