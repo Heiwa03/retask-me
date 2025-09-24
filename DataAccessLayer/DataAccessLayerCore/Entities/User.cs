@@ -16,3 +16,4 @@ public class User : BaseId
     public int Gender {get; set; }
     public bool IsVerified { get; set; } = false;
 }
+

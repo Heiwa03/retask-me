@@ -4,10 +4,12 @@ namespace BusinessLogicLayerCore.DTOs
 {
     public class LoginDto
     {
-        [Required]
-        public string Username { get; set; }
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress]
+        public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Password is required")]
+
         public string Password { get; set; }
     }
 }
