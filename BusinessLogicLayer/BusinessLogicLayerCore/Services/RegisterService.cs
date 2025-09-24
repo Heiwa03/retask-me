@@ -25,20 +25,20 @@ namespace BusinessLogicLayerCore.Services
         private readonly IUserRepository _userRepository;
 
         private readonly IBaseRepository _baseRepository;
-        private readonly EmailHelper _emailHelper;
+        private readonly IEmailService _emailService;
         private readonly SigningCredentials _signingCredentials;
         private readonly string _frontendUrl;
 
         public RegisterService(
             IUserRepository userRepository,
             IBaseRepository baseRepository,
-            EmailHelper emailHelper,
+            IEmailService emailService,
             SigningCredentials signingCredentials,
             IConfiguration configuration)
         {
             _userRepository = userRepository;
             _baseRepository = baseRepository;
-            _emailHelper = emailHelper;
+            _emailService = emailService;
             _signingCredentials = signingCredentials;
             _frontendUrl = configuration["Frontend:BaseUrl"] ?? throw new ArgumentNullException("Frontend:BaseUrl missing");
         }
@@ -87,15 +87,14 @@ namespace BusinessLogicLayerCore.Services
 
             string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
 
-            // Send verification email
-            await _emailHelper.SendEmailAsync(
+            // 8?? Send verification email
+            await _emailService.SendEmailAsync(
                 new List<string> { dto.Mail },
                 "Verify Your Email",
                 htmlContent
             );
         }
 
-        #region Internal helpers
 
         internal void CheckUniqueMail(string mail)
         {
@@ -163,8 +162,6 @@ namespace BusinessLogicLayerCore.Services
                 throw;
             }
         }
-
-        #endregion
 
     }
 }

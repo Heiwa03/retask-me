@@ -1,11 +1,7 @@
 
 // System
 using System.ComponentModel.DataAnnotations;
-
-// DAl
 using DataAccessLayerCore.Enum;
-
-// idk
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Query;
 
