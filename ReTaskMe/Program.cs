@@ -7,7 +7,10 @@ using BusinessLogicLayer.Services.Interfaces;
 using DataAccessLayerCore.Repositories.Interfaces;
 using DataAccessLayerCore.Repositories;
 using DataAccessLayerCore;
-using HelperLayer.Email;
+using HelperLayer.Security;
+using Azure.Communication.Email;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 // ======================
 // Create builder
