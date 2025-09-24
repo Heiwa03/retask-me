@@ -7,6 +7,7 @@ using BusinessLogicLayer.Services.Interfaces;
 using DataAccessLayerCore.Repositories.Interfaces;
 using DataAccessLayerCore.Repositories;
 using DataAccessLayerCore;
+using HelperLayer.Email;
 
 // ======================
 // Create builder
