@@ -23,13 +23,6 @@ namespace DataAccessLayerCore.Repositories.Interfaces
         /// <returns>
         /// The user object if found in the database, otherwise null.
         /// </returns>
-        Task<User?> GetUserByUsername(string email);
-
-        /// <summary>
-        /// Retrieves a user session by the provided refresh token.
-        /// </summary>
-        /// <param name="refreshToken">The refresh token used to identify the user session.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation. The result is a nullable <see cref="UserSession"/> object if found, otherwise <c>null</c>.</returns>
-        Task<UserSession?> GetSessionByRefreshToken(string refreshToken);
+        Task<User?> GetUserByUsername(string username);
     }
 }

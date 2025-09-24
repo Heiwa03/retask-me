@@ -25,7 +25,7 @@ namespace DataAccessLayerCore.Repositories
         /// </summary>
         /// <param name="name">The email to check.</param>
         /// <returns><c>true</c> if the email is occupied, <c>false</c> otherwise.</returns>
-        public bool IsUsernameOccupied(string email)
+        public bool IsUsernameOccupied (string email)
         {
             return _databaseContext.Users.Any(x => x.NormalizedUsername == email.ToUpper());
         }
@@ -42,19 +42,6 @@ namespace DataAccessLayerCore.Repositories
             var user = await _databaseContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.NormalizedUsername == email.ToUpper());
 
             return user;
-        }
-
-        /// <summary>
-        /// Retrieves a user session by the provided refresh token.
-        /// </summary>
-        /// <param name="refreshToken">The refresh token used to identify the user session.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation. The result is a nullable <see cref="UserSession"/> object if found, otherwise <c>null</c>.</returns>
-        public async Task<UserSession?> GetSessionByRefreshToken(string refreshToken)
-        {
-            var session = await _databaseContext.UserSessions.Include(x => x.User)
-                .FirstOrDefaultAsync(x => x.RefreshToken == refreshToken);
-
-            return session;
         }
     }
 }
