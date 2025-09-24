@@ -59,7 +59,6 @@ public class TaskServiceFixture
         Status = StatusTask.Done,
         Priority = PriorityTask.Medium
     };
-    
     // DailyTask-шаблон
     public static DailyTask TestTask => new DailyTask
     {
@@ -130,7 +129,6 @@ public class TaskServiceFixture
         Assert.Equal(user.Id, createdTask.UserId);
         Assert.NotEqual(Guid.Empty, createdTask.Uuid);
     }
-
     [Fact]
     public async Task GetTask_ShouldReturnTask_WhenTaskExists()
     {
@@ -236,5 +234,5 @@ public class TaskServiceFixture
 
         _taskRepository.Verify(r => r.GetTaskByUserUidAsync(userUid, task.Uuid), Times.Once);
     }
-    
+
 }

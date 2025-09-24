@@ -2,7 +2,6 @@ namespace DataAccessLayerCore.Entities;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using DataAccessLayerCore.Enum;
 using Microsoft.EntityFrameworkCore;
 
 [Index(nameof(Id), IsUnique = true)]

@@ -13,9 +13,9 @@ public class DailyTask : BaseId
     public Guid UserUuid { get; set; }
     public virtual required User User { get; set; }
 
-    // public long? BoardId { get; set; }
-    // public Guid? BoardUuid { get; set; }
-    // [ForeignKey(nameof(BoardId))] public required Board? Board { get; set; }
+    public long? BoardId { get; set; }
+    public Guid? BoardUuid { get; set; }
+    [ForeignKey(nameof(BoardId))] public Board? Board { get; set; }
 
     [StringLength(50)] public required string Title { get; set; }
     [StringLength(255)] public string? Description { get; set; }

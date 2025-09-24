@@ -8,5 +8,6 @@ namespace DataAccessLayerCore
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserSession> UserSessions { get; set; }
         public virtual DbSet<DailyTask> Tasks {get; set;}
+        public virtual DbSet<Board> Board {get; set; }
     }
 }
