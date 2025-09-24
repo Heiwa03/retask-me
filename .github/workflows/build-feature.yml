@@ -1,0 +1,77 @@
+name: ReTaskMe - Build & Deploy Backend
+
+on:
+  push:
+    branches:
+      - devel
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '9.0.x'
+
+  AZURE_REGION: 'westeurope'
+  RESOURCE_GROUP_NAME: 'retaskme'
+  BACKEND_APP_NAME: 'retaskme'
+
+  REGISTRY: ${{ secrets.DOCKER_REGISTRY_SERVER_URL }}
+  REGISTRY_BACKEND: ${{ secrets.DOCKER_REGISTRY_SERVER_URL }}/retaskme-app
+
+  BUILD_NUMBER: ${{ github.run_number }}
+  BRANCH_NAME: 'devel'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build & Deploy Backend
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore & Build Backend
+        run: |
+          dotnet restore ./ReTaskMe/ReTaskMe.sln
+          dotnet build ./ReTaskMe/ReTaskMe.sln --configuration Release --no-restore
+
+      - name: Run Backend Tests
+        run: |
+          dotnet test ./ReTaskMe/ReTaskMe.sln --configuration Release --no-build
+
+      - name: Azure Login with Service Principal
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}", "clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}", "tenantId":"${{ secrets.AZURE_TENANT_ID }}", "subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}"}'
+
+      - name: Build Docker Image
+        run: |
+          SHORT_SHA=${GITHUB_SHA::8}
+          docker build -f ./ReTaskMe/Dockerfile \
+            -t ${{ env.REGISTRY_BACKEND }}:latest \
+            -t ${{ env.REGISTRY_BACKEND }}:$SHORT_SHA .
+
+      - name: Login to ACR
+        run: |
+          echo "${{ secrets.DOCKER_REGISTRY_SERVER_PASSWORD }}" | docker login ${{ env.REGISTRY }} \
+            --username ${{ secrets.DOCKER_REGISTRY_SERVER_USERNAME }} --password-stdin
+
+      - name: Push Docker Image
+        run: |
+          docker push ${{ env.REGISTRY_BACKEND }} --all-tags
+
+      - name: Update App Service to use Docker image
+        run: |
+          az webapp config container set \
+            --name ${{ env.BACKEND_APP_NAME }} \
+            --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
+            --docker-custom-image-name ${{ env.REGISTRY_BACKEND }}:latest \
+            --docker-registry-server-url ${{ env.REGISTRY }} \
+            --docker-registry-server-user ${{ secrets.DOCKER_REGISTRY_SERVER_USERNAME }} \
+            --docker-registry-server-password ${{ secrets.DOCKER_REGISTRY_SERVER_PASSWORD }}
+
+      - name: Azure logout
+        run: az logout

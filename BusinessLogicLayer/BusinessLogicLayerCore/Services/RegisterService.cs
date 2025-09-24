@@ -47,37 +47,37 @@ namespace BusinessLogicLayer.Services
         /// </summary>
         public async Task RegisterUser(RegisterDTO dto)
         {
-            // 1?? Validate input
+            // Validate input
             CheckUniqueMail(dto.Mail);
             CheckRepeatPassword(dto.Password, dto.RepeatPassword);
             CheckPasswordRequirements(dto.Password);
 
-            // 2?? Hash password
+            //  Hash password
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
 
-            // 3?? Create user
+            // Create user
             User user = CreateUser(dto, hashedPassword);
             _baseRepository.Add(user);
             await _baseRepository.SaveChangesAsync();
 
-            // 4?? Create session
+            // Create session
             UserSession userSession = CreateSession(user);
             _baseRepository.Add(userSession);
             await SaveChanges();
 
-            // 5?? Generate JWT verification token (1h expiry)
+            // Generate JWT verification token (1h expiry)
             string token = TokenHelper.GenerateJwtToken(
                 user.NormalizedUsername, // or Email if added
                 _signingCredentials,
                 issuer: null,
                 audience: null,
-                expiresMinutes: 2
+                expiresMinutes: 60
             );
 
-            // 6?? Build verification link
+            // Build verification link
             string verificationLink = $"{_frontendUrl}/verify-email?token={token}";
 
-            // 7?? Build email content (Unicode-safe)
+            // Build email content (Unicode-safe)
             string bodyContent = "<p>Hi,</p>" +
                                  "<p>Please click the link below to verify your email:</p>" +
                                  $"<p><a href='{verificationLink}'>Verify Email</a></p>" +
@@ -85,7 +85,7 @@ namespace BusinessLogicLayer.Services
 
             string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
 
-            // 8?? Send verification email
+            // Send verification email
             await _emailHelper.SendEmailAsync(
                 new List<string> { dto.Mail },
                 "Verify Your Email",
@@ -131,6 +131,7 @@ namespace BusinessLogicLayer.Services
             string refreshToken = TokenHelper.GenerateRefreshToken();
 
             return new UserSession
+
             {
                 Id = 0,
                 Uuid = user.Uuid,
@@ -157,5 +158,6 @@ namespace BusinessLogicLayer.Services
         }
 
         #endregion
+
     }
 }
