@@ -23,7 +23,7 @@ namespace DataAccessLayerCore.Repositories
         /// <summary>
         /// Checks if an email is occupied.
         /// </summary>
-        /// <param name="email">The email to check.</param>
+        /// <param name="name">The email to check.</param>
         /// <returns><c>true</c> if the email is occupied, <c>false</c> otherwise.</returns>
         public bool IsUsernameOccupied (string email)
         {

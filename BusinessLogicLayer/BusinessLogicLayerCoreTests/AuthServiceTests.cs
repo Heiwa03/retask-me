@@ -1,8 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using BusinessLogicLayer.Services;
-using BusinessLogicLayer.Services.Interfaces;
+using BusinessLogicLayerCore.Services;
+using BusinessLogicLayerCore.Services.Interfaces;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

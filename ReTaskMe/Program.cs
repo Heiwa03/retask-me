@@ -3,16 +3,16 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
-using BusinessLogicLayer.Services;
-using BusinessLogicLayer.Services.Interfaces;
+using BusinessLogicLayerCore.Services;
+using DataAccessLayerCore;
 using DataAccessLayerCore.Repositories.Interfaces;
 using DataAccessLayerCore.Repositories;
-using DataAccessLayerCore;
 using HelperLayer.Security;
 using Azure.Communication.Email;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-
+using BusinessLogicLayerCore.Services.Interfaces;
+using BusinessLogicLayer.Services;
 // ======================
 // Create builder
 // ======================
@@ -63,6 +63,7 @@ if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpa
         var client = new EmailClient(mailConnectionString);
         return new EmailHelper(client, mailSenderAddress);
     });
+    builder.Services.AddScoped<IEmailService, EmailService>();
 }
 
 // Fallback local file (development)
@@ -94,7 +95,6 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
-builder.Services.AddScoped<ILoginChecker, DbLoginChecker>();
 
 // ======================
 // CORS Policy Creation
