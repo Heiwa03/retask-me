@@ -3,11 +3,7 @@
     <h1 class="card__title">Sign up for Retask_ME</h1>
 
     <div class="field">
-      <input class="input" type="text" name="fullName" [(ngModel)]="fullName" placeholder="Full Name" required>
-    </div>
-
-    <div class="field">
-      <input class="input" type="email" name="email" [(ngModel)]="email" placeholder="Email" required>
+      <input class="input" type="email" name="mail" [(ngModel)]="mail" placeholder="Email" required>
     </div>
 
     <div class="field">
@@ -15,10 +11,16 @@
     </div>
 
     <div class="field">
-      <input class="input" type="password" name="confirmPassword" [(ngModel)]="confirmPassword" placeholder="Confirm Password" required>
+      <input class="input" type="password" name="repeatPassword" [(ngModel)]="repeatPassword" placeholder="Repeat Password" required>
     </div>
 
-    <button type="submit" class="cta">Sign up</button>
+
+
+    <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <button type="submit" class="cta" [disabled]="isLoading">
+      <span *ngIf="!isLoading">Sign up</span>
+      <span *ngIf="isLoading">Creating account...</span>
+    </button>
 
     <div class="divider"></div>
 
@@ -29,7 +31,7 @@
 
     <p class="alt">Already have an account? <a routerLink="/login" class="alt__link">Log in</a></p>
 
-    
+
   </form>
 
   <div class="theme-switch">

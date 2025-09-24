@@ -2,8 +2,9 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../data/services/auth.service';
+import { AuthService, UserRole } from '../../data/services/auth.service';
 import { ChatGPTService } from '../../data/services/chatgpt.service';
+import { DbContextService, DbCheckResponse } from '../../data/services/db-context.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,6 +17,7 @@ export class Dashboard {
   private auth = inject(AuthService);
   private router = inject(Router);
   private chatGPT = inject(ChatGPTService);
+  private dbContext = inject(DbContextService);
   isProfileOpen = false;
   isAIAssistOpen = false;
   userAvatar = 'https://via.placeholder.com/40x40/6366f1/ffffff?text=AY'; // Default avatar
@@ -24,6 +26,8 @@ export class Dashboard {
   aiMessage = '';
   aiResponse = '';
   isAILoading = false;
+  dbStatus: DbCheckResponse | null = null;
+  isDbLoading = false;
   
   tasks = [
     { id: 1, title: 'Create design for app', time: '07:00 - 09:00', priority: 'high', completed: false },
@@ -41,6 +45,9 @@ export class Dashboard {
       const chk = document.getElementById('dashThemeSwitch') as HTMLInputElement | null;
       if (chk) chk.checked = !dark; // checked = Light
     });
+    
+    // Check database connection on dashboard load
+    this.checkDatabaseStatus();
   }
 
   onThemeToggle(e: Event) {
@@ -135,6 +142,61 @@ export class Dashboard {
 
   setDarkTheme() {
     this.onThemeToggle({ target: { checked: false } } as any);
+  }
+
+  checkDatabaseStatus() {
+    this.isDbLoading = true;
+    this.dbContext.checkDatabaseConnection().subscribe({
+      next: (response) => {
+        this.dbStatus = response;
+        this.isDbLoading = false;
+        console.log('Database Status:', response);
+      },
+      error: (error) => {
+        console.error('Database check failed:', error);
+        this.isDbLoading = false;
+        this.dbStatus = { canConnect: false, userCount: 0 };
+      }
+    });
+  }
+
+  refreshDatabaseStatus() {
+    this.checkDatabaseStatus();
+  }
+
+  testBackendConnection() {
+    console.log('Testing backend connection...');
+    this.auth.testConnection().subscribe({
+      next: (response) => {
+        console.log('Backend connection successful:', response);
+        alert('Backend connection successful!');
+      },
+      error: (error) => {
+        console.error('Backend connection failed:', error);
+        alert('Backend connection failed. Check console for details.');
+      }
+    });
+  }
+
+  testRegisterAPI() {
+    console.log('Testing register API...');
+    const testData = {
+      mail: 'test@example.com',
+      password: 'testpassword',
+      repeatPassword: 'testpassword',
+      role: UserRole.USER
+    };
+    
+    this.auth.register(testData).subscribe({
+      next: (response) => {
+        console.log('Register API Response:', response);
+        alert(`Register test result: ${response.success ? 'Success' : 'Failed'} - ${response.message}`);
+      },
+      error: (error) => {
+        console.error('Register API Error:', error);
+        alert('Register API test failed. Check console for details.');
+      }
+    });
   }
 }
 

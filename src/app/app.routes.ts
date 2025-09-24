@@ -10,6 +10,7 @@ import { AuthService } from './data/services/auth.service';
 import { Dashboard } from './common-ui/dashboard/dashboard';
 import { RootGate } from './common-ui/root-gate/root-gate';
 import { NotFound } from './common-ui/not-found/not-found';
+import { ApiDocsComponent } from './common-ui/api-docs/api-docs';
 
 const AuthGuard = () => {
   const auth = inject(AuthService);
@@ -34,6 +35,7 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPassword, canActivate: [GuestGuard] },
   { path: 'register-details', component: RegisterDetails, canActivate: [GuestGuard] },
   { path: 'dashboard', component: Dashboard, canActivate: [AuthGuard] },
+  { path: 'api-docs', component: ApiDocsComponent },
   { path: '**', component: NotFound }
 ];
 

@@ -3,7 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { inject } from '@angular/core';
-import { AuthService } from '../../data/services/auth.service';
+import { AuthService, LoginRequest } from '../../data/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +15,8 @@ import { AuthService } from '../../data/services/auth.service';
 export class Login {
   email = '';
   password = '';
+  isLoading = false;
+  errorMessage = '';
   private auth = inject(AuthService);
   private router = inject(Router);
 
@@ -35,8 +37,34 @@ export class Login {
   }
 
   onSubmit() {
-    this.auth.login();
-    this.router.navigateByUrl('/dashboard');
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Please fill in all fields';
+      return;
+    }
+
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    const loginData: LoginRequest = {
+      email: this.email,
+      password: this.password
+    };
+
+    this.auth.login(loginData).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        if (response.success) {
+          this.router.navigateByUrl('/dashboard');
+        } else {
+          this.errorMessage = response.message || 'Login failed';
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = 'Login failed. Please check your credentials.';
+        console.error('Login error:', error);
+      }
+    });
   }
 }
 

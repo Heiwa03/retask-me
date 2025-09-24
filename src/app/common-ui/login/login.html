@@ -12,7 +12,11 @@
 
     <a routerLink="/forgot-password" class="alt"><span class="alt__link">Forgot your password?</span></a>
 
-    <button type="submit" class="cta">Log in</button>
+    <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <button type="submit" class="cta" [disabled]="isLoading">
+      <span *ngIf="!isLoading">Log in</span>
+      <span *ngIf="isLoading">Logging in...</span>
+    </button>
 
     <div class="divider"></div>
 

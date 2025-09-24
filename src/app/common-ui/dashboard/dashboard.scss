@@ -33,10 +33,20 @@
 .user__name { font-weight: 700; }
 .user__role { color: var(--muted); }
 
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0; }
-.stat { background: var(--surface); border: 1px solid var(--primary); border-radius: 14px; padding: 16px; text-align: center; color: var(--text); }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 20px 0; }
+.stat { background: var(--surface); border: 1px solid var(--primary); border-radius: 14px; padding: 16px; text-align: center; color: var(--text); position: relative; }
 .stat__title { color: var(--muted); margin-bottom: 6px; }
 .stat__value { font-size: 26px; font-weight: 800; }
+.stat__value--success { color: #22c55e; }
+.stat__value--error { color: #ef4444; }
+.stat__subtitle { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.stat__refresh { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border: none; background: var(--surface-2); color: var(--muted); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+.stat__refresh:hover:not(:disabled) { background: var(--border); color: var(--text); }
+.stat__refresh:disabled { opacity: 0.5; cursor: not-allowed; }
+.stat__test { position: absolute; top: 8px; right: 40px; width: 24px; height: 24px; border: none; background: var(--surface-2); color: var(--muted); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+.stat__test:hover { background: var(--border); color: var(--text); }
+.stat__test-register { position: absolute; top: 8px; right: 72px; width: 24px; height: 24px; border: none; background: var(--surface-2); color: var(--muted); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+.stat__test-register:hover { background: var(--border); color: var(--text); }
 
 .tasks__header { display: flex; align-items: center; justify-content: space-between; margin: 6px 0 12px; }
 .tasks__title { margin: 0; color: var(--text); }

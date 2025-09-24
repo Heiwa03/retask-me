@@ -1,25 +1,32 @@
 import {Component, inject} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HttpClient} from '@angular/common/http';
+import {CommonModule} from '@angular/common';
+import {Router} from '@angular/router';
+import {RegisterDetailsService, RegisterDetailsRequest} from '../../data/services/register-details';
 
 @Component({
   selector: 'app-register-details',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    CommonModule
   ],
   templateUrl: './register-details.html',
   styleUrl: './register-details.scss'
 })
 export class RegisterDetails {
-  http = inject(HttpClient);
+  private registerDetailsService = inject(RegisterDetailsService);
+  private router = inject(Router);
   firstName = '';
   lastName = '';
   email = '';
   dob: string | null = null;
   isDobFocused = false;
   gender = '';
+  isLoading = false;
+  errorMessage = '';
+  successMessage = '';
 
   openDobPicker(input: HTMLInputElement): void {
     const anyInput = input as any;
@@ -49,5 +56,42 @@ export class RegisterDetails {
     const isLight = (e.target as HTMLInputElement).checked;
     document.documentElement.classList.toggle('theme-dark', !isLight);
     localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+
+  onSubmit() {
+    if (!this.firstName || !this.lastName || !this.dob || !this.gender) {
+      this.errorMessage = 'Please fill in all fields';
+      return;
+    }
+
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    const details: RegisterDetailsRequest = {
+      firstName: this.firstName,
+      lastName: this.lastName,
+      dateOfBirth: this.dob,
+      gender: this.gender
+    };
+
+    this.registerDetailsService.submitRegisterDetails(details).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        if (response.success) {
+          this.successMessage = 'Details submitted successfully!';
+          setTimeout(() => {
+            this.router.navigateByUrl('/dashboard');
+          }, 2000);
+        } else {
+          this.errorMessage = response.message || 'Failed to submit details';
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = 'Failed to submit details. Please try again.';
+        console.error('Register details error:', error);
+      }
+    });
   }
 }

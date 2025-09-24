@@ -15,10 +15,11 @@ export class RootGate {
   private router = inject(Router);
 
   ngOnInit() {
-    if (!this.auth.isAuthenticated()) {
-      this.auth.login();
+    if (this.auth.isAuthenticated()) {
+      this.router.navigateByUrl('/dashboard');
+    } else {
+      this.router.navigateByUrl('/login');
     }
-    this.router.navigateByUrl('/dashboard');
   }
 }
 
