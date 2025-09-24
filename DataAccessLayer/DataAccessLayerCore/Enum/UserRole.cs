@@ -1,4 +1,5 @@
-namespace BusinessLogicLayerCore.Enums{
+namespace DataAccessLayerCore.Enum{
+
     public enum UserRole{
         Guest = 0,
         Client = 100,
