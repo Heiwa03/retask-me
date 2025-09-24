@@ -2,8 +2,9 @@ using BusinessLogicLayerCore.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using HelperLayer.Security.Token;
+using System.Collections.Concurrent;
 using DataAccessLayerCore.Repositories.Interfaces;
-namespace BusinessLogicLayer.Services
+namespace BusinessLogicLayerCore.Services
 {
     public class AuthService : IAuthService
     {
