@@ -65,6 +65,7 @@ if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpa
     });
     builder.Services.AddScoped<IEmailService, EmailService>();
 }
+
 // Fallback local file (development)
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
@@ -74,7 +75,6 @@ if (string.IsNullOrWhiteSpace(privateKeyPem))
         privateKeyPem = File.ReadAllText(pemPath);
     }
 }
-
 
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
@@ -95,7 +95,6 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
-
 
 // ======================
 // CORS Policy Creation
@@ -147,7 +146,6 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.FromMinutes(2)
     };
 });
-
 
 // ======================
 // Build app
