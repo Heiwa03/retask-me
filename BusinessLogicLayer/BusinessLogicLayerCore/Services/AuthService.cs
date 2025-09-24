@@ -1,11 +1,10 @@
-﻿using BusinessLogicLayer.Services;
-using BusinessLogicLayer.Services.Interfaces;
+﻿using BusinessLogicLayerCore.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using HelperLayer.Security.Token;
 namespace BusinessLogicLayer.Services
 {
-    public class AuthService : IAuthService
+    public class AuthService(IUserRepository userRepository, ILoginChecker loginChecker,IConfiguration configuration, SigningCredentials signingCredentials) : IAuthService
     {
         private readonly ILoginChecker _loginChecker;
 
@@ -14,6 +13,7 @@ namespace BusinessLogicLayer.Services
         private readonly string? _issuer;
         private readonly string? _audience;
         private static readonly Dictionary<string, string> _refreshTokenToEmail = new();
+
 
         public AuthService(ILoginChecker loginChecker, IConfiguration configuration, SigningCredentials signingCredentials)
         {
@@ -33,7 +33,7 @@ namespace BusinessLogicLayer.Services
                 return Task.FromResult(new AuthResponse { Token = token, RefreshToken = refreshToken });
             }
 
-            return Task.FromResult<AuthResponse>(null);
+            return new AuthResponse();
         }
 
         public Task<AuthResponse> RefreshAsync(string refreshToken)

@@ -1,6 +1,6 @@
-using BusinessLogicLayer.DTOs;
+using BusinessLogicLayerCore.DTOs;
 
-namespace BusinessLogicLayer.Services.Interfaces{
+namespace BusinessLogicLayerCore.Services.Interfaces{
     public interface IRegisterService{
         // 1. Main method for register
         Task RegisterUser(RegisterDTO dto);
