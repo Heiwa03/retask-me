@@ -31,8 +31,8 @@ namespace DataAccessLayerCore.Repositories.Interfaces
         /// </summary>
         /// <param name="refreshToken">The refresh token to be redeemed.</param>
         /// <param name="jwtId">The new JWT ID to associate with the session.</param>
-        /// <returns>A Task representing the asynchronous operation.</returns>
-        Task RedeemRefreshTokenAsync(string refreshToken, string jwtId);
+        /// <returns>Boolean True if Session was found, otherwise false.</returns>
+        Task<bool> RedeemRefreshTokenAsync(string refreshToken, string jwtId);
 
         /// <summary>
         /// Removes all user sessions for a specific user.
