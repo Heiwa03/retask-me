@@ -45,6 +45,20 @@ string? publicKeyPem = Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY"); // 
 string? jwtIssuer = Environment.GetEnvironmentVariable("Authorization_Issuer");
 string? jwtAudience = Environment.GetEnvironmentVariable("Authorization_Audience");
 
+// Email
+var mailConnectionString = builder.Configuration["Email:ConnectionString"]
+                           ?? Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING");
+var mailSenderAddress = builder.Configuration["Email:SenderAddress"]
+                        ?? Environment.GetEnvironmentVariable("EMAIL_SENDER_ADDRESS");
+
+if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
+{
+    builder.Services.AddSingleton(sp =>
+    {
+        var client = new EmailClient(mailConnectionString);
+        return new EmailHelper(client, mailSenderAddress);
+    });
+}
 // Fallback local file (development)
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
@@ -138,7 +152,7 @@ app.UseCors("FrontEndUI");
 // ======================
 app.UseSwagger();
 app.UseSwaggerUI();
-
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
