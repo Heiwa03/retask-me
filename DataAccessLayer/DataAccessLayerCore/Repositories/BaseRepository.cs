@@ -101,6 +101,12 @@ namespace DataAccessLayerCore.Repositories
         /// <exception cref="ArgumentNullException">Thrown if the entity is null.</exception>
         public void Update<TEntity>(TEntity entity) where TEntity : BaseId
         {
+            // The explicit null check
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             databaseContext.Set<TEntity>().Update(entity);
         }
 

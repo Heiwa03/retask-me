@@ -15,7 +15,7 @@ namespace BusinessLogicLayer.Services
 
         public bool CheckCredentials(string email, string password)
         {
-            var user = _userRepository.GetUserByEmail(email).GetAwaiter().GetResult();
+            var user = _userRepository.GetUserByUsername(email).GetAwaiter().GetResult();
             if (user == null)
             {
                 return false;

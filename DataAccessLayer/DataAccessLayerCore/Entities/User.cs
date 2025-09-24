@@ -12,4 +12,6 @@ public class User : BaseId
 
     // New property to track email verification
     public bool IsVerified { get; set; } = false;
+    //public required DateTime RegistrationDate { get; set; }
 }
+
