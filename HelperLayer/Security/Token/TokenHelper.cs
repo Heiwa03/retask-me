@@ -30,5 +30,20 @@ namespace HelperLayer.Security.Token{
             var randomBytes = RandomNumberGenerator.GetBytes(64);
             return Convert.ToBase64String(randomBytes); 
         }
+        public static string ValidateJwtToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadJwtToken(token);
+
+            // Optional: validate expiry
+            if (jwtToken.ValidTo < DateTime.UtcNow)
+                throw new SecurityTokenExpiredException();
+
+            var email = jwtToken.Subject; // "sub" claim
+            if (string.IsNullOrEmpty(email))
+                throw new SecurityTokenException("Invalid token");
+
+            return email;
+        }
     }
 }
