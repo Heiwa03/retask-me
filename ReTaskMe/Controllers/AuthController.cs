@@ -13,27 +13,18 @@ using System.Threading.Tasks;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController(
+    IAuthService authService,
+    DatabaseContext databaseContext,
+    SigningCredentials signingCredentials,
+    IConfiguration configuration,
+    EmailHelper emailHelper) : ControllerBase
 {
-    private readonly IAuthService _authService;
-    private readonly DatabaseContext _databaseContext;
-    private readonly SigningCredentials _signingCredentials;
-    private readonly string _frontendUrl;
-    private readonly EmailHelper _emailHelper;
-
-    public AuthController(
-        IAuthService authService,
-        DatabaseContext databaseContext,
-        SigningCredentials signingCredentials,
-        IConfiguration configuration,
-        EmailHelper emailHelper)
-    {
-        _authService = authService;
-        _databaseContext = databaseContext;
-        _signingCredentials = signingCredentials;
-        _frontendUrl = configuration["Frontend:BaseUrl"];
-        _emailHelper = emailHelper;
-    }
+    private readonly IAuthService _authService = authService;
+    private readonly DatabaseContext _databaseContext = databaseContext;
+    private readonly SigningCredentials _signingCredentials = signingCredentials;
+    private readonly string _frontendUrl = configuration["Frontend:BaseUrl"];
+    private readonly EmailHelper _emailHelper = emailHelper;
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
