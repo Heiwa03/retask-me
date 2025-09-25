@@ -11,7 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, Login, RegisterDetails, JsonPipe, Dashboard, HttpClientModule],
+  imports: [RouterOutlet, RegisterDetails, JsonPipe, Dashboard, HttpClientModule],
   templateUrl: './app.html',
   styleUrls: ['./app.scss']
 })
@@ -29,4 +29,8 @@ export class App {
         console.log('forgot-password test:', val);
       });
    }
+
+  toggleTheme() {
+    // Theme toggle functionality can be implemented here if needed
+  }
 }

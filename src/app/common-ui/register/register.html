@@ -1,33 +1,58 @@
-<div class="login-container">
-  <div class="login-card">
-    <h2 class="title">Sign up for Retask_ME</h2>
+<main class="page">
+  <form class="card" novalidate (ngSubmit)="onSubmit()">
+    <h1 class="card__title">Sign up for Retask_ME</h1>
 
-    <form>
-      <input type="text" placeholder="Full Name" required />
-      <input type="email" placeholder="Email" required />
-      <input type="password" placeholder="Password" required />
-      <input type="password" placeholder="Confirm Password" required />
+    <div class="field">
+      <input class="input" type="email" name="mail" [(ngModel)]="mail" placeholder="Email" required>
+    </div>
 
-      <button type="submit" class="btn primary">Sign up</button>
+    <div class="field">
+      <input class="input" type="password" name="password" [(ngModel)]="password" placeholder="Password" required>
+    </div>
 
-      <div class="divider">
-        <span>or continue with</span>
-      </div>
+    <div class="field">
+      <input class="input" type="password" name="repeatPassword" [(ngModel)]="repeatPassword" placeholder="Repeat Password" required>
+    </div>
 
-      <button type="button" class="btn google">
-        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
-        Sign up with Google
-      </button>
 
-      <button type="button" class="btn facebook">
-        <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" />
-        Sign up with Facebook
-      </button>
-    </form>
 
-    <p class="signup">
-      Already have an account?
-      <a routerLink="/login">Log in</a>
-    </p>
+    <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <button type="submit" class="cta" [disabled]="isLoading">
+      <span *ngIf="!isLoading">Sign up</span>
+      <span *ngIf="isLoading">Creating account...</span>
+    </button>
+
+    <div class="divider"></div>
+
+    <button type="button" class="cta" style="background: var(--surface-2); color: var(--text); border: 1px solid var(--border)">
+      <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="18" height="18" style="margin-right:8px" />
+      Sign up with Google
+    </button>
+
+    <p class="alt">Already have an account? <a routerLink="/login" class="alt__link">Log in</a></p>
+
+
+  </form>
+
+  <div class="theme-switch">
+    <input id="registerThemeSwitch" type="checkbox" class="theme-switch__chk" (change)="onThemeToggle($event)" checked>
+    <label for="registerThemeSwitch" class="theme-switch__label">
+      <span class="theme-switch__opt theme-switch__opt--light">
+        <svg class="theme-switch__icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="5" fill="currentColor"/>
+          <g stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+          </g>
+        </svg>
+        Light
+      </span>
+      <span class="theme-switch__opt theme-switch__opt--dark">
+        <svg class="theme-switch__icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="currentColor"/>
+        </svg>
+        Dark
+      </span>
+      <span class="theme-switch__thumb"></span>
+    </label>
   </div>
-</div>
+</main>

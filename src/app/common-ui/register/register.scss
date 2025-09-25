@@ -1,113 +1,19 @@
-/* Reuse login.component.css */
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: #111;
-  font-family: Arial, sans-serif;
-}
+@use '../register-details/register-details.scss' as *;
 
-.login-card {
-  background: #1c1c1c;
-  padding: 2rem;
-  border-radius: 12px;
-  width: 320px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  text-align: center;
-  color: #fff;
-}
-
-.title {
-  margin-bottom: 1.5rem;
-  font-size: 20px;
-  font-weight: bold;
-  color: #fff;
-}
-
-.login-card input {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 6px;
-  background: #2c2c2c;
-  color: #fff;
-}
-
-.login-card input::placeholder {
-  color: #aaa;
-}
-
-.btn {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.btn.primary {
-  background: #fff;
-  color: #111;
-}
-
-.btn.google {
-  background: #fff;
-  color: #111;
-}
-
-.btn.facebook {
-  background: #1877f2;
-  color: #fff;
-}
-
-/* Icons inside buttons */
-.btn img {
-  width: 20px;
-  height: 20px;
-}
-
-.divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin: 1rem 0;
-  color: #aaa;
+/* Error message styling */
+.error-message {
+  color: #ef4444;
   font-size: 12px;
+  margin: 8px 0;
+  text-align: center;
+  padding: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
-.divider::before,
-.divider::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid #333;
-}
-
-.divider:not(:empty)::before {
-  margin-right: 0.75em;
-}
-.divider:not(:empty)::after {
-  margin-left: 0.75em;
-}
-
-.signup {
-  margin-top: 1rem;
-  font-size: 13px;
-  color: #aaa;
-}
-
-.signup a {
-  color: #fff;
-  text-decoration: none;
-  font-weight: bold;
-}
-.signup a:hover {
-  text-decoration: underline;
+/* Loading state */
+.cta:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

@@ -1,13 +1,13 @@
 <main class="page">
-  <form class="card" novalidate>
+  <form class="card" novalidate (ngSubmit)="onSubmit()">
     <h1 class="card__title">Fill entered data</h1>
 
     <div class="field">
-      <input class="input" type="text" name="firstName" placeholder="First Name" autocomplete="given-name" required>
+      <input class="input" type="text" name="firstName" placeholder="First Name" autocomplete="given-name" [(ngModel)]="firstName" required>
     </div>
 
     <div class="field">
-      <input class="input" type="text" name="lastName" placeholder="Last Name" autocomplete="family-name" required>
+      <input class="input" type="text" name="lastName" placeholder="Last Name" autocomplete="family-name" [(ngModel)]="lastName" required>
     </div>
 
     <!-- Date of birth -->
@@ -51,7 +51,12 @@
       </select>
     </div>
 
-    <button type="submit" class="cta">Finish registration</button>
+    <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div class="success-message" *ngIf="successMessage">{{ successMessage }}</div>
+    <button type="submit" class="cta" [disabled]="isLoading">
+      <span *ngIf="!isLoading">Finish registration</span>
+      <span *ngIf="isLoading">Submitting...</span>
+    </button>
 
     <p class="legal">
       By signing up, you agree to our
