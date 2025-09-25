@@ -99,7 +99,7 @@ builder.Services.AddSingleton(sp =>
     new EmailHelper(new EmailClient(mailConnectionString), mailSenderAddress)
 );
 
-builder.Services.AddScoped<IEmailService, EmailService>();
+//builder.Services.AddScoped<IEmailService, EmailService>();
 
 // ======================
 // Repositories
