@@ -81,7 +81,7 @@ System.Console.WriteLine(mailSenderAddress);
 System.Console.WriteLine(mailConnectionString);
 System.Console.WriteLine(mailSenderAddress);
 
-/*
+
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
 {
    // builder.Services.AddSingleton(sp => new EmailHelper(new EmailClient(mailConnectionString), mailSenderAddress));
@@ -90,7 +90,7 @@ if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpa
     builder.Services.AddScoped<IEmailService>(sp =>
     {
         //var helper = sp.GetRequiredService<EmailHelper>();
-        return new EmailService(/*helper,*/ mailSenderAddress);
+        return new EmailService(mailSenderAddress);
     });
 }
 else
