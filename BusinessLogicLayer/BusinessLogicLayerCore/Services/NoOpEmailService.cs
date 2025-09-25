@@ -1,8 +1,6 @@
 ﻿using BusinessLogicLayerCore.Services.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLogicLayerCore.Services
@@ -14,6 +12,11 @@ namespace BusinessLogicLayerCore.Services
             Console.WriteLine($"[NoOp Email] To: {string.Join(", ", recipients)}, Subject: {subject}");
             return Task.FromResult(true);
         }
-    }
 
+        public Task<bool> SendVerificationEmailAsync(string recipient, string verificationLink)
+        {
+            Console.WriteLine($"[NoOp Verification Email] To: {recipient}, Link: {verificationLink}");
+            return Task.FromResult(true);
+        }
+    }
 }
