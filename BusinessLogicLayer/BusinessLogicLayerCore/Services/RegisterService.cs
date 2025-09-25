@@ -7,6 +7,7 @@ using HelperLayer.Security;
 using HelperLayer.Security.Token;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 using DataAccessLayerCore.Repositories.Interfaces;
 
 namespace BusinessLogicLayerCore.Services
