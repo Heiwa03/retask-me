@@ -6,7 +6,7 @@ using DataAccessLayerCore.Entities;
 
 namespace BusinessLogicLayerCore.Services;
 
-    public class UserService(ITaskService _taskService) : IUserService {
+    public class UserService(ITaskService _taskService, IProfileService _profileService) : IUserService {
 
         // Delegete to taskServ
         public async Task CreateTask(TaskDTO dto, Guid userUid){
@@ -30,10 +30,13 @@ namespace BusinessLogicLayerCore.Services;
         }
 
         // Delegete to profServ
+        public async Task<PostRegisterDTO> GetUserProfile(Guid userUid){
+            return await _profileService.GetProfile(userUid);
+        }
 
-        // public async Task<RegisterDTO> GetUserProfile(){
-        //     var profile = 
-        // }
+        public async Task UpdateUserProfile(PostRegisterDTO dto, Guid userUid){
+            await _profileService.UpdateProfile(dto, userUid);
+        }
     }
     
         

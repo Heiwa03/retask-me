@@ -11,6 +11,7 @@ using HelperLayer.Security.Token;
 // DAL namespaces
 using DataAccessLayerCore.Repositories.Interfaces;
 using DataAccessLayerCore.Entities;
+using BusinessLogicLayerCore.Templates;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 
