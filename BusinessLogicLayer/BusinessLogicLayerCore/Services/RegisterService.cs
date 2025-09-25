@@ -1,169 +1,100 @@
-
+using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-
-// Used namespaces from BL
-using BusinessLogicLayer.Services.Interfaces;
-using BusinessLogicLayer.DTOs;
-
-// Used namespaces from HL
+using BusinessLogicLayerCore.Services.Interfaces;
+using BusinessLogicLayerCore.DTOs;
+using DataAccessLayerCore.Entities;
 using HelperLayer.Security;
 using HelperLayer.Security.Token;
-
-// Used namespaces from DAL
-using DataAccessLayerCore.Entities;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration;
 using DataAccessLayerCore.Repositories.Interfaces;
 
-namespace BusinessLogicLayer.Services
+namespace BusinessLogicLayerCore.Services
 {
-    /// <summary>
-    /// Service responsible for user registration.
-    /// </summary>
     public class RegisterService : IRegisterService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IBaseRepository _baseRepository;
+        private readonly IEmailService _emailService;
+        private readonly SigningCredentials _signingCredentials;
+        private readonly string _frontendUrl;
+        private readonly string _jwtIssuer;
+        private readonly string _jwtAudience;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RegisterService"/> class.
-        /// </summary>
-        /// <param name="userRepository">The user repository.</param>
-        /// <param name="baseRepository">The base repository for database operations.</param>
-        public RegisterService(IUserRepository _userRepository, IBaseRepository _baseRepository)
+        public RegisterService(
+            IUserRepository userRepository,
+            IEmailService emailService,
+            SigningCredentials signingCredentials,
+            IConfiguration configuration)
         {
-            this._userRepository = _userRepository;
-            this._baseRepository = _baseRepository;
+            _userRepository = userRepository;
+            _emailService = emailService;
+            _signingCredentials = signingCredentials;
+
+            _frontendUrl = configuration["Frontend:BaseUrl"]
+                           ?? throw new ArgumentNullException("Frontend:BaseUrl missing");
+
+            _jwtIssuer = configuration["Authorization:Issuer"] ?? throw new ArgumentNullException("Authorization:Issuer missing");
+            _jwtAudience = configuration["Authorization:Audience"] ?? throw new ArgumentNullException("Authorization:Audience missing");
         }
 
-        /// <summary>
-        /// Main method for registering a user.
-        /// Checks username uniqueness, password strength, password match,
-        /// hashes the password, creates the user and session.
-        /// </summary>
-        /// <param name="dto">The registration DTO containing user data.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
         public async Task RegisterUser(RegisterDTO dto)
         {
-            // Check if mail is unique
-            CheckUniqueMail(dto.Mail);
+            // --- Input validation ---
+            if (_userRepository.IsUsernameOccupied(dto.Mail))
+                throw new InvalidOperationException("Email already exists.");
 
-            // Validate password repeat
-            CheckRepeatPassword(dto.Password, dto.RepeatPassword);
+            if (!PasswordHelper.ValidateRegisterData(dto.Password, dto.RepeatPassword))
+                throw new InvalidOperationException("Passwords do not match.");
 
-            // Validate password strength
-            CheckPasswordRequirements(dto.Password);
+            if (!PasswordHelper.IsPasswordStrong(dto.Password))
+                throw new InvalidOperationException("Password is not strong enough.");
 
-            // Hashing Password with BCrypt
+            // --- Create user ---
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
-
-            // Create user 
-            User user = CreateUser(dto, hashedPassword);
-            _baseRepository.Add(user);
-            await _baseRepository.SaveChangesAsync();
-
-            // Create session
-            UserSession userSession = CreateSession(user);
-            _baseRepository.Add(userSession);
-            await SaveChanges();
-        }
-
-        /// <summary>
-        /// Checks if the mail is unique.
-        /// </summary>
-        /// <param name="mail">The mail to check.</param>
-        /// <exception cref="InvalidOperationException">Thrown if the mail is already taken.</exception>
-        internal void CheckUniqueMail(string mail)
-        {
-            if (_userRepository.IsUsernameOccupied(mail))
+            var user = new User
             {
-                throw new InvalidOperationException("Username already exists");
-            }
-        }
-
-        /// <summary>
-        /// Checks that the repeated password matches the original password.
-        /// </summary>
-        /// <param name="password">The original password.</param>
-        /// <param name="repeatPassword">The repeated password.</param>
-        /// <exception cref="InvalidOperationException">Thrown if passwords do not match.</exception>
-        internal void CheckRepeatPassword(string password, string repeatPassword)
-        {
-            if (!PasswordHelper.ValidateRegisterData(password, repeatPassword))
-            {
-                throw new InvalidOperationException("Password does not match");
-            }
-        }
-
-        /// <summary>
-        /// Checks the strength of the password.
-        /// </summary>
-        /// <param name="password">The password to check.</param>
-        /// <exception cref="InvalidOperationException">Thrown if the password is not strong.</exception>
-        internal void CheckPasswordRequirements(string password)
-        {
-            if (!PasswordHelper.IsPasswordStrong(password))
-            {
-                throw new InvalidOperationException("Password is not strong");
-            }
-        }
-
-        /// <summary>
-        /// Creates a <see cref="User"/> object.
-        /// </summary>
-        /// <param name="dto">The registration DTO.</param>
-        /// <param name="hashedPassword">The hashed password.</param>
-        /// <returns>The created <see cref="User"/> object.</returns>
-        internal User CreateUser(RegisterDTO dto, string hashedPassword)
-        {
-            User user = new User
-            {
-                Id = 0,
                 Uuid = Guid.NewGuid(),
                 Username = dto.Mail,
                 NormalizedUsername = dto.Mail.ToUpperInvariant(),
-                Password = hashedPassword
+                Password = hashedPassword,
+                IsVerified = false
             };
-            return user;
-        }
 
-        /// <summary>
-        /// Creates a <see cref="UserSession"/> object for the user.
-        /// </summary>
-        /// <param name="user">The user.</param>
-        /// <returns>The created <see cref="UserSession"/> object.</returns>
-        internal UserSession CreateSession(User user)
-        {
-            string generatedRefreshToken = TokenHelper.GenerateRefreshToken();
+            _userRepository.Add(user);
+            await _userRepository.SaveChangesAsync();
 
-            UserSession userSession = new UserSession
+            // --- Create session ---
+            var session = new UserSession
             {
-                Id = 0,
                 Uuid = user.Uuid,
                 User = user,
                 UserId = user.Id,
-                RefreshToken = generatedRefreshToken,
+                RefreshToken = TokenHelper.GenerateRefreshToken(),
                 JwtId = user.Uuid.ToString(),
                 RefreshTokenExpiration = DateTime.UtcNow.AddDays(7),
                 Redeemed = false
             };
+            _userRepository.Add(session);
+            await _userRepository.SaveChangesAsync();
 
-            return userSession;
-        }
+            // --- Generate JWT verification token (1h expiry) ---
+            string token = TokenHelper.GenerateJwtToken(
+                user.NormalizedUsername,
+                _signingCredentials,
+                issuer: _jwtIssuer,
+                audience: _jwtAudience,
+                expiresMinutes: 60
+            );
 
-        /// <summary>
-        /// Saves changes in the database asynchronously.
-        /// </summary>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        /// <exception cref="DbUpdateException">Thrown if an error occurs during saving.</exception>
-        internal async Task SaveChanges()
-        {
-            try
+            string verificationLink = $"{_frontendUrl}/verify-email?token={token}";
+
+            // --- Send verification email ---
+            bool emailSent = await _emailService.SendVerificationEmailAsync(dto.Mail, verificationLink);
+
+            if (!emailSent)
             {
-                await _baseRepository.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                Console.WriteLine(ex.InnerException?.Message);
-                throw;
+                Console.WriteLine($"[RegisterService] Failed to send verification email to {dto.Mail}");
             }
         }
     }

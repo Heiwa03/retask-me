@@ -1,28 +1,25 @@
-using BusinessLogicLayer.Services.Interfaces;
+using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore.Repositories.Interfaces;
 using HelperLayer.Security;
 
-namespace BusinessLogicLayer.Services
+namespace BusinessLogicLayerCore.Services
 {
-    public class DbLoginChecker : ILoginChecker
+    public class LoginChecker : ILoginChecker
     {
         private readonly IUserRepository _userRepository;
 
-        public DbLoginChecker(IUserRepository userRepository)
+        public LoginChecker(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
 
-        public bool CheckCredentials(string email, string password)
+        public async Task<bool> CheckCredentials(string username, string password)
         {
-            var user = _userRepository.GetUserByUsername(email).GetAwaiter().GetResult();
+            var user = await _userRepository.GetUserByUsername(username);
             if (user == null)
-            {
                 return false;
-            }
+
             return PasswordHelper.VerifyHashedPassword(password, user.Password);
         }
     }
 }
-
-
