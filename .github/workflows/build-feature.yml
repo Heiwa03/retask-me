@@ -73,5 +73,11 @@ jobs:
             --docker-registry-server-user ${{ secrets.DOCKER_REGISTRY_SERVER_USERNAME }} \
             --docker-registry-server-password ${{ secrets.DOCKER_REGISTRY_SERVER_PASSWORD }}
 
+      - name: Restart App Service
+        run: |
+          az webapp restart \
+            --name ${{ env.BACKEND_APP_NAME }} \
+            --resource-group ${{ env.RESOURCE_GROUP_NAME }}
+
       - name: Azure logout
         run: az logout
