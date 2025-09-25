@@ -8,10 +8,10 @@ namespace HelperLayer.Security
 {
     public class EmailHelper
     {
-        private readonly EmailClient _emailClient;
+        private readonly EmailClient? _emailClient;
         private readonly string _senderAddress;
 
-        public EmailHelper(EmailClient emailClient, string senderAddress)
+        public EmailHelper(EmailClient? emailClient, string senderAddress)
         {
             _emailClient = emailClient;
             _senderAddress = senderAddress;
