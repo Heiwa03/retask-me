@@ -25,7 +25,7 @@ namespace DataAccessLayerCore.Repositories
         /// </summary>
         /// <param name="name">The email to check.</param>
         /// <returns><c>true</c> if the email is occupied, <c>false</c> otherwise.</returns>
-        public bool IsUsernameOccupied (string email)
+        public bool IsUsernameOccupied(string email)
         {
             return _databaseContext.Users.Any(x => x.NormalizedUsername == email.ToUpper());
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DataAccessLayerCore.Enum;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace DataAccessLayerCore.Entities;
@@ -13,7 +14,7 @@ public class User : BaseId
     // From mentor
     [StringLength(50)] public string? FirstName { get; set; }
     [StringLength(50)] public string? LastName { get; set; }
-    public int Gender {get; set; }
+    public Gender Gender {get; set; }
     public bool IsVerified { get; set; } = false;
 }
 

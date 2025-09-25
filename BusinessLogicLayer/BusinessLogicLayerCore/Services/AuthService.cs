@@ -1,4 +1,4 @@
-using BusinessLogicLayerCore.Services.Interfaces;
+﻿using BusinessLogicLayerCore.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using HelperLayer.Security.Token;
@@ -18,6 +18,7 @@ namespace BusinessLogicLayerCore.Services
         private readonly SigningCredentials _signingCredentials;
         private readonly string? _issuer;
         private readonly string? _audience;
+
 
         public AuthService(
             ILoginChecker loginChecker,

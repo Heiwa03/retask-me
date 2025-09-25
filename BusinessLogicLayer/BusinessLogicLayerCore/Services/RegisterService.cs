@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 // BL namespaces
 using BusinessLogicLayerCore.Services.Interfaces;
 using BusinessLogicLayerCore.DTOs;
+using BusinessLogicLayerCore.Services.Interfaces;
+using BusinessLogicLayerCore.DTOs;
 
 // HL namespaces
 using HelperLayer.Security;
@@ -11,21 +13,23 @@ using HelperLayer.Security.Token;
 // DAL namespaces
 using DataAccessLayerCore.Repositories.Interfaces;
 using DataAccessLayerCore.Entities;
-using BusinessLogicLayerCore.Templates;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
+using BusinessLogicLayerCore.Templates;
+
 
 namespace BusinessLogicLayerCore.Services
 {
     /// <summary>
     /// Service responsible for user registration and email verification.
     /// </summary>
-    public class RegisterService : IRegisterService
-    {
+
+    public class RegisterService : IRegisterService{
         private readonly IUserRepository _userRepository;
 
         private readonly IBaseRepository _baseRepository;
         private readonly IEmailService _emailService;
+        private readonly EmailHelper _emailHelper;
         private readonly SigningCredentials _signingCredentials;
         private readonly string _frontendUrl;
 
@@ -33,12 +37,14 @@ namespace BusinessLogicLayerCore.Services
             IUserRepository userRepository,
             IBaseRepository baseRepository,
             IEmailService emailService,
+            EmailHelper emailHelper,
             SigningCredentials signingCredentials,
             IConfiguration configuration)
         {
             _userRepository = userRepository;
             _baseRepository = baseRepository;
             _emailService = emailService;
+            _emailHelper = emailHelper;
             _signingCredentials = signingCredentials;
             _frontendUrl = configuration["Frontend:BaseUrl"] ?? throw new ArgumentNullException("Frontend:BaseUrl missing");
         }
@@ -53,6 +59,15 @@ namespace BusinessLogicLayerCore.Services
             CheckRepeatPassword(dto.Password, dto.RepeatPassword);
 
             CheckPasswordRequirements(dto.Password);
+            if (_userRepository.IsUsernameOccupied(dto.Mail))
+                throw new InvalidOperationException("Email already exists");
+
+
+            if (!PasswordHelper.ValidateRegisterData(dto.Password, dto.RepeatPassword))
+                throw new InvalidOperationException("Passwords do not match");
+
+            if (!PasswordHelper.IsPasswordStrong(dto.Password))
+                throw new InvalidOperationException("Password is not strong enough");
 
             //  Hash password
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
@@ -61,9 +76,12 @@ namespace BusinessLogicLayerCore.Services
             User user = CreateUser(dto, hashedPassword);
             _userRepository.Add(user); // base
             await _userRepository.SaveChangesAsync(); // base
+            _userRepository.Add(user); // base
+            await _userRepository.SaveChangesAsync(); // base
 
             // Create session
             UserSession userSession = CreateSession(user);
+            _userRepository.Add(userSession); //base
             _userRepository.Add(userSession); //base
             await SaveChanges();
 
@@ -131,6 +149,7 @@ namespace BusinessLogicLayerCore.Services
         }
 
 
+
         internal UserSession CreateSession(User user)
         {
             string refreshToken = TokenHelper.GenerateRefreshToken();
@@ -150,10 +169,12 @@ namespace BusinessLogicLayerCore.Services
         }
 
 
+
         internal async Task SaveChanges()
         {
             try
             {
+                await _userRepository.SaveChangesAsync(); //base
                 await _userRepository.SaveChangesAsync(); //base
             }
             catch (DbUpdateException ex)
@@ -162,6 +183,5 @@ namespace BusinessLogicLayerCore.Services
                 throw;
             }
         }
-
     }
 }

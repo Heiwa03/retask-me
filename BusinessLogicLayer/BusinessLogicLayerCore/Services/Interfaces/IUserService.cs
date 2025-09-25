@@ -10,5 +10,6 @@ namespace BusinessLogicLayerCore.Services.Interfaces;
         Task UpdateTask(TaskDTO dto, Guid uuid, Guid tuid);
         Task DeleteTask(Guid uuid, Guid tuid);
 
-        //Task GetUserProfile(long userId);
+        Task<PostRegisterDTO> GetUserProfile(Guid userUid);
+        Task UpdateUserProfile(PostRegisterDTO dto, Guid userUid);
     }
