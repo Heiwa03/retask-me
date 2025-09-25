@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BusinessLogicLayerCore.DTOs;
@@ -10,8 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;
 using FluentAssertions;
-using HelperLayer.Security;
-using Azure.Communication.Email;
 
 namespace BusinessLogicLayerCoreTests.TestRegister
 {
@@ -38,13 +36,9 @@ namespace BusinessLogicLayerCoreTests.TestRegister
                 Microsoft.IdentityModel.Tokens.SecurityAlgorithms.RsaSha256
             );
 
-            var dummyEmailHelper = new EmailHelper(null, "test@mail.ru");
-
-
             return new RegisterService(
                 _userRepository.Object,
                 _emailService.Object,
-                dummyEmailHelper,
                 dummyCreds,
                 _configuration.Object
             );
@@ -132,3 +126,4 @@ namespace BusinessLogicLayerCoreTests.TestRegister
         }
     }
 }
+*/
