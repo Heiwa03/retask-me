@@ -3,11 +3,19 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
+
+// BL
 using BusinessLogicLayerCore.Services;
-using DataAccessLayerCore;
+using BusinessLogicLayerCore.Services.Interfaces;
+
+// DAL
 using DataAccessLayerCore.Repositories.Interfaces;
 using DataAccessLayerCore.Repositories;
+using DataAccessLayerCore;
+
+// HL
 using HelperLayer.Security;
+
 using Azure.Communication.Email;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
@@ -19,17 +27,28 @@ using System.Collections.Generic;
 // ======================
 var builder = WebApplication.CreateBuilder(args);
 
+// Database
+// builder.Services.AddDbContext<DatabaseContext>(options =>
+//     options.UseSqlServer(
+//         builder.Configuration.GetValue<string>("ConnectionStrings:AzureSqlConnection") ?? throw new InvalidOperationException(), b => 
+//         {
+//             b.MigrationsAssembly("ReTaskMe");
+//             b.CommandTimeout(60);
+//         }
+//     )
+// );
+
+
 // ======================
 // Configure port for Azure
 // ======================
-var portEnv = Environment.GetEnvironmentVariable("WEBSITES_PORT");
-var port = string.IsNullOrWhiteSpace(portEnv) ? 8080 : int.Parse(portEnv);
+// var portEnv = Environment.GetEnvironmentVariable("WEBSITES_PORT");
+// var port = string.IsNullOrWhiteSpace(portEnv) ? 8080 : int.Parse(portEnv);
 
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(port);
-});
-
+// builder.WebHost.ConfigureKestrel(options =>
+// {
+//     options.ListenAnyIP(port);
+// });
 // ======================
 // Database configuration
 // ======================
@@ -39,8 +58,23 @@ if (string.IsNullOrWhiteSpace(connectionString))
     throw new ApplicationException("Database connection string is missing. Set Data__ConnectionString in App Settings.");
 }
 
+// // ======================
+// // Database configuration
+// // ======================
+// var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString");
+// if (string.IsNullOrWhiteSpace(connectionString))
+// {
+//     throw new ApplicationException("Database connection string is missing. Set Data__ConnectionString in App Settings.");
+// }
+
+
+// MariaDB (Bagrin)
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseSqlServer(connectionString)
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("MariaDbConnection") 
+            ?? throw new InvalidOperationException("MariaDB"),
+        new MySqlServerVersion(new Version(12, 0, 2)) 
+    )
 );
 
 // ======================
@@ -84,19 +118,18 @@ else
     // Fallback / no-op EmailService
     builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 }
-
-
 // ======================
 // Fallback local file for JWT (development)
 // ======================
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
-    var pemPath = builder.Configuration["Jwt:PrivateKeyPem"];
+    var pemPath = builder.Configuration["JWT_PRIVATE_KEY:PrivateKeyPem"];
     if (!string.IsNullOrEmpty(pemPath) && File.Exists(pemPath))
     {
         privateKeyPem = File.ReadAllText(pemPath);
     }
 }
+
 
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
@@ -172,6 +205,7 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.FromMinutes(2)
     };
 });
+
 
 // ======================
 // Build app
