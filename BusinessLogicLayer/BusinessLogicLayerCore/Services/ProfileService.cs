@@ -15,16 +15,18 @@ namespace BusinessLogicLayerCore.Services;
             
             return new PostRegisterDTO {
                 Username = profile.Username,
-                FirstName = profile.FirstName ?? "",
-                LastName = profile.LastName ?? "",
+                FirstName = profile.FirstName ?? "Nofirstname",
+                LastName = profile.LastName ?? "Nolastname",
                 Gender = profile.Gender
             };
         }   
-
 
         public async Task UpdateProfile(PostRegisterDTO dto, Guid userUid){
             User? profile = await _userRepository.GetByUuidAsync<User>(userUid) ?? throw new KeyNotFoundException($"User not found");
             
             profile.Username = dto.Username;
+            profile.FirstName = dto.FirstName;
+            profile.LastName = dto.LastName;
+            profile.Gender = dto.Gender;
         }  
     }

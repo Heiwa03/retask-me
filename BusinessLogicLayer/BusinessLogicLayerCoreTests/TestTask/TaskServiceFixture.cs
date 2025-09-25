@@ -11,7 +11,6 @@ using BusinessLogicLayerCore.DTOs;
 using DataAccessLayerCore.Repositories.Interfaces;
 using DataAccessLayerCore.Entities;
 using DataAccessLayerCore.Enum;
-using DataAccessLayerCore.Repositories;
 
 namespace BusinessLogicLayerCoreTests.TestTask;
     
@@ -38,7 +37,7 @@ public class TaskServiceFixture
         Password = "hashed_pw",
         FirstName = "Test",
         LastName = "User",
-        Gender = 1,
+        Gender = Gender.Male,
         IsVerified = true
     };
     
@@ -119,7 +118,6 @@ public class TaskServiceFixture
         _output.WriteLine($"- Priority: {createdTask?.Priority}");
         _output.WriteLine($"- Status: {createdTask?.Status}");
         _output.WriteLine($"- Deadline: {createdTask?.Deadline}");
-
 
         // Asserts
         Assert.NotNull(createdTask);

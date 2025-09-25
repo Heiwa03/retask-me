@@ -27,13 +27,22 @@ using DataAccessLayerCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Database
+// builder.Services.AddDbContext<DatabaseContext>(options =>
+//     options.UseSqlServer(
+//         builder.Configuration.GetValue<string>("ConnectionStrings:AzureSqlConnection") ?? throw new InvalidOperationException(), b => 
+//         {
+//             b.MigrationsAssembly("ReTaskMe");
+//             b.CommandTimeout(60);
+//         }
+//     )
+// );
+
+// MariaDB (BagrinDB)
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetValue<string>("ConnectionStrings:AzureSqlConnection") ?? throw new InvalidOperationException(), b => 
-        {
-            b.MigrationsAssembly("ReTaskMe");
-            b.CommandTimeout(60);
-        }
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("MariaDbConnection") 
+            ?? throw new InvalidOperationException("MariaDB"),
+        new MySqlServerVersion(new Version(12, 0, 2)) 
     )
 );
 
@@ -82,6 +91,8 @@ builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
+
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 
@@ -137,11 +148,13 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 // App runner
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-    db.Database.Migrate(); 
-}
+
+// Migration checker for MSSQL
+// using (var scope = app.Services.CreateScope())
+// {
+//     var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+//     db.Database.Migrate(); 
+// }
 
 if (app.Environment.IsDevelopment())
 {
