@@ -114,6 +114,15 @@ builder.Services.AddCors(options =>
     );
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("OpenCorsNoLimitation", policy =>
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+    );
+});
+
 // ======================
 // Controllers & Swagger
 // ======================
@@ -126,7 +135,9 @@ builder.Services.AddSwaggerGen();
 // ======================
 var app = builder.Build();
 
-app.UseCors("FrontEndUI");
+// app.UseCors("FrontEndUI");
+app.UseCors("OpenCorsNoLimitation");
+
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
