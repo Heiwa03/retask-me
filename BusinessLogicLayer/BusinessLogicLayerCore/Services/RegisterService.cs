@@ -15,19 +15,14 @@ using DataAccessLayerCore.Repositories.Interfaces;
 using DataAccessLayerCore.Entities;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
+using BusinessLogicLayerCore.Templates;
+
 
 namespace BusinessLogicLayerCore.Services
 {
     /// <summary>
     /// Service responsible for user registration and email verification.
     /// </summary>
-    public class RegisterService : IRegisterService
-    {
-using BusinessLogicLayerCore.Templates;
-
-
-namespace BusinessLogicLayerCore.Services;
-
 
     public class RegisterService : IRegisterService{
         private readonly IUserRepository _userRepository;
@@ -189,4 +184,4 @@ namespace BusinessLogicLayerCore.Services;
             }
         }
     }
-
+}
