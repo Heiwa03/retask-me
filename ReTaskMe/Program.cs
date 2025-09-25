@@ -51,11 +51,15 @@ string? publicKeyPem = Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY"); // 
 string? jwtIssuer = Environment.GetEnvironmentVariable("Authorization_Issuer");
 string? jwtAudience = Environment.GetEnvironmentVariable("Authorization_Audience");
 
-// Email
-var mailConnectionString = builder.Configuration["Email:ConnectionString"]
-                           ?? Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING");
-var mailSenderAddress = builder.Configuration["Email:SenderAddress"]
-                        ?? Environment.GetEnvironmentVariable("EMAIL_SENDER_ADDRESS");
+// Email (prefer specific env vars, then generic env, then appsettings)
+var mailConnectionString =
+    Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
+    ?? Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")
+    ?? builder.Configuration["Email:ConnectionString"];
+var mailSenderAddress =
+    Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
+    ?? Environment.GetEnvironmentVariable("EMAIL_SENDER_ADDRESS")
+    ?? builder.Configuration["Email:SenderAddress"];
 
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
 {
