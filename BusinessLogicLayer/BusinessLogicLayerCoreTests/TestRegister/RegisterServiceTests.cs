@@ -11,6 +11,7 @@ using Moq;
 using Xunit;
 using FluentAssertions;
 using HelperLayer.Security;
+using Azure.Communication.Email;
 
 namespace BusinessLogicLayerCoreTests.TestRegister
 {
