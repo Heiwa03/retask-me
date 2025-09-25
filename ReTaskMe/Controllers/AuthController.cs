@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using BusinessLogicLayerCore.DTOs;
 using BusinessLogicLayerCore.Services.Interfaces;
+using BusinessLogicLayerCore.DTOs;
+using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore;
 using BusinessLogicLayerCore.Templates;
 using HelperLayer.Security.Token;
@@ -18,21 +20,22 @@ public class AuthController : ControllerBase
     private readonly IAuthService _authService;
     private readonly DatabaseContext _databaseContext;
     private readonly SigningCredentials _signingCredentials;
-    private readonly string? _frontendUrl;
-    private readonly EmailHelper _emailHelper;
+    private readonly IEmailService _emailService;
+    private readonly string _frontendUrl;
 
     public AuthController(
         IAuthService authService,
         DatabaseContext databaseContext,
         SigningCredentials signingCredentials,
         IConfiguration configuration,
-        EmailHelper emailHelper)
+        IEmailService emailService)
     {
         _authService = authService;
         _databaseContext = databaseContext;
         _signingCredentials = signingCredentials;
-        _frontendUrl = configuration["Frontend:BaseUrl"];
-        _emailHelper = emailHelper;
+        _emailService = emailService;
+        _frontendUrl = configuration["Frontend:BaseUrl"] ?? throw new ApplicationException("Frontend:BaseUrl configuration is missing.");
+
     }
 
     [HttpPost("login")]
@@ -46,7 +49,6 @@ public class AuthController : ControllerBase
 
         if (!user.IsVerified)
         {
-            // Optional: resend verification email
             string token = TokenHelper.GenerateJwtToken(
                 user.NormalizedUsername,
                 _signingCredentials,
@@ -65,8 +67,8 @@ public class AuthController : ControllerBase
 
             string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
 
-            await _emailHelper.SendEmailAsync(
-                new List<string> { user.Username }, // replace with actual email
+            await _emailService.SendEmailAsync(
+                new List<string> { user.Username },
                 "Verify Your Email",
                 htmlContent
             );
@@ -74,7 +76,6 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = "Email not verified. A new verification link has been sent.", isVerified = false });
         }
 
-        // If verified, generate JWT for session
         var authResponse = await _authService.LoginAsync(user.NormalizedUsername, loginDto.Password);
 
         return Ok(new { authResponse, isVerified = true });

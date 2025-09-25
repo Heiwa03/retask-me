@@ -17,7 +17,10 @@ using DataAccessLayerCore;
 using HelperLayer.Security;
 
 using Azure.Communication.Email;
-
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using BusinessLogicLayerCore.Services.Interfaces;
+using System.Collections.Generic;
 
 // ======================
 // Create builder
@@ -73,25 +76,54 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 // ======================
 string? privateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY");
 string? publicKeyPem = Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY"); // optional
-string? jwtIssuer = Environment.GetEnvironmentVariable("Authorization_Issuer");
-string? jwtAudience = Environment.GetEnvironmentVariable("Authorization_Audience");
+string? jwtIssuer =
+    Environment.GetEnvironmentVariable("Authorization__Issuer")
+    ?? Environment.GetEnvironmentVariable("Authorization_Issuer")
+    ?? builder.Configuration["Authorization:Issuer"];
+string? jwtAudience =
+    Environment.GetEnvironmentVariable("Authorization__Audience")
+    ?? Environment.GetEnvironmentVariable("Authorization_Audience")
+    ?? builder.Configuration["Authorization:Audience"];
 
-// Email
-var mailConnectionString = builder.Configuration["Email:ConnectionString"]
-                           ?? Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING");
-var mailSenderAddress = builder.Configuration["Email:SenderAddress"]
-                        ?? Environment.GetEnvironmentVariable("EMAIL_SENDER_ADDRESS");
+
+// ======================
+// Email setup with fallback
+// ======================
+var mailConnectionString =
+    Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
+    ?? Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")
+    ?? builder.Configuration["Email:ConnectionString"];
+
+var mailSenderAddress =
+    Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
+    ?? Environment.GetEnvironmentVariable("EMAIL_SENDER_ADDRESS")
+    ?? builder.Configuration["Email:SenderAddress"];
 
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
 {
+    // Real EmailHelper + EmailService
     builder.Services.AddSingleton(sp =>
     {
         var client = new EmailClient(mailConnectionString);
         return new EmailHelper(client, mailSenderAddress);
     });
+    builder.Services.AddScoped<IEmailService, BusinessLogicLayerCore.Services.EmailService>();
+}
+else
+{
+    // Fallback / no-op EmailService
+    builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 }
 
-// Fallback local file (development)
+// ======================
+// NoOpEmailService definition
+// ======================
+builder.Services.AddScoped<IEmailService, NoOpEmailService>();
+
+
+// ======================
+// Fallback local file for JWT (development)
+// ======================
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
     var pemPath = builder.Configuration["JWT_PRIVATE_KEY:PrivateKeyPem"];
@@ -120,18 +152,20 @@ builder.Services.AddSingleton(signingCredentials);
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserSessionRepository, UserSessionRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
-builder.Services.AddScoped<IProfileService, ProfileService>();
-
+builder.Services.AddScoped<ILoginChecker, LoginChecker>();
 
 // ======================
 // CORS Policy Creation
 // ======================
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name:"FrontEndUI", policy =>
+    options.AddPolicy(name: "FrontEndUI", policy =>
     {
-        policy.WithOrigins("http://localhost:4200/").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
@@ -159,7 +193,7 @@ builder.Services.AddAuthentication(options =>
     }
     else
     {
-        issuerSigningKey = rsaKey; // fallback la cheia privată
+        issuerSigningKey = rsaKey; // fallback to private key
     }
 
     options.TokenValidationParameters = new TokenValidationParameters
@@ -182,6 +216,7 @@ builder.Services.AddAuthentication(options =>
 var app = builder.Build();
 
 app.UseCors("FrontEndUI");
+
 // ======================
 // Middleware
 // ======================
