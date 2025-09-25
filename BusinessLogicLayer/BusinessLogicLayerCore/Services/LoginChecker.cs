@@ -4,22 +4,22 @@ using HelperLayer.Security;
 
 namespace BusinessLogicLayerCore.Services
 {
-    public class LoginChecker(IUserRepository userRepository) : ILoginChecker
+    public class LoginChecker : ILoginChecker
     {
-        private readonly IUserRepository _userRepository = userRepository;
+        private readonly IUserRepository _userRepository;
 
-        public bool CheckCredentials(string username, string password)
+        public LoginChecker(IUserRepository userRepository)
         {
-            // Synchronous facade over async repo for simplicity in interface contract
-            var user = _userRepository.GetUserByUsername(username).GetAwaiter().GetResult();
+            _userRepository = userRepository;
+        }
+
+        public async Task<bool> CheckCredentials(string username, string password)
+        {
+            var user = await _userRepository.GetUserByUsername(username);
             if (user == null)
-            {
                 return false;
-            }
 
             return PasswordHelper.VerifyHashedPassword(password, user.Password);
         }
     }
 }
-
-

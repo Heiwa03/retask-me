@@ -2,6 +2,6 @@
 {
     public interface ILoginChecker
     {
-        bool CheckCredentials(string username, string password);
+        Task<bool> CheckCredentials(string username, string password);
     }
 }

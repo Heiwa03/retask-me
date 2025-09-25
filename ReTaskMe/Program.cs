@@ -82,7 +82,7 @@ if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpa
     builder.Services.AddScoped<IEmailService>(sp =>
     {
         //var helper = sp.GetRequiredService<EmailHelper>();
-        return new EmailService(/*helper,*/ mailSenderAddress);
+        return new EmailService(mailSenderAddress);
     });
 }
 else
