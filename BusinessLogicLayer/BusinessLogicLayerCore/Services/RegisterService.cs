@@ -15,7 +15,6 @@ namespace BusinessLogicLayerCore.Services
     public class RegisterService : IRegisterService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IBaseRepository _baseRepository;
         private readonly IEmailService _emailService;
         private readonly SigningCredentials _signingCredentials;
         private readonly string _frontendUrl;
@@ -95,23 +94,8 @@ namespace BusinessLogicLayerCore.Services
 
             if (!emailSent)
             {
-                // Optional: log or handle failure
                 Console.WriteLine($"[RegisterService] Failed to send verification email to {dto.Mail}");
             }
         }
-
-        internal async Task SaveChanges()
-        {
-            try
-            {
-                await _userRepository.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                Console.WriteLine(ex.InnerException?.Message);
-                throw;
-            }
-        }
-
     }
 }
