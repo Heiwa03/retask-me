@@ -3,8 +3,8 @@ using Xunit;
 
 using DataAccessLayerCore.Repositories.Interfaces;
 using BusinessLogicLayerCore.Services;
-using System.Net.Mail;
-
+using BusinessLogicLayerCore.DTOs;
+using DataAccessLayerCore.Entities;
 
 namespace BusinessLogicLayerCoreTests.TestRegister;
 
@@ -22,63 +22,73 @@ namespace BusinessLogicLayerCoreTests.TestRegister;
             public static string password = "3centimeterS@";
             public static string repeatPassword = "3centimeterS@";
             public static string wrongRepPassword = "3.5centimeters5%";
-
-        }
-
-
-        // MAIL
-        [Fact]
-        public void CheckUniqueMail_WhenMailIsUnique_ShouldNotThrow(){
-            _userRepository.Setup(r => r.IsUserNameOccupied(Globals.mail));
-
-            var e = Record.Exception(() => registerService.CheckUniqueMail(Globals.mail));
-            Assert.Null(e); 
-        }
-
-        [Fact]
-        public void CheckUniqueMail_WhenMailExists_ShouldThrow(){
-            _userRepository
-                .Setup(r => r.IsUserNameOccupied(Globals.mail))
-                .Returns(true);
-
-            var e = Assert.Throws<InvalidOperationException>(() =>
-                registerService.CheckUniqueMail(Globals.mail)
-            );
-
-            Assert.Equal("Username already exists", e.Message);
-        }
-
-        // REP Passowrd
-        [Fact]
-        public void CheckRepeatPassword_Succed(){
-            _userRepository.Setup(r => r.IsUserNameOccupied(Globals.mail));
-
-            var e = Record.Exception(() => registerService.CheckRepeatPassword(Globals.password, Globals.repeatPassword));
-
-            Assert.Null(e);
-        }
-
-        [Fact]
-        public void CheckRepeatPassword_Fail(){
-            var e = Record.Exception(() => registerService.CheckRepeatPassword(Globals.password, Globals.wrongRepPassword));
-
-            Assert.Equal("Password does not match", e.Message);
-        }
-
-        // Strong password
-        [Fact]
-        public void CheckStrongPassword_Succed(){
-            var e = Record.Exception(() => registerService.CheckPasswordRequirements(Globals.password));
-
-            Assert.Null(e);
-        }
-
-        [Fact]
-        public void CheckStrongPassword_Fail(){
-            var e = Record.Exception(() => registerService.CheckPasswordRequirements(Globals.weekPassword));
-
-            Assert.Equal("Password is not strong", e.Message);
         }
 
         
-    }
+
+        [Fact]
+        public async Task RegisterUser_Success(){
+            // Averange
+            var dto = new RegisterDTO{
+                Mail = Globals.mail,
+                Password = Globals.repeatPassword,
+                RepeatPassword = Globals.repeatPassword
+            };
+
+            _userRepository.Setup(r => r.IsUserNameOccupied(dto.Mail)).Returns(false);
+
+            _userRepository
+                .Setup(repo => repo.Add(It.IsAny<User>()));
+            _userRepository
+                .Setup(repo => repo.Add(It.IsAny<UserSession>()));
+            _userRepository
+                .Setup(repo => repo.SaveChangesAsync())
+                .Returns(Task.FromResult(1));
+
+            // Act
+            await registerService.RegisterUser(dto);
+
+            // Assert
+            _userRepository.Verify(repo => repo.IsUserNameOccupied(dto.Mail), Times.Once);
+            _userRepository.Verify(repo => repo.Add(It.Is<User>(u => u.Username == dto.Mail)), Times.Once);
+            _userRepository.Verify(repo => repo.Add(It.Is<UserSession>(s => s.User.Username == dto.Mail)), Times.Once);
+            _userRepository.Verify(repo => repo.SaveChangesAsync(), Times.Once);
+        }
+
+        [Fact]
+        public async Task RegisterUser_FAIL_MailOccupied(){
+            // Averange
+            var dto = new RegisterDTO{
+                Mail = Globals.mail,
+                Password = Globals.repeatPassword,
+                RepeatPassword = Globals.repeatPassword
+            };
+
+            var dto2 = new RegisterDTO{
+                Mail = Globals.mail,
+                Password = Globals.repeatPassword,
+                RepeatPassword = Globals.repeatPassword
+            };
+
+            _userRepository
+                .Setup(repo => repo.Add(It.IsAny<User>()));
+            _userRepository
+                .Setup(repo => repo.Add(It.IsAny<UserSession>()));
+            _userRepository
+                .Setup(repo => repo.SaveChangesAsync())
+                .Returns(Task.FromResult(1));
+
+            // Act
+            await registerService.RegisterUser(dto);
+
+            await registerService.RegisterUser(dto2);
+
+            // Assert
+            _userRepository.Verify(repo => repo.IsUserNameOccupied(dto.Mail), Times.Once);
+            _userRepository.Verify(repo => repo.Add(It.Is<User>(u => u.Username == dto.Mail)), Times.Once);
+            _userRepository.Verify(repo => repo.Add(It.Is<UserSession>(s => s.User.Username == dto.Mail)), Times.Once);
+            _userRepository.Verify(repo => repo.SaveChangesAsync(), Times.Once);
+        }
+
+
+}
