@@ -18,7 +18,6 @@ namespace BusinessLogicLayerCoreTests.TestRegister
     public class RegisterServiceTests
     {
         private readonly Mock<IUserRepository> _userRepository = new();
-        private readonly Mock<IBaseRepository> _baseRepository = new();
         private readonly Mock<IEmailService> _emailService = new();
         private readonly Mock<IConfiguration> _configuration = new();
 
@@ -44,7 +43,6 @@ namespace BusinessLogicLayerCoreTests.TestRegister
 
             return new RegisterService(
                 _userRepository.Object,
-                _baseRepository.Object,
                 _emailService.Object,
                 dummyEmailHelper,
                 dummyCreds,
