@@ -48,8 +48,15 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 // ======================
 string? privateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY");
 string? publicKeyPem = Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY"); // optional
-string? jwtIssuer = Environment.GetEnvironmentVariable("Authorization_Issuer");
-string? jwtAudience = Environment.GetEnvironmentVariable("Authorization_Audience");
+string? jwtIssuer =
+    Environment.GetEnvironmentVariable("Authorization__Issuer")
+    ?? Environment.GetEnvironmentVariable("Authorization_Issuer")
+    ?? builder.Configuration["Authorization:Issuer"];
+string? jwtAudience =
+    Environment.GetEnvironmentVariable("Authorization__Audience")
+    ?? Environment.GetEnvironmentVariable("Authorization_Audience")
+    ?? builder.Configuration["Authorization:Audience"];
+
 
 // Email (prefer specific env vars, then generic env, then appsettings)
 var mailConnectionString =
@@ -68,9 +75,8 @@ if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpa
         var client = new EmailClient(mailConnectionString);
         return new EmailHelper(client, mailSenderAddress);
     });
-    builder.Services.AddScoped<IEmailService, EmailService>();
+    builder.Services.AddScoped<IEmailService, BusinessLogicLayer.Services.EmailService>();
 }
-
 // Fallback local file (development)
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
@@ -110,7 +116,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(name:"FrontEndUI", policy =>
     {
-        policy.WithOrigins("http://localhost:4200/").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
