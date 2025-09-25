@@ -74,6 +74,7 @@ var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_Email
 var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
                          ?? builder.Configuration["Email:SenderAddress"];
 
+/*
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
 {
     builder.Services.AddSingleton(sp =>
@@ -85,6 +86,9 @@ else
 {
     builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 }
+*/
+
+builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 
 // ======================
 // Repositories
