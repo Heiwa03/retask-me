@@ -1,11 +1,10 @@
 ﻿using BusinessLogicLayerCore.Services.Interfaces;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Configuration;
-using HelperLayer.Security.Token;
-using System.Collections.Concurrent;
-using DataAccessLayerCore.Repositories.Interfaces;
 using DataAccessLayerCore.Entities;
-using System.Collections.Concurrent;
+using DataAccessLayerCore.Repositories.Interfaces;
+using HelperLayer.Security.Token;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+
 namespace BusinessLogicLayerCore.Services
 {
     public class AuthService : IAuthService
@@ -14,11 +13,12 @@ namespace BusinessLogicLayerCore.Services
         private readonly IUserRepository _userRepository;
         private readonly IUserSessionRepository _userSessionRepository;
 
-        // JWT Signing
         private readonly SigningCredentials _signingCredentials;
-        private readonly string? _issuer;
-        private readonly string? _audience;
+        private readonly string _issuer;
+        private readonly string _audience;
 
+        private const int AccessTokenMinutes = 60;
+        private const int RefreshTokenDays = 7;
 
         public AuthService(
             ILoginChecker loginChecker,
@@ -31,48 +31,79 @@ namespace BusinessLogicLayerCore.Services
             _userRepository = userRepository;
             _userSessionRepository = userSessionRepository;
             _signingCredentials = signingCredentials;
-            _issuer = configuration["Authorization:Issuer"];
-            _audience = configuration["Authorization:Audience"];
+            _issuer = configuration["Authorization:Issuer"] ?? throw new ArgumentNullException("Authorization:Issuer");
+            _audience = configuration["Authorization:Audience"] ?? throw new ArgumentNullException("Authorization:Audience");
         }
 
-        public Task<AuthResponse?> LoginAsync(string email, string password)
+        public async Task<AuthResponse?> LoginAsync(string email, string password)
         {
-            if (!_loginChecker.CheckCredentials(email, password))
+            if (!await _loginChecker.CheckCredentials(email, password))
+                return null;
+
+            return await CreateSessionAsync(email);
+        }
+
+        public async Task<AuthResponse?> RefreshAsync(string refreshToken)
+        {
+            if (string.IsNullOrWhiteSpace(refreshToken))
+                return null;
+
+            var existingSession = await _userSessionRepository.GetSessionByRefreshTokenAsync(refreshToken);
+            if (existingSession == null || existingSession.Redeemed || existingSession.RefreshTokenExpiration <= DateTime.UtcNow)
+                return null;
+
+            // Redeem and rotate session atomically
+            var newJwtId = Guid.NewGuid().ToString();
+            bool redeemed = await _userSessionRepository.RedeemRefreshTokenAsync(refreshToken, newJwtId);
+            if (!redeemed)
+                return null;
+
+            var user = existingSession.User;
+
+            var newRefreshToken = TokenHelper.GenerateRefreshToken();
+            var newSession = new UserSession
             {
-                return Task.FromResult<AuthResponse?>(null);
-            }
+                UserId = user.Id,
+                Uuid = user.Uuid,
+                User = user,
+                RefreshToken = newRefreshToken,
+                JwtId = newJwtId,
+                RefreshTokenExpiration = DateTime.UtcNow.AddDays(RefreshTokenDays),
+                Redeemed = false
+            };
 
-            return LoginWithPersistentSessionAsync(email);
+            _userSessionRepository.Add(newSession);
+            await _userSessionRepository.SaveChangesAsync();
+
+            var accessToken = TokenHelper.GenerateJwtToken(user.NormalizedUsername, _signingCredentials, _issuer, _audience, AccessTokenMinutes);
+
+            return new AuthResponse
+            {
+                Token = accessToken,
+                RefreshToken = newRefreshToken
+            };
         }
 
-        public Task<AuthResponse?> RefreshAsync(string refreshToken)
-        {
-            return RefreshWithPersistentSessionAsync(refreshToken);
-        }
-
-        private async Task<AuthResponse?> LoginWithPersistentSessionAsync(string email)
+        private async Task<AuthResponse> CreateSessionAsync(string email)
         {
             var user = await _userRepository.GetUserByUsername(email);
             if (user == null)
-            {
-                return null;
-            }
+                throw new InvalidOperationException("User not found after credential check.");
 
-            // Remove existing active sessions for this user
+            // Remove any existing sessions for this user
             await _userSessionRepository.RemoveSessionByUserIdAsync(user.Id);
 
-            var accessToken = TokenHelper.GenerateJwtToken(email, _signingCredentials, _issuer, _audience, 60);
+            var accessToken = TokenHelper.GenerateJwtToken(user.NormalizedUsername, _signingCredentials, _issuer, _audience, AccessTokenMinutes);
             var refreshToken = TokenHelper.GenerateRefreshToken();
 
             var session = new UserSession
             {
-                Id = 0,
+                UserId = user.Id,
                 Uuid = user.Uuid,
                 User = user,
-                UserId = user.Id,
                 RefreshToken = refreshToken,
                 JwtId = user.Uuid.ToString(),
-                RefreshTokenExpiration = DateTime.UtcNow.AddDays(7),
+                RefreshTokenExpiration = DateTime.UtcNow.AddDays(RefreshTokenDays),
                 Redeemed = false
             };
 
@@ -83,60 +114,6 @@ namespace BusinessLogicLayerCore.Services
             {
                 Token = accessToken,
                 RefreshToken = refreshToken
-            };
-        }
-
-        private async Task<AuthResponse?> RefreshWithPersistentSessionAsync(string refreshToken)
-        {
-            if (string.IsNullOrWhiteSpace(refreshToken))
-            {
-                return null;
-            }
-
-            var existingSession = await _userSessionRepository.GetSessionByRefreshTokenAsync(refreshToken);
-            if (existingSession == null)
-            {
-                return null;
-            }
-
-            // Validate not redeemed and not expired
-            if (existingSession.Redeemed || existingSession.RefreshTokenExpiration <= DateTime.UtcNow)
-            {
-                return null;
-            }
-
-            // Redeem old token and rotate
-            var newJwtId = Guid.NewGuid().ToString();
-            var redeemed = await _userSessionRepository.RedeemRefreshTokenAsync(refreshToken, newJwtId);
-            if (!redeemed)
-            {
-                return null;
-            }
-            await _userSessionRepository.SaveChangesAsync();
-
-            // Issue new refresh token as a new session
-            var newRefreshToken = TokenHelper.GenerateRefreshToken();
-            var user = existingSession.User;
-
-            var newSession = new UserSession
-            {
-                Id = 0,
-                Uuid = user.Uuid,
-                User = user,
-                UserId = user.Id,
-                RefreshToken = newRefreshToken,
-                JwtId = newJwtId,
-                RefreshTokenExpiration = DateTime.UtcNow.AddDays(7),
-                Redeemed = false
-            };
-            _userSessionRepository.Add(newSession);
-            await _userSessionRepository.SaveChangesAsync();
-
-            var newAccessToken = TokenHelper.GenerateJwtToken(user.NormalizedUsername, _signingCredentials, _issuer, _audience, 60);
-            return new AuthResponse
-            {
-                Token = newAccessToken,
-                RefreshToken = newRefreshToken
             };
         }
     }
