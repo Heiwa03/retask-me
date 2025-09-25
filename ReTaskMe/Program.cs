@@ -1,15 +1,18 @@
+// Microsoft Packages
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using BusinessLogicLayerCore.Services;
-using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore;
-using DataAccessLayerCore.Repositories;
 using DataAccessLayerCore.Repositories.Interfaces;
+using DataAccessLayerCore.Repositories;
 using HelperLayer.Security;
 using Azure.Communication.Email;
-
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using BusinessLogicLayerCore.Services.Interfaces;
+using System.Collections.Generic;
 // ======================
 // Create builder
 // ======================
@@ -31,52 +34,72 @@ builder.WebHost.ConfigureKestrel(options =>
 // ======================
 var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString");
 if (string.IsNullOrWhiteSpace(connectionString))
+{
     throw new ApplicationException("Database connection string is missing. Set Data__ConnectionString in App Settings.");
+}
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(connectionString)
 );
 
 // ======================
-// JWT configuration
+// JWT configuration with fallback (env or local file)
 // ======================
-var privateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY") 
-                    ?? builder.Configuration["Jwt:PrivateKeyPem"];
+string? privateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY");
+string? publicKeyPem = Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY"); // optional
+string? jwtIssuer =
+    Environment.GetEnvironmentVariable("Authorization__Issuer")
+    ?? Environment.GetEnvironmentVariable("Authorization_Issuer")
+    ?? builder.Configuration["Authorization:Issuer"];
+string? jwtAudience =
+    Environment.GetEnvironmentVariable("Authorization__Audience")
+    ?? Environment.GetEnvironmentVariable("Authorization_Audience")
+    ?? builder.Configuration["Authorization:Audience"];
+
+
+// Email (prefer specific env vars, then generic env, then appsettings)
+var mailConnectionString =
+    Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
+    ?? Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")
+    ?? builder.Configuration["Email:ConnectionString"];
+var mailSenderAddress =
+    Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
+    ?? Environment.GetEnvironmentVariable("EMAIL_SENDER_ADDRESS")
+    ?? builder.Configuration["Email:SenderAddress"];
+
+if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
+{
+    builder.Services.AddSingleton(sp =>
+    {
+        var client = new EmailClient(mailConnectionString);
+        return new EmailHelper(client, mailSenderAddress);
+    });
+    builder.Services.AddScoped<IEmailService, BusinessLogicLayerCore.Services.EmailService>();
+}
+// Fallback local file (development)
+if (string.IsNullOrWhiteSpace(privateKeyPem))
+{
+    var pemPath = builder.Configuration["Jwt:PrivateKeyPem"];
+    if (!string.IsNullOrEmpty(pemPath) && File.Exists(pemPath))
+    {
+        privateKeyPem = File.ReadAllText(pemPath);
+    }
+}
 
 if (string.IsNullOrWhiteSpace(privateKeyPem))
-    throw new ApplicationException("JWT private key is missing. Set JWT_PRIVATE_KEY or Jwt:PrivateKeyPem in configuration.");
+{
+    throw new ApplicationException("JWT signing key is not configured. Provide JWT_PRIVATE_KEY or Jwt:PrivateKeyPem file.");
+}
 
+// Import private key
 RSA rsaPrivate = RSA.Create();
 rsaPrivate.ImportFromPem(privateKeyPem.ToCharArray());
 var rsaKey = new RsaSecurityKey(rsaPrivate);
-builder.Services.AddSingleton(new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256));
-
-var jwtIssuer = Environment.GetEnvironmentVariable("Authorization_Issuer") 
-                ?? builder.Configuration["Jwt:Issuer"];
-var jwtAudience = Environment.GetEnvironmentVariable("Authorization_Audience") 
-                  ?? builder.Configuration["Jwt:Audience"];
-
-if (string.IsNullOrWhiteSpace(jwtIssuer) || string.IsNullOrWhiteSpace(jwtAudience))
-    throw new ApplicationException("JWT issuer or audience is missing.");
+var signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
+builder.Services.AddSingleton(signingCredentials);
 
 // ======================
-// Email configuration
-// ======================
-var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_EmailSmtp");
-var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFrom");
-
-if (string.IsNullOrWhiteSpace(mailConnectionString) || string.IsNullOrWhiteSpace(mailSenderAddress))
-    throw new ApplicationException("Email configuration missing. Set AppSettings_EmailSmtp and AppSettings_EmailFrom in App Settings.");
-
-builder.Services.AddSingleton(sp =>
-{
-    var client = new EmailClient(mailConnectionString);
-    return new EmailHelper(client, mailSenderAddress);
-});
-builder.Services.AddScoped<IEmailService, EmailService>();
-
-// ======================
-// Application services
+// Service registrations
 // ======================
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
@@ -86,27 +109,24 @@ builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<ILoginChecker, LoginChecker>();
 
 // ======================
-// CORS configuration
+// CORS Policy Creation
 // ======================
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("FrontEndUI", policy =>
+    options.AddPolicy(name:"FrontEndUI", policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "https://red-mud-060e13903.1.azurestaticapps.net")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
-// ======================
-// Controllers & Swagger
-// ======================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // ======================
-// JWT Authentication
+// Authentication setup
 // ======================
 builder.Services.AddAuthentication(options =>
 {
@@ -115,33 +135,53 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    SecurityKey issuerSigningKey;
+
+    if (!string.IsNullOrWhiteSpace(publicKeyPem))
+    {
+        RSA rsaPub = RSA.Create();
+        rsaPub.ImportFromPem(publicKeyPem.ToCharArray());
+        issuerSigningKey = new RsaSecurityKey(rsaPub);
+    }
+    else
+    {
+        issuerSigningKey = rsaKey; // fallback la cheia privată
+    }
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = rsaKey,
         ValidIssuer = jwtIssuer,
         ValidAudience = jwtAudience,
+        IssuerSigningKey = issuerSigningKey,
         ClockSkew = TimeSpan.FromMinutes(2)
     };
 });
 
 // ======================
-// Build & run app
+// Build app
 // ======================
 var app = builder.Build();
 
 app.UseCors("FrontEndUI");
-
+// ======================
+// Middleware
+// ======================
 app.UseSwagger();
 app.UseSwaggerUI();
-
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// ======================
+// Map controllers
+// ======================
 app.MapControllers();
 
+// ======================
+// Run app
+// ======================
 app.Run();
