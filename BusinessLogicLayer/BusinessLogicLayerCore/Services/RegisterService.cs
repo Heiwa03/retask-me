@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 // BL namespaces
 using BusinessLogicLayerCore.Services.Interfaces;
 using BusinessLogicLayerCore.DTOs;
+using BusinessLogicLayerCore.Services.Interfaces;
+using BusinessLogicLayerCore.DTOs;
 
 // HL namespaces
 using HelperLayer.Security;
@@ -14,6 +16,13 @@ using DataAccessLayerCore.Entities;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 
+namespace BusinessLogicLayerCore.Services
+{
+    /// <summary>
+    /// Service responsible for user registration and email verification.
+    /// </summary>
+    public class RegisterService : IRegisterService
+    {
 using BusinessLogicLayerCore.Templates;
 
 
@@ -22,17 +31,24 @@ namespace BusinessLogicLayerCore.Services;
 
     public class RegisterService : IRegisterService{
         private readonly IUserRepository _userRepository;
+
+        private readonly IBaseRepository _baseRepository;
+        private readonly IEmailService _emailService;
         private readonly EmailHelper _emailHelper;
         private readonly SigningCredentials _signingCredentials;
         private readonly string _frontendUrl;
 
         public RegisterService(
             IUserRepository userRepository,
+            IBaseRepository baseRepository,
+            IEmailService emailService,
             EmailHelper emailHelper,
             SigningCredentials signingCredentials,
             IConfiguration configuration)
         {
             _userRepository = userRepository;
+            _baseRepository = baseRepository;
+            _emailService = emailService;
             _emailHelper = emailHelper;
             _signingCredentials = signingCredentials;
             _frontendUrl = configuration["Frontend:BaseUrl"] ?? throw new ArgumentNullException("Frontend:BaseUrl missing");
@@ -44,6 +60,10 @@ namespace BusinessLogicLayerCore.Services;
         public async Task RegisterUser(RegisterDTO dto)
         {
             // Validate input
+            CheckUniqueMail(dto.Mail);
+            CheckRepeatPassword(dto.Password, dto.RepeatPassword);
+
+            CheckPasswordRequirements(dto.Password);
             if (_userRepository.IsUsernameOccupied(dto.Mail))
                 throw new InvalidOperationException("Email already exists");
 
@@ -61,9 +81,12 @@ namespace BusinessLogicLayerCore.Services;
             User user = CreateUser(dto, hashedPassword);
             _userRepository.Add(user); // base
             await _userRepository.SaveChangesAsync(); // base
+            _userRepository.Add(user); // base
+            await _userRepository.SaveChangesAsync(); // base
 
             // Create session
             UserSession userSession = CreateSession(user);
+            _userRepository.Add(userSession); //base
             _userRepository.Add(userSession); //base
             await SaveChanges();
 
@@ -87,12 +110,33 @@ namespace BusinessLogicLayerCore.Services;
 
             string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
 
-            // Send verification email
-            await _emailHelper.SendEmailAsync(
+            // 8?? Send verification email
+            await _emailService.SendEmailAsync(
                 new List<string> { dto.Mail },
                 "Verify Your Email",
                 htmlContent
             );
+        }
+
+
+        internal void CheckUniqueMail(string mail)
+        {
+            if (_userRepository.IsUsernameOccupied(mail))
+                throw new InvalidOperationException("Email already exists");
+        }
+
+
+        internal void CheckRepeatPassword(string password, string repeatPassword)
+        {
+            if (!PasswordHelper.ValidateRegisterData(password, repeatPassword))
+                throw new InvalidOperationException("Passwords do not match");
+        }
+
+
+        internal void CheckPasswordRequirements(string password)
+        {
+            if (!PasswordHelper.IsPasswordStrong(password))
+                throw new InvalidOperationException("Password is not strong enough");
         }
 
 
@@ -108,6 +152,7 @@ namespace BusinessLogicLayerCore.Services;
                 IsVerified = false // Ensure email not verified initially
             };
         }
+
 
 
         internal UserSession CreateSession(User user)
@@ -129,10 +174,12 @@ namespace BusinessLogicLayerCore.Services;
         }
 
 
+
         internal async Task SaveChanges()
         {
             try
             {
+                await _userRepository.SaveChangesAsync(); //base
                 await _userRepository.SaveChangesAsync(); //base
             }
             catch (DbUpdateException ex)

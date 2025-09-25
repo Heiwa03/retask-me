@@ -1,18 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using HelperLayer.Security.Token;
-using DataAccessLayerCore;
-using DataAccessLayerCore.Entities;
+using DataAccessLayerCore.Repositories.Interfaces;
 
 [ApiController]
 [Route("api/v1/[controller]")]
 public class EmailController : ControllerBase
 {
-    private readonly DatabaseContext _dbContext;
+    private readonly IUserRepository _userRepository;
 
-    public EmailController(DatabaseContext dbContext)
+    public EmailController(IUserRepository userRepository)
     {
-        _dbContext = dbContext;
+        _userRepository = userRepository;
     }
 
     /// <summary>
@@ -24,7 +22,7 @@ public class EmailController : ControllerBase
         if (string.IsNullOrWhiteSpace(token))
             return BadRequest("Token is required.");
 
-        // 1️⃣ Validate JWT
+        //  Validate JWT
         string normalizedEmail;
         try
         {
@@ -35,19 +33,19 @@ public class EmailController : ControllerBase
             return BadRequest("Invalid or expired token.");
         }
 
-        // 2️⃣ Find user
-        var user = await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.NormalizedUsername == normalizedEmail.ToUpperInvariant());
+        //  Find user via repository
+        var user = await _userRepository.GetUserByUsername(normalizedEmail);
 
         if (user == null)
             return NotFound("User not found.");
 
-        // 3️⃣ Update verification state
+        //  Update verification state
         if (user.IsVerified)
             return Ok("Email already verified.");
 
         user.IsVerified = true;
-        await _dbContext.SaveChangesAsync();
+        _userRepository.Update(user);
+        await _userRepository.SaveChangesAsync();
 
         return Ok("Email successfully verified!");
     }
