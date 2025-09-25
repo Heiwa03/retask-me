@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using BusinessLogicLayerCore.Services.Interfaces;
 using BusinessLogicLayer.Services;
+using System.Collections.Generic;
 // ======================
 // Create builder
 // ======================
@@ -96,6 +97,7 @@ builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserSessionRepository, UserSessionRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
+builder.Services.AddScoped<ILoginChecker, LoginChecker>();
 
 // ======================
 // CORS Policy Creation

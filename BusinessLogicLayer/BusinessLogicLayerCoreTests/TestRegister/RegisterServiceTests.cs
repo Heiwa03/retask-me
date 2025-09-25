@@ -1,4 +1,4 @@
-/*using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BusinessLogicLayerCore.DTOs;
@@ -117,16 +117,15 @@ namespace BusinessLogicLayerCoreTests.TestRegister
             };
 
             _userRepository.Setup(r => r.IsUsernameOccupied(dto.Mail)).Returns(false);
-            _baseRepository.Setup(r => r.SaveChangesAsync()).ReturnsAsync(1);
+            _userRepository.Setup(r => r.SaveChangesAsync()).ReturnsAsync(1);
 
             var service = CreateService();
 
             await service.RegisterUser(dto);
 
-            _baseRepository.Verify(r => r.Add(It.Is<User>(u => u.NormalizedUsername == "OK@SITE.COM")), Times.Once);
-            _baseRepository.Verify(r => r.Add(It.Is<UserSession>(s => s.User != null)), Times.Once);
-            _baseRepository.Verify(r => r.SaveChangesAsync(), Times.AtLeastOnce);
+            _userRepository.Verify(r => r.Add(It.Is<User>(u => u.NormalizedUsername == "OK@SITE.COM")), Times.Once);
+            _userRepository.Verify(r => r.Add(It.Is<UserSession>(s => s.User != null)), Times.Once);
+            _userRepository.Verify(r => r.SaveChangesAsync(), Times.AtLeastOnce);
         }
     }
 }
-*/
