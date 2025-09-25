@@ -55,19 +55,17 @@ namespace BusinessLogicLayerCore.Services
         public async Task RegisterUser(RegisterDTO dto)
         {
             // Validate input
-            CheckUniqueMail(dto.Mail);
-            CheckRepeatPassword(dto.Password, dto.RepeatPassword);
-
-            CheckPasswordRequirements(dto.Password);
-            if (_userRepository.IsUsernameOccupied(dto.Mail))
+            if (_userRepository.IsUsernameOccupied(dto.Mail)){
                 throw new InvalidOperationException("Email already exists");
+            }
 
-
+            // Validate confirm password
             if (!PasswordHelper.ValidateRegisterData(dto.Password, dto.RepeatPassword))
                 throw new InvalidOperationException("Passwords do not match");
 
-            if (!PasswordHelper.IsPasswordStrong(dto.Password))
+            if (!PasswordHelper.IsPasswordStrong(dto.Password)){
                 throw new InvalidOperationException("Password is not strong enough");
+            }
 
             //  Hash password
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
@@ -76,12 +74,10 @@ namespace BusinessLogicLayerCore.Services
             User user = CreateUser(dto, hashedPassword);
             _userRepository.Add(user); // base
             await _userRepository.SaveChangesAsync(); // base
-            _userRepository.Add(user); // base
-            await _userRepository.SaveChangesAsync(); // base
+
 
             // Create session
             UserSession userSession = CreateSession(user);
-            _userRepository.Add(userSession); //base
             _userRepository.Add(userSession); //base
             await SaveChanges();
 
@@ -111,27 +107,6 @@ namespace BusinessLogicLayerCore.Services
                 "Verify Your Email",
                 htmlContent
             );
-        }
-
-
-        internal void CheckUniqueMail(string mail)
-        {
-            if (_userRepository.IsUsernameOccupied(mail))
-                throw new InvalidOperationException("Email already exists");
-        }
-
-
-        internal void CheckRepeatPassword(string password, string repeatPassword)
-        {
-            if (!PasswordHelper.ValidateRegisterData(password, repeatPassword))
-                throw new InvalidOperationException("Passwords do not match");
-        }
-
-
-        internal void CheckPasswordRequirements(string password)
-        {
-            if (!PasswordHelper.IsPasswordStrong(password))
-                throw new InvalidOperationException("Password is not strong enough");
         }
 
 
@@ -174,7 +149,6 @@ namespace BusinessLogicLayerCore.Services
         {
             try
             {
-                await _userRepository.SaveChangesAsync(); //base
                 await _userRepository.SaveChangesAsync(); //base
             }
             catch (DbUpdateException ex)
