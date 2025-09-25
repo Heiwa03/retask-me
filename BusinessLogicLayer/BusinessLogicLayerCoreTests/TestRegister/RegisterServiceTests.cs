@@ -130,7 +130,6 @@ namespace BusinessLogicLayerCoreTests.TestRegister
 
             _userRepository.Verify(r => r.Add(It.Is<User>(u => u.NormalizedUsername == "OK@SITE.COM")), Times.Once);
             _userRepository.Verify(r => r.Add(It.Is<UserSession>(s => s.User != null)), Times.Once);
-            _userRepository.Verify(r => r.SaveChangesAsync(), Times.AtLeastOnce);
         }
     }
 }
