@@ -3,69 +3,44 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
-
-// BL
 using BusinessLogicLayerCore.Services;
-using BusinessLogicLayerCore.Services.Interfaces;
-
-// DAL
+using DataAccessLayerCore;
 using DataAccessLayerCore.Repositories.Interfaces;
 using DataAccessLayerCore.Repositories;
-using DataAccessLayerCore;
-
-// HL
 using HelperLayer.Security;
-
 using Azure.Communication.Email;
-
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using BusinessLogicLayerCore.Services.Interfaces;
+using System.Collections.Generic;
 
 // ======================
 // Create builder
 // ======================
 var builder = WebApplication.CreateBuilder(args);
 
-// Database
-// builder.Services.AddDbContext<DatabaseContext>(options =>
-//     options.UseSqlServer(
-//         builder.Configuration.GetValue<string>("ConnectionStrings:AzureSqlConnection") ?? throw new InvalidOperationException(), b => 
-//         {
-//             b.MigrationsAssembly("ReTaskMe");
-//             b.CommandTimeout(60);
-//         }
-//     )
-// );
-
-
 // ======================
 // Configure port for Azure
 // ======================
-// var portEnv = Environment.GetEnvironmentVariable("WEBSITES_PORT");
-// var port = string.IsNullOrWhiteSpace(portEnv) ? 8080 : int.Parse(portEnv);
+var portEnv = Environment.GetEnvironmentVariable("WEBSITES_PORT");
+var port = string.IsNullOrWhiteSpace(portEnv) ? 8080 : int.Parse(portEnv);
 
-// builder.WebHost.ConfigureKestrel(options =>
-// {
-//     options.ListenAnyIP(port);
-// });
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(port);
+});
 
+// ======================
+// Database configuration
+// ======================
+var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString") ?? builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new ApplicationException("Database connection string is missing. Set Data__ConnectionString in App Settings.");
+}
 
-
-// // ======================
-// // Database configuration
-// // ======================
-// var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString");
-// if (string.IsNullOrWhiteSpace(connectionString))
-// {
-//     throw new ApplicationException("Database connection string is missing. Set Data__ConnectionString in App Settings.");
-// }
-
-
-// MariaDB (Bagrin)
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("MariaDbConnection") 
-            ?? throw new InvalidOperationException("MariaDB"),
-        new MySqlServerVersion(new Version(12, 0, 2)) 
-    )
+    options.UseSqlServer(connectionString)
 );
 
 // ======================
@@ -73,34 +48,55 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 // ======================
 string? privateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY");
 string? publicKeyPem = Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY"); // optional
-string? jwtIssuer = Environment.GetEnvironmentVariable("Authorization_Issuer");
-string? jwtAudience = Environment.GetEnvironmentVariable("Authorization_Audience");
+string? jwtIssuer =
+    Environment.GetEnvironmentVariable("Authorization__Issuer")
+    ?? Environment.GetEnvironmentVariable("Authorization_Issuer")
+    ?? builder.Configuration["Authorization:Issuer"];
+string? jwtAudience =
+    Environment.GetEnvironmentVariable("Authorization__Audience")
+    ?? Environment.GetEnvironmentVariable("Authorization_Audience")
+    ?? builder.Configuration["Authorization:Audience"];
 
-// Email
-var mailConnectionString = builder.Configuration["Email:ConnectionString"]
-                           ?? Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING");
-var mailSenderAddress = builder.Configuration["Email:SenderAddress"]
-                        ?? Environment.GetEnvironmentVariable("EMAIL_SENDER_ADDRESS");
+
+// ======================
+// Email setup with fallback
+// ======================
+var mailConnectionString =
+    Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
+    ?? builder.Configuration["Email:ConnectionString"];
+
+var mailSenderAddress =
+    Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
+    ?? builder.Configuration["Email:SenderAddress"];
 
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
 {
+    // Real EmailHelper + EmailService
     builder.Services.AddSingleton(sp =>
     {
         var client = new EmailClient(mailConnectionString);
         return new EmailHelper(client, mailSenderAddress);
     });
+    builder.Services.AddScoped<IEmailService, EmailService>();
+}
+else
+{
+    // Fallback / no-op EmailService
+    builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 }
 
-// Fallback local file (development)
+
+// ======================
+// Fallback local file for JWT (development)
+// ======================
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
-    var pemPath = builder.Configuration["JWT_PRIVATE_KEY:PrivateKeyPem"];
+    var pemPath = builder.Configuration["Jwt:PrivateKeyPem"];
     if (!string.IsNullOrEmpty(pemPath) && File.Exists(pemPath))
     {
         privateKeyPem = File.ReadAllText(pemPath);
     }
 }
-
 
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
@@ -120,18 +116,20 @@ builder.Services.AddSingleton(signingCredentials);
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserSessionRepository, UserSessionRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
-builder.Services.AddScoped<IProfileService, ProfileService>();
-
+builder.Services.AddScoped<ILoginChecker, LoginChecker>();
 
 // ======================
 // CORS Policy Creation
 // ======================
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name:"FrontEndUI", policy =>
+    options.AddPolicy(name: "FrontEndUI", policy =>
     {
-        policy.WithOrigins("http://localhost:4200/").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
@@ -159,7 +157,7 @@ builder.Services.AddAuthentication(options =>
     }
     else
     {
-        issuerSigningKey = rsaKey; // fallback la cheia privată
+        issuerSigningKey = rsaKey; // fallback to private key
     }
 
     options.TokenValidationParameters = new TokenValidationParameters
@@ -175,13 +173,13 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
 // ======================
 // Build app
 // ======================
 var app = builder.Build();
 
 app.UseCors("FrontEndUI");
+
 // ======================
 // Middleware
 // ======================
