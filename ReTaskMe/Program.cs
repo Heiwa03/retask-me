@@ -94,6 +94,7 @@ builder.Services.AddSingleton(signingCredentials);
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserSessionRepository, UserSessionRepository>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 
 // ======================
