@@ -7,6 +7,12 @@ using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore;
 using DataAccessLayerCore.Repositories;
 using DataAccessLayerCore.Repositories.Interfaces;
+using BusinessLogicLayerCore.Templates;
+using Azure;
+using Azure.Communication.Email;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 // ======================
 // Create builder
