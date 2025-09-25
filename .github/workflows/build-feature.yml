@@ -3,7 +3,7 @@ name: ReTaskMe - Build & Deploy Backend
 on:
   push:
     branches:
-      - devel
+      - afterfrontcors
   workflow_dispatch:
 
 env:
