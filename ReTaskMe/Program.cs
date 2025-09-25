@@ -97,7 +97,7 @@ else
 {
     builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 }
-*/
+
 
 builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 
