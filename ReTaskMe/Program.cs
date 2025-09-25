@@ -68,9 +68,8 @@ if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpa
         var client = new EmailClient(mailConnectionString);
         return new EmailHelper(client, mailSenderAddress);
     });
-    builder.Services.AddScoped<IEmailService, EmailService>();
+    builder.Services.AddScoped<IEmailService, BusinessLogicLayer.Services.EmailService>();
 }
-
 // Fallback local file (development)
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
@@ -110,7 +109,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(name:"FrontEndUI", policy =>
     {
-        policy.WithOrigins("http://localhost:4200/").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
