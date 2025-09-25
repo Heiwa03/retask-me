@@ -74,6 +74,13 @@ var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_Email
 var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
                          ?? builder.Configuration["Email:SenderAddress"];
 
+System.Console.WriteLine(mailConnectionString);
+System.Console.WriteLine(mailSenderAddress);
+System.Console.WriteLine(mailConnectionString);
+System.Console.WriteLine(mailSenderAddress);
+System.Console.WriteLine(mailConnectionString);
+System.Console.WriteLine(mailSenderAddress);
+
 /*
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
 {
