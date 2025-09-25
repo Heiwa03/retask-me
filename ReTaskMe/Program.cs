@@ -109,13 +109,12 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserSessionRepository, UserSessionRepository>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IBoardRepository,  BoardRepository>();
-
+builder.Services.AddScoped<ILoginChecker, LoginChecker>();
 // ======================
 // Business Services
 // ======================
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ILoginChecker, LoginChecker>();
 
 // ======================
 // CORS
