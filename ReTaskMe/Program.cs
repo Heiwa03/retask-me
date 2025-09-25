@@ -7,8 +7,6 @@ using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore;
 using DataAccessLayerCore.Repositories;
 using DataAccessLayerCore.Repositories.Interfaces;
-using HelperLayer.Security;
-using Azure.Communication.Email;
 
 // ======================
 // Create builder
@@ -43,8 +41,10 @@ var rsaKey = new RsaSecurityKey(rsaPrivate);
 var signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
 builder.Services.AddSingleton(signingCredentials);
 
-string? jwtIssuer = builder.Configuration["Authorization:Issuer"] ?? throw new ApplicationException("Authorization:Issuer missing");
-string? jwtAudience = builder.Configuration["Authorization:Audience"] ?? throw new ApplicationException("Authorization:Audience missing");
+string? jwtIssuer = builder.Configuration["Authorization:Issuer"]
+                    ?? throw new ApplicationException("Authorization:Issuer missing");
+string? jwtAudience = builder.Configuration["Authorization:Audience"]
+                      ?? throw new ApplicationException("Authorization:Audience missing");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -74,32 +74,16 @@ var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_Email
 var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
                          ?? builder.Configuration["Email:SenderAddress"];
 
-System.Console.WriteLine(mailConnectionString);
-System.Console.WriteLine(mailSenderAddress);
-System.Console.WriteLine(mailConnectionString);
-System.Console.WriteLine(mailSenderAddress);
-System.Console.WriteLine(mailConnectionString);
-System.Console.WriteLine(mailSenderAddress);
-
-
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
 {
-   // builder.Services.AddSingleton(sp => new EmailHelper(new EmailClient(mailConnectionString), mailSenderAddress));
-
-    // Register EmailService with proper constructor injection
     builder.Services.AddScoped<IEmailService>(sp =>
-    {
-        //var helper = sp.GetRequiredService<EmailHelper>();
-        return new EmailService(mailSenderAddress);
-    });
+        new EmailService(mailConnectionString, mailSenderAddress)
+    );
 }
 else
 {
     builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 }
-
-
-builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 
 // ======================
 // Repositories
@@ -108,8 +92,9 @@ builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserSessionRepository, UserSessionRepository>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
-builder.Services.AddScoped<IBoardRepository,  BoardRepository>();
+builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 builder.Services.AddScoped<ILoginChecker, LoginChecker>();
+
 // ======================
 // Business Services
 // ======================
@@ -126,10 +111,7 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod()
     );
-});
 
-builder.Services.AddCors(options =>
-{
     options.AddPolicy("OpenCorsNoLimitation", policy =>
         policy.AllowAnyOrigin()
               .AllowAnyHeader()
