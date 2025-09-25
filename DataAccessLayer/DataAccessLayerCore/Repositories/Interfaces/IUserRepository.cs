@@ -10,20 +10,20 @@ namespace DataAccessLayerCore.Repositories.Interfaces
     public interface IUserRepository : IBaseRepository
     {
         /// <summary>
-        /// Checks if a username is occupied.
+        /// Checks if an email is occupied.
         /// </summary>
-        /// <param name="username">The username to check.</param>
-        /// <returns><c>true</c> if the username is occupied, <c>false</c> otherwise.</returns>
-        bool IsUserNameOccupied(string username);
+        /// <param name="email">The email to check.</param>
+        /// <returns><c>true</c> if the email is occupied, <c>false</c> otherwise.</returns>
+        bool IsUsernameOccupied(string email);
 
         /// <summary>
-        /// Retrieves a user from the database given a username.
+        /// Retrieves a user from the database given an email.
         /// </summary>
-        /// <param name="username">The username of the user to retrieve.</param>
+        /// <param name="email">The email of the user to retrieve.</param>
         /// <returns>
         /// The user object if found in the database, otherwise null.
         /// </returns>
-        Task<User?> GetUserByUsername(string username);
+        Task<User?> GetUserByUsername(string email);
 
         /// <summary>
         /// Retrieves a user session by the provided refresh token.
