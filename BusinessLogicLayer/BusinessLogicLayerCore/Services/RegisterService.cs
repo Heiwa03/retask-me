@@ -26,8 +26,6 @@ namespace BusinessLogicLayerCore.Services
 
     public class RegisterService : IRegisterService{
         private readonly IUserRepository _userRepository;
-
-        private readonly IBaseRepository _baseRepository;
         private readonly IEmailService _emailService;
         private readonly EmailHelper _emailHelper;
         private readonly SigningCredentials _signingCredentials;
@@ -35,14 +33,12 @@ namespace BusinessLogicLayerCore.Services
 
         public RegisterService(
             IUserRepository userRepository,
-            IBaseRepository baseRepository,
             IEmailService emailService,
             EmailHelper emailHelper,
             SigningCredentials signingCredentials,
             IConfiguration configuration)
         {
             _userRepository = userRepository;
-            _baseRepository = baseRepository;
             _emailService = emailService;
             _emailHelper = emailHelper;
             _signingCredentials = signingCredentials;
