@@ -3,7 +3,7 @@ using HelperLayer.Security;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BusinessLogicLayer.Services
+namespace BusinessLogicLayerCore.Services
 {
     public class EmailService : IEmailService
     {
