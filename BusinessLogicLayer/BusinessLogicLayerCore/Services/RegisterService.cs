@@ -30,13 +30,11 @@ namespace BusinessLogicLayerCore.Services
 
         public RegisterService(
             IUserRepository userRepository,
-            IBaseRepository baseRepository,
             IEmailService emailService,
             SigningCredentials signingCredentials,
             IConfiguration configuration)
         {
             _userRepository = userRepository;
-            _baseRepository = baseRepository;
             _emailService = emailService;
             _signingCredentials = signingCredentials;
             _frontendUrl = configuration["Frontend:BaseUrl"] ?? throw new ArgumentNullException("Frontend:BaseUrl missing");
@@ -48,9 +46,17 @@ namespace BusinessLogicLayerCore.Services
         public async Task RegisterUser(RegisterDTO dto)
         {
             // Validate input
-            CheckUniqueMail(dto.Mail);
-            CheckRepeatPassword(dto.Password, dto.RepeatPassword);
-            CheckPasswordRequirements(dto.Password);
+            if (_userRepository.IsUsernameOccupied(dto.Mail)){
+                throw new InvalidOperationException("Email already exists");
+            }
+
+            // Validate confirm password
+            if (!PasswordHelper.ValidateRegisterData(dto.Password, dto.RepeatPassword))
+                throw new InvalidOperationException("Passwords do not match");
+
+            if (!PasswordHelper.IsPasswordStrong(dto.Password)){
+                throw new InvalidOperationException("Password is not strong enough");
+            }
 
             // Hash password
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
@@ -78,24 +84,6 @@ namespace BusinessLogicLayerCore.Services
 
             // Delegate email creation & sending to EmailService
             await _emailService.SendVerificationEmailAsync(dto.Mail, verificationLink);
-        }
-
-        internal void CheckUniqueMail(string mail)
-        {
-            if (_userRepository.IsUsernameOccupied(mail))
-                throw new InvalidOperationException("Email already exists");
-        }
-
-        internal void CheckRepeatPassword(string password, string repeatPassword)
-        {
-            if (!PasswordHelper.ValidateRegisterData(password, repeatPassword))
-                throw new InvalidOperationException("Passwords do not match");
-        }
-
-        internal void CheckPasswordRequirements(string password)
-        {
-            if (!PasswordHelper.IsPasswordStrong(password))
-                throw new InvalidOperationException("Password is not strong enough");
         }
 
         internal User CreateUser(RegisterDTO dto, string hashedPassword)
@@ -140,5 +128,6 @@ namespace BusinessLogicLayerCore.Services
                 throw;
             }
         }
+
     }
 }
