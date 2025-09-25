@@ -12,7 +12,6 @@ using Azure.Communication.Email;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using BusinessLogicLayerCore.Services.Interfaces;
-using BusinessLogicLayer.Services;
 using System.Collections.Generic;
 // ======================
 // Create builder
@@ -75,7 +74,7 @@ if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpa
         var client = new EmailClient(mailConnectionString);
         return new EmailHelper(client, mailSenderAddress);
     });
-    builder.Services.AddScoped<IEmailService, BusinessLogicLayer.Services.EmailService>();
+    builder.Services.AddScoped<IEmailService, BusinessLogicLayerCore.Services.EmailService>();
 }
 // Fallback local file (development)
 if (string.IsNullOrWhiteSpace(privateKeyPem))
