@@ -9,22 +9,27 @@ namespace BusinessLogicLayerCore.Services
 {
     public class EmailService : IEmailService
     {
-        private readonly EmailHelper? _emailHelper;
+        //private readonly EmailHelper _emailHelper;
         private readonly string _defaultSender;
 
         // Fallback constructor for testing / missing EmailHelper
         public EmailService() { }
 
-        public EmailService(EmailHelper emailHelper, string defaultSender)
+        public EmailService(/*EmailHelper emailHelper,*/ string defaultSender)
         {
-            _emailHelper = emailHelper;
+            //_emailHelper = emailHelper;
             _defaultSender = defaultSender;
+        }
+
+        public Task<bool> SendEmailAsync(List<string> recipients, string subject, string htmlContent)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
         /// Sends a raw email with subject & HTML content.
         /// </summary>
-        public Task<bool> SendEmailAsync(List<string> recipients, string subject, string htmlContent)
+        /*public Task<bool> SendEmailAsync(List<string> recipients, string subject, string htmlContent)
         {
             if (_emailHelper == null)
             {
@@ -34,7 +39,7 @@ namespace BusinessLogicLayerCore.Services
 
             return _emailHelper.SendEmailAsync(recipients, subject, htmlContent);
         }
-
+        */
         /// <summary>
         /// Builds and sends a verification email for new users.
         /// </summary>

@@ -43,8 +43,8 @@ var rsaKey = new RsaSecurityKey(rsaPrivate);
 var signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
 builder.Services.AddSingleton(signingCredentials);
 
-string? jwtIssuer = builder.Configuration["Authorization:Issuer"];
-string? jwtAudience = builder.Configuration["Authorization:Audience"];
+string? jwtIssuer = builder.Configuration["Authorization:Issuer"] ?? throw new ApplicationException("Authorization:Issuer missing");
+string? jwtAudience = builder.Configuration["Authorization:Audience"] ?? throw new ApplicationException("Authorization:Audience missing");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -76,11 +76,14 @@ var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFro
 
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
 {
-    // Real EmailHelper + EmailService
-    builder.Services.AddSingleton(sp =>
-        new EmailHelper(new EmailClient(mailConnectionString), mailSenderAddress)
-    );
-    builder.Services.AddScoped<IEmailService, EmailService>();
+   // builder.Services.AddSingleton(sp => new EmailHelper(new EmailClient(mailConnectionString), mailSenderAddress));
+
+    // Register EmailService with proper constructor injection
+    builder.Services.AddScoped<IEmailService>(sp =>
+    {
+        //var helper = sp.GetRequiredService<EmailHelper>();
+        return new EmailService(/*helper,*/ mailSenderAddress);
+    });
 }
 else
 {
@@ -122,15 +125,23 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // ======================
-// Build & run app
+// Build app
 // ======================
 var app = builder.Build();
 
 app.UseCors("FrontEndUI");
-app.UseSwagger();
-app.UseSwaggerUI();
+
+// Developer exception page for dev
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 app.Run();
