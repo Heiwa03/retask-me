@@ -13,18 +13,27 @@ using System.Threading.Tasks;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class AuthController(
-    IAuthService authService,
-    DatabaseContext databaseContext,
-    SigningCredentials signingCredentials,
-    IConfiguration configuration,
-    EmailHelper emailHelper) : ControllerBase
+public class AuthController : ControllerBase
 {
-    private readonly IAuthService _authService = authService;
-    private readonly DatabaseContext _databaseContext = databaseContext;
-    private readonly SigningCredentials _signingCredentials = signingCredentials;
-    private readonly string _frontendUrl = configuration["Frontend:BaseUrl"];
-    private readonly EmailHelper _emailHelper = emailHelper;
+    private readonly IAuthService _authService;
+    private readonly DatabaseContext _databaseContext;
+    private readonly SigningCredentials _signingCredentials;
+    private readonly IEmailService _emailService;
+    private readonly string _frontendUrl;
+
+    public AuthController(
+        IAuthService authService,
+        DatabaseContext databaseContext,
+        SigningCredentials signingCredentials,
+        IConfiguration configuration,
+        IEmailService emailService)
+    {
+        _authService = authService;
+        _databaseContext = databaseContext;
+        _signingCredentials = signingCredentials;
+        _emailService = emailService;
+        _frontendUrl = configuration["Frontend:BaseUrl"];
+    }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
@@ -37,7 +46,6 @@ public class AuthController(
 
         if (!user.IsVerified)
         {
-            // Optional: resend verification email
             string token = TokenHelper.GenerateJwtToken(
                 user.NormalizedUsername,
                 _signingCredentials,
@@ -56,8 +64,9 @@ public class AuthController(
 
             string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
 
-            await _emailHelper.SendEmailAsync(
-                new List<string> { user.Username }, // replace with actual email
+            // Use the injected IEmailService instead of EmailHelper
+            await _emailService.SendEmailAsync(
+                new List<string> { user.Username },
                 "Verify Your Email",
                 htmlContent
             );
@@ -65,7 +74,6 @@ public class AuthController(
             return BadRequest(new { message = "Email not verified. A new verification link has been sent.", isVerified = false });
         }
 
-        // If verified, generate JWT for session
         var authResponse = await _authService.LoginAsync(user.NormalizedUsername, loginDto.Password);
 
         return Ok(new { authResponse, isVerified = true });

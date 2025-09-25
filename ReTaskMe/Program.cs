@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using BusinessLogicLayerCore.Services.Interfaces;
 using System.Collections.Generic;
+
 // ======================
 // Create builder
 // ======================
@@ -50,11 +51,14 @@ string? publicKeyPem = Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY"); // 
 string? jwtIssuer = Environment.GetEnvironmentVariable("Authorization_Issuer");
 string? jwtAudience = Environment.GetEnvironmentVariable("Authorization_Audience");
 
-// Email (prefer specific env vars, then generic env, then appsettings)
+// ======================
+// Email setup with fallback
+// ======================
 var mailConnectionString =
     Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
     ?? Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")
     ?? builder.Configuration["Email:ConnectionString"];
+
 var mailSenderAddress =
     Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
     ?? Environment.GetEnvironmentVariable("EMAIL_SENDER_ADDRESS")
@@ -62,6 +66,7 @@ var mailSenderAddress =
 
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
 {
+    // Real EmailHelper + EmailService
     builder.Services.AddSingleton(sp =>
     {
         var client = new EmailClient(mailConnectionString);
@@ -69,7 +74,21 @@ if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpa
     });
     builder.Services.AddScoped<IEmailService, BusinessLogicLayerCore.Services.EmailService>();
 }
-// Fallback local file (development)
+else
+{
+    // Fallback / no-op EmailService
+    builder.Services.AddScoped<IEmailService, NoOpEmailService>();
+}
+
+// ======================
+// NoOpEmailService definition
+// ======================
+builder.Services.AddScoped<IEmailService, NoOpEmailService>();
+
+
+// ======================
+// Fallback local file for JWT (development)
+// ======================
 if (string.IsNullOrWhiteSpace(privateKeyPem))
 {
     var pemPath = builder.Configuration["Jwt:PrivateKeyPem"];
@@ -106,7 +125,7 @@ builder.Services.AddScoped<ILoginChecker, LoginChecker>();
 // ======================
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name:"FrontEndUI", policy =>
+    options.AddPolicy(name: "FrontEndUI", policy =>
     {
         policy.WithOrigins("http://localhost:4200")
               .AllowAnyMethod()
@@ -138,7 +157,7 @@ builder.Services.AddAuthentication(options =>
     }
     else
     {
-        issuerSigningKey = rsaKey; // fallback la cheia privată
+        issuerSigningKey = rsaKey; // fallback to private key
     }
 
     options.TokenValidationParameters = new TokenValidationParameters
@@ -160,6 +179,7 @@ builder.Services.AddAuthentication(options =>
 var app = builder.Build();
 
 app.UseCors("FrontEndUI");
+
 // ======================
 // Middleware
 // ======================
