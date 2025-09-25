@@ -33,7 +33,7 @@ builder.WebHost.ConfigureKestrel(options =>
 // ======================
 // Database configuration
 // ======================
-var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString");
+var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString") ?? builder.Configuration.GetConnectionString("DefaultConnection");
 if (string.IsNullOrWhiteSpace(connectionString))
 {
     throw new ApplicationException("Database connection string is missing. Set Data__ConnectionString in App Settings.");
@@ -63,12 +63,10 @@ string? jwtAudience =
 // ======================
 var mailConnectionString =
     Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
-    ?? Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")
     ?? builder.Configuration["Email:ConnectionString"];
 
 var mailSenderAddress =
     Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
-    ?? Environment.GetEnvironmentVariable("EMAIL_SENDER_ADDRESS")
     ?? builder.Configuration["Email:SenderAddress"];
 
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
@@ -79,18 +77,13 @@ if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpa
         var client = new EmailClient(mailConnectionString);
         return new EmailHelper(client, mailSenderAddress);
     });
-    builder.Services.AddScoped<IEmailService, BusinessLogicLayerCore.Services.EmailService>();
+    builder.Services.AddScoped<IEmailService, EmailService>();
 }
 else
 {
     // Fallback / no-op EmailService
     builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 }
-
-// ======================
-// NoOpEmailService definition
-// ======================
-builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 
 
 // ======================
