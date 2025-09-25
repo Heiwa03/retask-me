@@ -69,19 +69,13 @@ builder.Services.AddAuthentication(options =>
 // ======================
 // Email configuration
 // ======================
-var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_EmailSmtp");
-//?? builder.Configuration["Email:ConnectionString"];
-var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFrom");
-                        //?? builder.Configuration["Email:SenderAddress"];
+var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
+                             ?? builder.Configuration["Email:ConnectionString"];
+var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
+                         ?? builder.Configuration["Email:SenderAddress"];
 
-System.Console.WriteLine(mailSenderAddress + "\n" + mailConnectionString + "\n\n");
-System.Console.WriteLine(mailSenderAddress + "\n" + mailConnectionString + "\n\n");
-System.Console.WriteLine(mailSenderAddress + "\n" + mailConnectionString + "\n\n");
-
-/*
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
 {
-    // Real EmailHelper + EmailService
     builder.Services.AddSingleton(sp =>
         new EmailHelper(new EmailClient(mailConnectionString), mailSenderAddress)
     );
@@ -89,17 +83,8 @@ if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpa
 }
 else
 {
-    // Fallback no-op service for dev/testing
     builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 }
-*/
-
-// Real EmailHelper + EmailService
-builder.Services.AddSingleton(sp =>
-    new EmailHelper(new EmailClient(mailConnectionString), mailSenderAddress)
-);
-
-//builder.Services.AddScoped<IEmailService, EmailService>();
 
 // ======================
 // Repositories

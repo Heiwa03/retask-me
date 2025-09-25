@@ -12,9 +12,6 @@ namespace BusinessLogicLayerCore.Services
         private readonly EmailHelper? _emailHelper;
         private readonly string _defaultSender;
 
-        // Fallback constructor for testing / missing EmailHelper
-        public EmailService() { }
-
         public EmailService(EmailHelper emailHelper, string defaultSender)
         {
             _emailHelper = emailHelper;
