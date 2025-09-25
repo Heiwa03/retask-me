@@ -70,10 +70,18 @@ builder.Services.AddAuthentication(options =>
 // Email configuration
 // ======================
 var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
-                           ?? builder.Configuration["Email:ConnectionString"];
+                             ?? builder.Configuration["Email:ConnectionString"];
 var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
-                        ?? builder.Configuration["Email:SenderAddress"];
+                         ?? builder.Configuration["Email:SenderAddress"];
 
+System.Console.WriteLine(mailConnectionString);
+System.Console.WriteLine(mailSenderAddress);
+System.Console.WriteLine(mailConnectionString);
+System.Console.WriteLine(mailSenderAddress);
+System.Console.WriteLine(mailConnectionString);
+System.Console.WriteLine(mailSenderAddress);
+
+/*
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
 {
    // builder.Services.AddSingleton(sp => new EmailHelper(new EmailClient(mailConnectionString), mailSenderAddress));
@@ -87,9 +95,11 @@ if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpa
 }
 else
 {
-    // Fallback no-op service for dev/testing
     builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 }
+*/
+
+builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 
 // ======================
 // Repositories
@@ -97,6 +107,8 @@ else
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserSessionRepository, UserSessionRepository>();
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<IBoardRepository,  BoardRepository>();
 
 // ======================
 // Business Services
@@ -112,6 +124,15 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontEndUI", policy =>
         policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+    );
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("OpenCorsNoLimitation", policy =>
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod()
     );
