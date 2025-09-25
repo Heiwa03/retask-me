@@ -49,21 +49,5 @@ namespace AuthBackend.Controllers
                 return BadRequest(e.Message);
             }
         }
-
-        [HttpGet("db-check")]
-        public async Task<IActionResult> DbCheck()
-        {
-            try
-            {
-                var canConnect = await _databaseContext.Database.CanConnectAsync();
-                var userCount = await _databaseContext.Users.CountAsync();
-                return Ok(new { canConnect, userCount });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { canConnect = false, error = ex.Message });
-            }
-        }
-
     }
 }
