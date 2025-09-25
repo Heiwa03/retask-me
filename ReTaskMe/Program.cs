@@ -138,6 +138,7 @@ var app = builder.Build();
 // app.UseCors("FrontEndUI");
 app.UseCors("OpenCorsNoLimitation");
 
+app.UseDeveloperExceptionPage();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
