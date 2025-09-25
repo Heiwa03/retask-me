@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -32,7 +31,8 @@ public class AuthController : ControllerBase
         _databaseContext = databaseContext;
         _signingCredentials = signingCredentials;
         _emailService = emailService;
-        _frontendUrl = configuration["Frontend:BaseUrl"];
+        _frontendUrl = configuration["Frontend:BaseUrl"] ?? throw new ApplicationException("Frontend:BaseUrl configuration is missing.");
+
     }
 
     [HttpPost("login")]
@@ -64,7 +64,6 @@ public class AuthController : ControllerBase
 
             string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
 
-            // Use the injected IEmailService instead of EmailHelper
             await _emailService.SendEmailAsync(
                 new List<string> { user.Username },
                 "Verify Your Email",
