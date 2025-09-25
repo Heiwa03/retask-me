@@ -69,10 +69,10 @@ builder.Services.AddAuthentication(options =>
 // ======================
 // Email configuration
 // ======================
-var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
-                           ?? builder.Configuration["Email:ConnectionString"];
-var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
-                        ?? builder.Configuration["Email:SenderAddress"];
+var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_EmailSmtp");
+//?? builder.Configuration["Email:ConnectionString"];
+var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFrom");
+                        //?? builder.Configuration["Email:SenderAddress"];
 
 System.Console.WriteLine(mailSenderAddress + "\n" + mailConnectionString + "\n\n");
 System.Console.WriteLine(mailSenderAddress + "\n" + mailConnectionString + "\n\n");
@@ -98,6 +98,7 @@ else
 builder.Services.AddSingleton(sp =>
     new EmailHelper(new EmailClient(mailConnectionString), mailSenderAddress)
 );
+
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 // ======================
