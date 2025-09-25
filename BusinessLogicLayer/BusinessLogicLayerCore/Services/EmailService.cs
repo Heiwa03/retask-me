@@ -9,7 +9,7 @@ namespace BusinessLogicLayerCore.Services
     {
         private readonly EmailHelper? _emailHelper;
 
-        // Allows DI to construct EmailService even if EmailHelper is not registered (fallback/no-op)
+        // Fallback constructor for testing / missing EmailHelper
         public EmailService() { }
 
         public EmailService(EmailHelper emailHelper)
@@ -21,11 +21,13 @@ namespace BusinessLogicLayerCore.Services
         {
             if (_emailHelper == null)
             {
-                // No email configuration available; succeed without sending
+                // Fallback: just log and succeed
+                Console.WriteLine($"[Fallback Email] To: {string.Join(",", recipients)}, Subject: {subject}");
                 return Task.FromResult(true);
             }
 
             return _emailHelper.SendEmailAsync(recipients, subject, htmlContent);
         }
     }
+
 }
