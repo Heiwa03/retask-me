@@ -79,7 +79,7 @@ namespace BusinessLogicLayerCore.Services
             // Create session
             UserSession userSession = CreateSession(user);
             _userRepository.Add(userSession); //base
-            await SaveChanges();
+            await _userRepository.SaveChangesAsync();
 
             // Generate JWT verification token (1h expiry)
             string token = TokenHelper.GenerateJwtToken(
@@ -141,21 +141,6 @@ namespace BusinessLogicLayerCore.Services
                 RefreshTokenExpiration = DateTime.UtcNow.AddDays(7),
                 Redeemed = false
             };
-        }
-
-
-
-        internal async Task SaveChanges()
-        {
-            try
-            {
-                await _userRepository.SaveChangesAsync(); //base
-            }
-            catch (DbUpdateException ex)
-            {
-                Console.WriteLine(ex.InnerException?.Message);
-                throw;
-            }
         }
     }
 }
