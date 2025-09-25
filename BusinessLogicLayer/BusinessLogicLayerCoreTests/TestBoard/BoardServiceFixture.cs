@@ -33,7 +33,7 @@ public class BoardServiceFixture
         Password = "3cm",
         FirstName = "Lastname",
         LastName = "Firstname",
-        Gender = 1,
+        Gender = Gender.Male,
         IsVerified = true
     };
 

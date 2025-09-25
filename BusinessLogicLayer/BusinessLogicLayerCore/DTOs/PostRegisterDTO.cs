@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using DataAccessLayerCore.Enum;
 
 namespace BusinessLogicLayerCore.DTOs{
     public class PostRegisterDTO{
@@ -15,6 +16,6 @@ namespace BusinessLogicLayerCore.DTOs{
         public string LastName { get; set; } = null!;
 
         [Required(ErrorMessage = "Gender is required")]
-        public int Gender {get; set; }
+        public Gender Gender {get; set; } = Gender.Undefiend;
     }
 }
