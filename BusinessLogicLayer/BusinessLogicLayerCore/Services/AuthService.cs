@@ -1,4 +1,5 @@
-﻿using BusinessLogicLayerCore.Services.Interfaces;
+﻿using BusinessLogicLayerCore.DTOs;
+using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore.Entities;
 using DataAccessLayerCore.Repositories.Interfaces;
 using HelperLayer.Security.Token;
@@ -35,12 +36,12 @@ namespace BusinessLogicLayerCore.Services
             _audience = configuration["Authorization:Audience"] ?? throw new ArgumentNullException("Authorization:Audience");
         }
 
-        public async Task<AuthResponse?> LoginAsync(string email, string password)
+        public async Task<AuthResponse?> LoginAsync(LoginDto dto)
         {
-            if (!await _loginChecker.CheckCredentials(email, password))
+            if (!await _loginChecker.CheckCredentials(dto))
                 return null;
 
-            return await CreateSessionAsync(email);
+            return await CreateSessionAsync(dto.Email);
         }
 
         public async Task<AuthResponse?> RefreshAsync(string refreshToken)
@@ -65,7 +66,7 @@ namespace BusinessLogicLayerCore.Services
             {
                 UserId = user.Id,
                 Uuid = user.Uuid,
-                User = user,
+               //User = user,
                 RefreshToken = newRefreshToken,
                 JwtId = newJwtId,
                 RefreshTokenExpiration = DateTime.UtcNow.AddDays(RefreshTokenDays),
@@ -100,7 +101,7 @@ namespace BusinessLogicLayerCore.Services
             {
                 UserId = user.Id,
                 Uuid = user.Uuid,
-                User = user,
+                //User = user,
                 RefreshToken = refreshToken,
                 JwtId = user.Uuid.ToString(),
                 RefreshTokenExpiration = DateTime.UtcNow.AddDays(RefreshTokenDays),

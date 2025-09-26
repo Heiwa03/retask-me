@@ -7,6 +7,8 @@ using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore;
 using DataAccessLayerCore.Repositories;
 using DataAccessLayerCore.Repositories.Interfaces;
+using Azure;
+using Azure.Communication.Email;
 
 // ======================
 // Create builder
@@ -70,9 +72,9 @@ builder.Services.AddAuthentication(options =>
 // Email configuration
 // ======================
 var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
-                             ?? builder.Configuration["Email:ConnectionString"];
+                             ?? builder.Configuration.GetConnectionString("AppSettings_EmailSmtp");
 var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
-                         ?? builder.Configuration["Email:SenderAddress"];
+                         ?? builder.Configuration.GetConnectionString("AppSettings_EmailFrom");
 
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
 {
@@ -137,9 +139,9 @@ app.UseCors("FrontEndUI");
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.UseSwagger();
     app.UseSwaggerUI();
 }
+    app.UseSwagger();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

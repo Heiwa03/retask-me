@@ -1,7 +1,9 @@
-﻿namespace BusinessLogicLayerCore.Services.Interfaces
+﻿using BusinessLogicLayerCore.DTOs;
+
+namespace BusinessLogicLayerCore.Services.Interfaces
 {
     public interface ILoginChecker
     {
-        Task<bool> CheckCredentials(string username, string password);
+        Task<bool> CheckCredentials(LoginDto dto);
     }
 }

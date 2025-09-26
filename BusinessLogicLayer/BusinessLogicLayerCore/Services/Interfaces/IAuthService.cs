@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using BusinessLogicLayerCore.DTOs;
+using System.Threading.Tasks;
 
 namespace BusinessLogicLayerCore.Services.Interfaces
 {
@@ -10,7 +11,7 @@ namespace BusinessLogicLayerCore.Services.Interfaces
 
     public interface IAuthService
     {
-        Task<AuthResponse?> LoginAsync(string email, string password);
+        Task<AuthResponse?> LoginAsync(LoginDto dto);
         Task<AuthResponse?> RefreshAsync(string refreshToken);
     }
 }

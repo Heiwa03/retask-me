@@ -1,3 +1,4 @@
+using BusinessLogicLayerCore.DTOs;
 using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore.Repositories.Interfaces;
 using HelperLayer.Security;
@@ -13,13 +14,13 @@ namespace BusinessLogicLayerCore.Services
             _userRepository = userRepository;
         }
 
-        public async Task<bool> CheckCredentials(string username, string password)
+        public async Task<bool> CheckCredentials(LoginDto dto)
         {
-            var user = await _userRepository.GetUserByUsername(username);
+            var user = await _userRepository.GetUserByUsername(dto.Email);
             if (user == null)
                 return false;
 
-            return PasswordHelper.VerifyHashedPassword(password, user.Password);
+            return PasswordHelper.VerifyHashedPassword(dto.Password, user.Password);
         }
     }
 }
