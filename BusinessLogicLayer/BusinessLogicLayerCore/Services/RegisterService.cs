@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using BusinessLogicLayerCore.Services.Interfaces;
 using BusinessLogicLayerCore.DTOs;
-using DataAccessLayerCore.Entities
-using HelperLayer.Security;
+using DataAccessLayerCore.Entities;
 using HelperLayer.Security.Token;
+using HelperLayer.Security;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 
@@ -13,15 +13,7 @@ using DataAccessLayerCore.Repositories.Interfaces;
 
 namespace BusinessLogicLayerCore.Services
 {
-    public class RegisterService : IRegisterService
-    {
-        private readonly IUserRepository _userRepository;
-        private readonly IEmailService _emailService;
-using BusinessLogicLayerCore.Templates;
 
-
-namespace BusinessLogicLayerCore.Services
-{
     /// <summary>
     /// Service responsible for user registration and email verification.
     /// </summary>
@@ -31,7 +23,6 @@ namespace BusinessLogicLayerCore.Services
 
         private readonly IBaseRepository _baseRepository;
         private readonly IEmailService _emailService;
-        private readonly EmailHelper _emailHelper;
         private readonly SigningCredentials _signingCredentials;
         private readonly string _frontendUrl;
         private readonly string _jwtIssuer;
