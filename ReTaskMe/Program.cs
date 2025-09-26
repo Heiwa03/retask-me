@@ -9,6 +9,7 @@ using DataAccessLayerCore.Repositories;
 using DataAccessLayerCore.Repositories.Interfaces;
 using HelperLayer.Security;
 using Azure.Communication.Email;
+using Microsoft.EntityFrameworkCore.Design;
 
 // ======================
 // Create builder
