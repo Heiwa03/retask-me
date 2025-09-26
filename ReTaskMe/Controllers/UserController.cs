@@ -11,6 +11,10 @@ namespace ReTaskMe.Controllers;
         
         [HttpPost("createTask")]
         public async Task<IActionResult> ActionCreateTask([FromBody] TaskDTO dto){
+        if (UserGuid.Value == Guid.Empty)
+        {
+            return NotFound(new { message = "UserGuid is NULL!!!" });
+        }
             await _userService.CreateTask(dto, UserGuid.Value); // THIS
             return Ok(new { message = "Task created successfully" });
         }
