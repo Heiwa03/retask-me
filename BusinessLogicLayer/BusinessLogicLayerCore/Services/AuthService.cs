@@ -100,7 +100,7 @@ namespace BusinessLogicLayerCore.Services
             {
                 UserId = user.Id,
                 Uuid = user.Uuid,
-                User = user,
+                //User = user,
                 RefreshToken = refreshToken,
                 JwtId = user.Uuid.ToString(),
                 RefreshTokenExpiration = DateTime.UtcNow.AddDays(RefreshTokenDays),
