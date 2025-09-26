@@ -1,18 +1,19 @@
-// Microsoft Packages
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using BusinessLogicLayerCore.Services;
-using DataAccessLayerCore;
-using DataAccessLayerCore.Repositories.Interfaces;
-using DataAccessLayerCore.Repositories;
-using HelperLayer.Security;
-using Azure.Communication.Email;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
 using BusinessLogicLayerCore.Services.Interfaces;
+using DataAccessLayerCore;
+using DataAccessLayerCore.Repositories;
+using DataAccessLayerCore.Repositories.Interfaces;
+using BusinessLogicLayerCore.Templates;
+using Azure;
+using Azure.Communication.Email;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+
 
 // ======================
 // Create builder
@@ -20,126 +21,41 @@ using System.Collections.Generic;
 var builder = WebApplication.CreateBuilder(args);
 
 // ======================
-// Configure port for Azure
-// ======================
-var portEnv = Environment.GetEnvironmentVariable("WEBSITES_PORT");
-var port = string.IsNullOrWhiteSpace(portEnv) ? 8080 : int.Parse(portEnv);
-
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(port);
-});
-
-// ======================
 // Database configuration
 // ======================
-var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString") ?? builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString")
+                       ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
 if (string.IsNullOrWhiteSpace(connectionString))
-{
-    throw new ApplicationException("Database connection string is missing. Set Data__ConnectionString in App Settings.");
-}
+    throw new ApplicationException("Database connection string is missing.");
+
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(connectionString)
 );
 
 // ======================
-// JWT configuration with fallback (env or local file)
+// JWT Configuration
 // ======================
-string? privateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY");
-string? publicKeyPem = Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY"); // optional
-string? jwtIssuer =
-    Environment.GetEnvironmentVariable("Authorization__Issuer")
-    ?? Environment.GetEnvironmentVariable("Authorization_Issuer")
-    ?? builder.Configuration["Authorization:Issuer"];
-string? jwtAudience =
-    Environment.GetEnvironmentVariable("Authorization__Audience")
-    ?? Environment.GetEnvironmentVariable("Authorization_Audience")
-    ?? builder.Configuration["Authorization:Audience"];
-
-
-// ======================
-// Email setup with fallback
-// ======================
-var mailConnectionString =
-    Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
-    ?? builder.Configuration["Email:ConnectionString"];
-
-var mailSenderAddress =
-    Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
-    ?? builder.Configuration["Email:SenderAddress"];
-
-if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
-{
-    // Real EmailHelper + EmailService
-    builder.Services.AddSingleton(sp =>
-    {
-        var client = new EmailClient(mailConnectionString);
-        return new EmailHelper(client, mailSenderAddress);
-    });
-    builder.Services.AddScoped<IEmailService, EmailService>();
-}
-else
-{
-    // Fallback / no-op EmailService
-    builder.Services.AddScoped<IEmailService, NoOpEmailService>();
-}
-
-
-// ======================
-// Fallback local file for JWT (development)
-// ======================
-if (string.IsNullOrWhiteSpace(privateKeyPem))
-{
-    var pemPath = builder.Configuration["Jwt:PrivateKeyPem"];
-    if (!string.IsNullOrEmpty(pemPath) && File.Exists(pemPath))
-    {
-        privateKeyPem = File.ReadAllText(pemPath);
-    }
-}
+string? privateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY")
+                        ?? File.ReadAllText(builder.Configuration["Jwt:PrivateKeyPem"] ?? string.Empty);
 
 if (string.IsNullOrWhiteSpace(privateKeyPem))
-{
-    throw new ApplicationException("JWT signing key is not configured. Provide JWT_PRIVATE_KEY or Jwt:PrivateKeyPem file.");
-}
+    throw new ApplicationException("JWT private key is missing.");
 
-// Import private key
+
 RSA rsaPrivate = RSA.Create();
 rsaPrivate.ImportFromPem(privateKeyPem.ToCharArray());
 var rsaKey = new RsaSecurityKey(rsaPrivate);
 var signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
 builder.Services.AddSingleton(signingCredentials);
 
-// ======================
-// Service registrations
-// ======================
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IBaseRepository, BaseRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserSessionRepository, UserSessionRepository>();
-builder.Services.AddScoped<IRegisterService, RegisterService>();
-builder.Services.AddScoped<ILoginChecker, LoginChecker>();
+string? jwtIssuer = builder.Configuration["Authorization:Issuer"]
+                    ?? throw new ApplicationException("Authorization:Issuer missing");
+string? jwtAudience = builder.Configuration["Authorization:Audience"]
+                      ?? throw new ApplicationException("Authorization:Audience missing");
 
-// ======================
-// CORS Policy Creation
-// ======================
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: "FrontEndUI", policy =>
-    {
-        policy.WithOrigins("http://localhost:4200")
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-// ======================
-// Authentication setup
-// ======================
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -147,18 +63,6 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    SecurityKey issuerSigningKey;
-
-    if (!string.IsNullOrWhiteSpace(publicKeyPem))
-    {
-        RSA rsaPub = RSA.Create();
-        rsaPub.ImportFromPem(publicKeyPem.ToCharArray());
-        issuerSigningKey = new RsaSecurityKey(rsaPub);
-    }
-    else
-    {
-        issuerSigningKey = rsaKey; // fallback to private key
-    }
 
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -168,10 +72,72 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtIssuer,
         ValidAudience = jwtAudience,
-        IssuerSigningKey = issuerSigningKey,
+        IssuerSigningKey = rsaKey,
         ClockSkew = TimeSpan.FromMinutes(2)
     };
 });
+
+// ======================
+// Email configuration
+// ======================
+var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
+                             ?? builder.Configuration["Email:ConnectionString"];
+var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
+                         ?? builder.Configuration["Email:SenderAddress"];
+
+if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
+{
+    builder.Services.AddScoped<IEmailService>(sp =>
+        new EmailService(mailConnectionString, mailSenderAddress)
+    );
+}
+else
+{
+    builder.Services.AddScoped<IEmailService, NoOpEmailService>();
+}
+
+
+// ======================
+// Repositories
+// ======================
+builder.Services.AddScoped<IBaseRepository, BaseRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserSessionRepository, UserSessionRepository>();
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<IBoardRepository, BoardRepository>();
+builder.Services.AddScoped<ILoginChecker, LoginChecker>();
+
+
+// ======================
+// Business Services
+// ======================
+builder.Services.AddScoped<IRegisterService, RegisterService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// ======================
+// CORS
+// ======================
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontEndUI", policy =>
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+    );
+
+    options.AddPolicy("OpenCorsNoLimitation", policy =>
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+    );
+});
+
+// ======================
+// Controllers & Swagger
+// ======================
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // ======================
 // Build app
@@ -180,21 +146,17 @@ var app = builder.Build();
 
 app.UseCors("FrontEndUI");
 
-// ======================
-// Middleware
-// ======================
-app.UseSwagger();
-app.UseSwaggerUI();
+// Developer exception page for dev
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ======================
-// Map controllers
-// ======================
 app.MapControllers();
-
-// ======================
-// Run app
-// ======================
 app.Run();

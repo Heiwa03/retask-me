@@ -1,20 +1,22 @@
+using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-
-// BL namespaces
 using BusinessLogicLayerCore.Services.Interfaces;
 using BusinessLogicLayerCore.DTOs;
-using BusinessLogicLayerCore.Services.Interfaces;
-using BusinessLogicLayerCore.DTOs;
-
-// HL namespaces
+using DataAccessLayerCore.Entities
 using HelperLayer.Security;
 using HelperLayer.Security.Token;
-
-// DAL namespaces
-using DataAccessLayerCore.Repositories.Interfaces;
-using DataAccessLayerCore.Entities;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
+
+using DataAccessLayerCore.Repositories.Interfaces;
+
+namespace BusinessLogicLayerCore.Services
+{
+    public class RegisterService : IRegisterService
+    {
+        private readonly IUserRepository _userRepository;
+        private readonly IEmailService _emailService;
 using BusinessLogicLayerCore.Templates;
 
 
@@ -32,155 +34,89 @@ namespace BusinessLogicLayerCore.Services
         private readonly EmailHelper _emailHelper;
         private readonly SigningCredentials _signingCredentials;
         private readonly string _frontendUrl;
+        private readonly string _jwtIssuer;
+        private readonly string _jwtAudience;
 
         public RegisterService(
             IUserRepository userRepository,
-            IBaseRepository baseRepository,
             IEmailService emailService,
-            EmailHelper emailHelper,
+
             SigningCredentials signingCredentials,
             IConfiguration configuration)
         {
             _userRepository = userRepository;
-            _baseRepository = baseRepository;
             _emailService = emailService;
-            _emailHelper = emailHelper;
+
             _signingCredentials = signingCredentials;
-            _frontendUrl = configuration["Frontend:BaseUrl"] ?? throw new ArgumentNullException("Frontend:BaseUrl missing");
+
+            _frontendUrl = configuration["Frontend:BaseUrl"]
+                           ?? throw new ArgumentNullException("Frontend:BaseUrl missing");
+
+            _jwtIssuer = configuration["Authorization:Issuer"] ?? throw new ArgumentNullException("Authorization:Issuer missing");
+            _jwtAudience = configuration["Authorization:Audience"] ?? throw new ArgumentNullException("Authorization:Audience missing");
         }
 
-        /// <summary>
-        /// Registers a new user and sends verification email.
-        /// </summary>
         public async Task RegisterUser(RegisterDTO dto)
         {
-            // Validate input
-            CheckUniqueMail(dto.Mail);
-            CheckRepeatPassword(dto.Password, dto.RepeatPassword);
+            // --- Input validation ---
 
-            CheckPasswordRequirements(dto.Password);
             if (_userRepository.IsUsernameOccupied(dto.Mail))
-                throw new InvalidOperationException("Email already exists");
-
+                throw new InvalidOperationException("Email already exists.");
 
             if (!PasswordHelper.ValidateRegisterData(dto.Password, dto.RepeatPassword))
-                throw new InvalidOperationException("Passwords do not match");
+                throw new InvalidOperationException("Passwords do not match.");
 
             if (!PasswordHelper.IsPasswordStrong(dto.Password))
-                throw new InvalidOperationException("Password is not strong enough");
+                throw new InvalidOperationException("Password is not strong enough.");
 
-            //  Hash password
+            // --- Create user ---
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
+            var user = new User
 
-            // Create user
-            User user = CreateUser(dto, hashedPassword);
-            _userRepository.Add(user); // base
-            await _userRepository.SaveChangesAsync(); // base
-            _userRepository.Add(user); // base
-            await _userRepository.SaveChangesAsync(); // base
-
-            // Create session
-            UserSession userSession = CreateSession(user);
-            _userRepository.Add(userSession); //base
-            _userRepository.Add(userSession); //base
-            await SaveChanges();
-
-            // Generate JWT verification token (1h expiry)
-            string token = TokenHelper.GenerateJwtToken(
-                user.NormalizedUsername, // or Email if added
-                _signingCredentials,
-                issuer: null,
-                audience: null,
-                expiresMinutes: 60
-            );
-
-            // Build verification link
-            string verificationLink = $"{_frontendUrl}/verify-email?token={token}";
-
-            // Build email content (Unicode-safe)
-            string bodyContent = "<p>Hi,</p>" +
-                                 "<p>Please click the link below to verify your email:</p>" +
-                                 $"<p><a href='{verificationLink}'>Verify Email</a></p>" +
-                                 "<p>If you did not register, ignore this email.</p>";
-
-            string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
-
-            // 8?? Send verification email
-            await _emailService.SendEmailAsync(
-                new List<string> { dto.Mail },
-                "Verify Your Email",
-                htmlContent
-            );
-        }
-
-
-        internal void CheckUniqueMail(string mail)
-        {
-            if (_userRepository.IsUsernameOccupied(mail))
-                throw new InvalidOperationException("Email already exists");
-        }
-
-
-        internal void CheckRepeatPassword(string password, string repeatPassword)
-        {
-            if (!PasswordHelper.ValidateRegisterData(password, repeatPassword))
-                throw new InvalidOperationException("Passwords do not match");
-        }
-
-
-        internal void CheckPasswordRequirements(string password)
-        {
-            if (!PasswordHelper.IsPasswordStrong(password))
-                throw new InvalidOperationException("Password is not strong enough");
-        }
-
-
-        internal User CreateUser(RegisterDTO dto, string hashedPassword)
-        {
-            return new User
             {
-                Id = 0,
                 Uuid = Guid.NewGuid(),
                 Username = dto.Mail,
                 NormalizedUsername = dto.Mail.ToUpperInvariant(),
                 Password = hashedPassword,
-                IsVerified = false // Ensure email not verified initially
+                IsVerified = false
             };
-        }
+
+            _userRepository.Add(user);
+            await _userRepository.SaveChangesAsync();
 
 
-
-        internal UserSession CreateSession(User user)
-        {
-            string refreshToken = TokenHelper.GenerateRefreshToken();
-
-            return new UserSession
-
+            // --- Create session ---
+            var session = new UserSession
             {
-                Id = 0,
                 Uuid = user.Uuid,
                 User = user,
                 UserId = user.Id,
-                RefreshToken = refreshToken,
+                RefreshToken = TokenHelper.GenerateRefreshToken(),
                 JwtId = user.Uuid.ToString(),
                 RefreshTokenExpiration = DateTime.UtcNow.AddDays(7),
                 Redeemed = false
             };
-        }
+            _userRepository.Add(session);
+            await _userRepository.SaveChangesAsync();
 
+            // --- Generate JWT verification token (1h expiry) ---
+            string token = TokenHelper.GenerateJwtToken(
+                user.NormalizedUsername,
+                _signingCredentials,
+                issuer: _jwtIssuer,
+                audience: _jwtAudience,
+                expiresMinutes: 60
+            );
 
+            string verificationLink = $"{_frontendUrl}/verify-email?token={token}";
 
-        internal async Task SaveChanges()
-        {
-            try
+            // --- Send verification email ---
+            bool emailSent = await _emailService.SendVerificationEmailAsync(dto.Mail, verificationLink);
+
+            if (!emailSent)
+
             {
-                await _userRepository.SaveChangesAsync(); //base
-                await _userRepository.SaveChangesAsync(); //base
-            }
-            catch (DbUpdateException ex)
-            {
-                Console.WriteLine(ex.InnerException?.Message);
-                throw;
+                Console.WriteLine($"[RegisterService] Failed to send verification email to {dto.Mail}");
             }
         }
     }

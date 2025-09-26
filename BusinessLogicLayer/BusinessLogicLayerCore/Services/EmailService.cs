@@ -1,5 +1,8 @@
 ﻿using BusinessLogicLayerCore.Services.Interfaces;
-using HelperLayer.Security;
+using BusinessLogicLayerCore.Templates;
+using Azure;
+using Azure.Communication.Email;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,26 +10,61 @@ namespace BusinessLogicLayerCore.Services
 {
     public class EmailService : IEmailService
     {
-        private readonly EmailHelper? _emailHelper;
+        private readonly EmailClient _emailClient;
+        private readonly string _defaultSender;
 
-        // Fallback constructor for testing / missing EmailHelper
-        public EmailService() { }
 
-        public EmailService(EmailHelper emailHelper)
+        public EmailService(string connectionString, string defaultSender)
         {
-            _emailHelper = emailHelper;
+            _emailClient = new EmailClient(connectionString);
+            _defaultSender = defaultSender;
         }
 
-        public Task<bool> SendEmailAsync(List<string> recipients, string subject, string htmlContent)
+        public async Task<bool> SendEmailAsync(List<string> recipientsEmails, string subject, string htmlContent)
         {
-            if (_emailHelper == null)
-            {
-                // Fallback: just log and succeed
-                Console.WriteLine($"[Fallback Email] To: {string.Join(",", recipients)}, Subject: {subject}");
-                return Task.FromResult(true);
-            }
+            if (recipientsEmails == null || recipientsEmails.Count == 0)
+                throw new ArgumentException("At least one recipient is required.");
 
-            return _emailHelper.SendEmailAsync(recipients, subject, htmlContent);
+            try
+            {
+                var recipients = new EmailRecipients(
+                    to: recipientsEmails.ConvertAll(email => new EmailAddress(email))
+                );
+
+                var emailContent = new EmailContent(subject)
+                {
+                    Html = htmlContent,
+                    PlainText = "This is a fallback text version."
+                };
+
+                var emailMessage = new EmailMessage(_defaultSender, recipients, emailContent);
+
+                await _emailClient.SendAsync(WaitUntil.Completed, emailMessage);
+
+                Console.WriteLine($"Email sent to {string.Join(", ", recipientsEmails)}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to send email: {ex}");
+                return false;
+            }
+        }
+
+        public Task<bool> SendVerificationEmailAsync(string recipient, string verificationLink)
+        {
+            string bodyContent = "<p>Hi,</p>" +
+                                 "<p>Please click the link below to verify your email:</p>" +
+                                 $"<p><a href='{verificationLink}'>Verify Email</a></p>" +
+                                 "<p>If you did not register, ignore this email.</p>";
+
+            string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
+
+            return SendEmailAsync(
+                new List<string> { recipient },
+                "Verify Your Email",
+                htmlContent
+            );
         }
     }
 
