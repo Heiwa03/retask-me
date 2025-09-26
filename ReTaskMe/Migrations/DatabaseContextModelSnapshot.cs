@@ -22,7 +22,7 @@ namespace ReTaskMe.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DataAccessLayerCore.Entities.DailyTask", b =>
+            modelBuilder.Entity("DataAccessLayerCore.Entities.Board", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,21 +30,9 @@ namespace ReTaskMe.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime?>("Deadline")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("Priority")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("TaskUuid")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -61,6 +49,59 @@ namespace ReTaskMe.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Board");
+                });
+
+            modelBuilder.Entity("DataAccessLayerCore.Entities.DailyTask", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("BoardId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid?>("BoardUuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("Deadline")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("UserUuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("Uuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BoardId");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -153,13 +194,30 @@ namespace ReTaskMe.Migrations
                     b.ToTable("UserSessions");
                 });
 
-            modelBuilder.Entity("DataAccessLayerCore.Entities.DailyTask", b =>
+            modelBuilder.Entity("DataAccessLayerCore.Entities.Board", b =>
                 {
                     b.HasOne("DataAccessLayerCore.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DataAccessLayerCore.Entities.DailyTask", b =>
+                {
+                    b.HasOne("DataAccessLayerCore.Entities.Board", "Board")
+                        .WithMany("DailyTasks")
+                        .HasForeignKey("BoardId");
+
+                    b.HasOne("DataAccessLayerCore.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Board");
 
                     b.Navigation("User");
                 });
@@ -173,6 +231,11 @@ namespace ReTaskMe.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DataAccessLayerCore.Entities.Board", b =>
+                {
+                    b.Navigation("DailyTasks");
                 });
 #pragma warning restore 612, 618
         }

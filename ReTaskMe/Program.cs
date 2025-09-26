@@ -31,7 +31,7 @@ if (string.IsNullOrWhiteSpace(connectionString))
 
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseSqlServer(connectionString)
+    options.UseSqlServer(connectionString, b => b.MigrationsAssembly("ReTaskMe"))
 );
 
 // ======================
