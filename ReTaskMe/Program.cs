@@ -116,6 +116,7 @@ builder.Services.AddScoped<ILoginChecker, LoginChecker>();
 // ======================
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // ======================
 // CORS
