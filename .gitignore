@@ -11,6 +11,7 @@ obj/
 /wwwroot/node_modules
 
 appsettings.Development.json
+ReTaskMe/appsettings.Development.json
 
 ### VisualStudio ###
 ## Ignore Visual Studio temporary files, build results, and
