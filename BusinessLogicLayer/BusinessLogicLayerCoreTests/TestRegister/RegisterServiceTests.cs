@@ -38,6 +38,7 @@ namespace BusinessLogicLayerCoreTests.TestRegister
 
             return new RegisterService(
                 _userRepository.Object,
+
                 _emailService.Object,
                 dummyCreds,
                 _configuration.Object
@@ -123,6 +124,7 @@ namespace BusinessLogicLayerCoreTests.TestRegister
 
             _userRepository.Verify(r => r.Add(It.Is<User>(u => u.NormalizedUsername == "OK@SITE.COM")), Times.Once);
             _userRepository.Verify(r => r.Add(It.Is<UserSession>(s => s.User != null)), Times.Once);
+
         }
     }
 }

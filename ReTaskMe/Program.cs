@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+
 // ======================
 // Create builder
 // ======================
@@ -28,6 +29,7 @@ var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionStrin
 if (string.IsNullOrWhiteSpace(connectionString))
     throw new ApplicationException("Database connection string is missing.");
 
+
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer(connectionString)
 );
@@ -41,6 +43,7 @@ string? privateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY")
 if (string.IsNullOrWhiteSpace(privateKeyPem))
     throw new ApplicationException("JWT private key is missing.");
 
+
 RSA rsaPrivate = RSA.Create();
 rsaPrivate.ImportFromPem(privateKeyPem.ToCharArray());
 var rsaKey = new RsaSecurityKey(rsaPrivate);
@@ -52,6 +55,7 @@ string? jwtIssuer = builder.Configuration["Authorization:Issuer"]
 string? jwtAudience = builder.Configuration["Authorization:Audience"]
                       ?? throw new ApplicationException("Authorization:Audience missing");
 
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -59,6 +63,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -91,6 +96,7 @@ else
     builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 }
 
+
 // ======================
 // Repositories
 // ======================
@@ -100,6 +106,7 @@ builder.Services.AddScoped<IUserSessionRepository, UserSessionRepository>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 builder.Services.AddScoped<ILoginChecker, LoginChecker>();
+
 
 // ======================
 // Business Services

@@ -5,6 +5,7 @@ using HelperLayer.Security.Token;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
+
 namespace BusinessLogicLayerCore.Services
 {
     public class AuthService : IAuthService
@@ -16,6 +17,7 @@ namespace BusinessLogicLayerCore.Services
         private readonly SigningCredentials _signingCredentials;
         private readonly string _issuer;
         private readonly string _audience;
+
 
         private const int AccessTokenMinutes = 60;
         private const int RefreshTokenDays = 7;
@@ -76,6 +78,7 @@ namespace BusinessLogicLayerCore.Services
             await _userSessionRepository.SaveChangesAsync();
 
             var accessToken = TokenHelper.GenerateJwtToken(user.NormalizedUsername, _signingCredentials, _issuer, _audience, AccessTokenMinutes);
+
 
             return new AuthResponse
             {

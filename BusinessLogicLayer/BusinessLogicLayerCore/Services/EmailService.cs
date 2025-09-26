@@ -13,6 +13,7 @@ namespace BusinessLogicLayerCore.Services
         private readonly EmailClient _emailClient;
         private readonly string _defaultSender;
 
+
         public EmailService(string connectionString, string defaultSender)
         {
             _emailClient = new EmailClient(connectionString);
@@ -66,4 +67,5 @@ namespace BusinessLogicLayerCore.Services
             );
         }
     }
+
 }

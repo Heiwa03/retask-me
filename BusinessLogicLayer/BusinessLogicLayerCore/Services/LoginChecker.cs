@@ -19,7 +19,9 @@ namespace BusinessLogicLayerCore.Services
             if (user == null)
                 return false;
 
+
             return PasswordHelper.VerifyHashedPassword(password, user.Password);
         }
     }
 }
+
