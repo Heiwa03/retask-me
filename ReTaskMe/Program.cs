@@ -118,6 +118,7 @@ builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 // ======================
 // CORS
