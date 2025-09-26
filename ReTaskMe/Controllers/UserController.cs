@@ -1,31 +1,32 @@
 using Microsoft.AspNetCore.Mvc;
 using BusinessLogicLayerCore.Services.Interfaces;
 using BusinessLogicLayerCore.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ReTaskMe.Controllers;
     [ApiController]
     [Route("api/[controller]")]
     public class UserController(IUserService userService) : BaseController {
         private readonly IUserService _userService = userService;
-
+        [Authorize]
         [HttpPost("createTask")]
         public async Task<IActionResult> ActionCreateTask([FromBody] TaskDTO dto){
             await _userService.CreateTask(dto, TestUserGuid ?? new Guid()); // THIS
             return Ok(new { message = "Task created successfully" });
         }
-
+        [Authorize]
         [HttpPost("updateTask/{taskUid:guid}")]
         public async Task<IActionResult> ActionUpdateTask([FromBody] TaskDTO dto, Guid taskUid){
             await _userService.UpdateTask(dto, TestUserGuid ?? new Guid(), taskUid);
             return Ok(new { message = "Task updated successfully" });
         }
-
+        [Authorize]
         [HttpDelete("deleteTask/{taskUid:guid}")]
         public async Task<IActionResult> ActionDeleteTask(Guid taskUid){
             await _userService.DeleteTask(TestUserGuid ?? new Guid(), taskUid);
             return Ok(new { message = $"Task {taskUid} deleted successfully" });
         }
-
+        [Authorize]
         [HttpGet("task/{taskUid:guid}")]
         public async Task<IActionResult> ActionGetTask(Guid taskUid){
             var task = await _userService.GetTask(TestUserGuid ?? new Guid(), taskUid);
