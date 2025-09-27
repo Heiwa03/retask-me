@@ -7,9 +7,12 @@ using System.Text;
 namespace HelperLayer.Security.Token{
     public static class TokenHelper{
         // Generate JWT Token using provided credentials; issuer/audience optional
-        public static string GenerateJwtToken(string username, SigningCredentials signingCredentials, string? issuer, string? audience, int expiresMinutes = 60){
+        public static string GenerateJwtToken(Guid userUuid, string username, SigningCredentials signingCredentials, 
+            string? issuer, string? audience, int expiresMinutes = 60)
+        {
             var claims = new[]
             {
+                new Claim(ClaimTypes.NameIdentifier, userUuid.ToString()), 
                 new Claim(JwtRegisteredClaimNames.Sub, username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };

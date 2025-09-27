@@ -49,6 +49,7 @@ public class AuthController : ControllerBase
         if (!user.IsVerified)
         {
             string token = TokenHelper.GenerateJwtToken(
+                user.Uuid,
                 user.NormalizedUsername,
                 _signingCredentials,
                 issuer: null,

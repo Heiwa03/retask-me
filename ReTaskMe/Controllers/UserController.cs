@@ -1,18 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
 using BusinessLogicLayerCore.Services.Interfaces;
 using BusinessLogicLayerCore.DTOs;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ReTaskMe.Controllers;
     [ApiController]
     [Route("api/[controller]")]
     public class UserController(IUserService userService) : BaseController {
         private readonly IUserService _userService = userService;
-
         [HttpPost("createTask")]
         public async Task<IActionResult> ActionCreateTask([FromBody] TaskDTO dto){
-            await _userService.CreateTask(dto, TestUserGuid ?? new Guid()); // THIS
+            await _userService.CreateTask(dto, TestUserGuid ?? Guid.NewGuid()) ; // THIS
             return Ok(new { message = "Task created successfully" });
         }
+
 
         [HttpPost("updateTask/{taskUid:guid}")]
         public async Task<IActionResult> ActionUpdateTask([FromBody] TaskDTO dto, Guid taskUid){

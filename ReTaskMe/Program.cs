@@ -13,7 +13,7 @@ using Azure.Communication.Email;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 // ======================
 // Create builder
@@ -23,15 +23,27 @@ var builder = WebApplication.CreateBuilder(args);
 // ======================
 // Database configuration
 // ======================
-var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString")
-                       ?? builder.Configuration.GetConnectionString("DefaultConnection");
+// var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString")
+//                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-if (string.IsNullOrWhiteSpace(connectionString))
-    throw new ApplicationException("Database connection string is missing.");
+// if (string.IsNullOrWhiteSpace(connectionString))
+//     throw new ApplicationException("Database connection string is missing.");
+
+
+// builder.Services.AddDbContext<DatabaseContext>(options =>
+//     options.UseSqlServer(connectionString, b => b.MigrationsAssembly("ReTaskMe"))
+// );
+
+
+var connectionStringM = Environment.GetEnvironmentVariable("MariaDbConnection")
+                       ?? builder.Configuration.GetConnectionString("MariaDbConnection");
 
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseSqlServer(connectionString, b => b.MigrationsAssembly("ReTaskMe"))
+    options.UseMySql(
+        connectionStringM,
+        ServerVersion.AutoDetect(connectionStringM)
+    )
 );
 
 // ======================
@@ -106,6 +118,11 @@ builder.Services.AddScoped<IUserSessionRepository, UserSessionRepository>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 builder.Services.AddScoped<ILoginChecker, LoginChecker>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
+
+
 
 
 // ======================

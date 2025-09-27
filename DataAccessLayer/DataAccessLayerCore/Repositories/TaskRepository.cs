@@ -23,7 +23,7 @@ namespace DataAccessLayerCore.Repositories
         /// </summary>
         public async Task<List<DailyTask>> GetTasksByUserUidAsync(Guid uuid)
         {
-            return await _context.Tasks
+            return await _context.DailyTasks
                 .Where(t => t.Uuid == uuid)
                 .ToListAsync();
         }
@@ -31,7 +31,7 @@ namespace DataAccessLayerCore.Repositories
         // найти юзера и таск
         public async Task<DailyTask?> GetTaskByUserUidAsync(Guid uuid, Guid tuid)
         {
-            return await _context.Tasks
+            return await _context.DailyTasks
                 .FirstOrDefaultAsync(t => t.Uuid == uuid && t.Uuid == tuid);
         }
 

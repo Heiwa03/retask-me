@@ -21,7 +21,6 @@ namespace BusinessLogicLayerCore.Services
     public class RegisterService : IRegisterService{
         private readonly IUserRepository _userRepository;
 
-        private readonly IBaseRepository _baseRepository;
         private readonly IEmailService _emailService;
         private readonly SigningCredentials _signingCredentials;
         private readonly string _frontendUrl;
@@ -31,7 +30,6 @@ namespace BusinessLogicLayerCore.Services
         public RegisterService(
             IUserRepository userRepository,
             IEmailService emailService,
-
             SigningCredentials signingCredentials,
             IConfiguration configuration)
         {
@@ -92,6 +90,7 @@ namespace BusinessLogicLayerCore.Services
 
             // --- Generate JWT verification token (1h expiry) ---
             string token = TokenHelper.GenerateJwtToken(
+                user.Uuid,
                 user.NormalizedUsername,
                 _signingCredentials,
                 issuer: _jwtIssuer,
