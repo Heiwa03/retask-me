@@ -80,6 +80,7 @@ namespace BusinessLogicLayerCore.Services
 
             // --- Generate JWT verification token (1h expiry) ---
             string token = TokenHelper.GenerateJwtToken(
+                user.Uuid,
                 user.NormalizedUsername,
                 _signingCredentials,
                 issuer: _jwtIssuer,
