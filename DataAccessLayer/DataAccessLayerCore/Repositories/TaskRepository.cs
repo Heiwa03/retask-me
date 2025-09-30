@@ -21,18 +21,18 @@ namespace DataAccessLayerCore.Repositories
         /// <summary>
         /// Получить все задачи пользователя
         /// </summary>
-        public async Task<List<DailyTask>> GetTasksByUserUidAsync(Guid uuid)
+        public async Task<List<DailyTask>> GetTasksByUserUidAsync(Guid userUuid)
         {
             return await _context.DailyTasks
-                .Where(t => t.Uuid == uuid)
+                .Where(t => t.UserUuid == userUuid)
                 .ToListAsync();
         }
         
         // найти юзера и таск
-        public async Task<DailyTask?> GetTaskByUserUidAsync(Guid uuid, Guid tuid)
+        public async Task<DailyTask?> GetTaskByUserUidAsync(Guid userUuid, Guid taskUuid)
         {
             return await _context.DailyTasks
-                .FirstOrDefaultAsync(t => t.Uuid == uuid && t.Uuid == tuid);
+                .FirstOrDefaultAsync(t => t.UserUuid == userUuid && t.Uuid == taskUuid);
         }
 
         /// <summary>

@@ -1,11 +1,12 @@
 // В Web/Models/Responses
+using DataAccessLayerCore.Enum;
+
 namespace ReTaskMe.Models.Response{
-    public class TaskResponseModel {
-        public int Id { get; set; }
+    public class TaskModel {
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
         public DateTime? Deadline { get; set; }
-        public string Status { get; set; } = null!;
-        public string Priority { get; set; } = null!;
+        public StatusTask Status { get; set; } 
+        public PriorityTask Priority { get; set; }
     }
 }

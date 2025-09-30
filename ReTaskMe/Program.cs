@@ -7,6 +7,7 @@ using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore;
 using DataAccessLayerCore.Repositories;
 using DataAccessLayerCore.Repositories.Interfaces;
+using Microsoft.OpenApi.Models;
 using BusinessLogicLayerCore.Templates;
 using Azure;
 using Azure.Communication.Email;
@@ -156,12 +157,49 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen(o =>
+        {
+            o.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "Matrevix API documentation",
+                Version = "v1",
+                Description = "List of APIs"
+            });
+            o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description =
+                    "JWT Authorization header using bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
+            o.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" },
+                        Scheme = "oauth2",
+                        Name = "Bearer",
+                        In = ParameterLocation.Header
+                    },
+                    new List<string>()
+                }
+            });
+        });
+
 // ======================
 // Build app
 // ======================
 var app = builder.Build();
 
 app.UseCors("FrontEndUI");
+
+
+
+
 
 // Developer exception page for dev
 if (app.Environment.IsDevelopment())
