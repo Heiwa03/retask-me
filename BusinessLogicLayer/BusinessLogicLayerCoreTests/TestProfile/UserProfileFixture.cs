@@ -21,7 +21,6 @@ namespace BusinessLogicLayerCoreTests.TestProfile;
         }
 
         public PostRegisterDTO TestUser => new PostRegisterDTO{
-            Username = "test_user",
             FirstName = "Lastname",
             LastName = "Firstname",
             Gender = Gender.Male,
@@ -35,7 +34,7 @@ namespace BusinessLogicLayerCoreTests.TestProfile;
             var user = new User
             {
                 Uuid = Guid.NewGuid(),
-                Username = TestUser.Username,
+                Username = "Dan",
                 NormalizedUsername = "TEST_USER",
                 Password = "3cmPeperoni",
                 FirstName = TestUser.FirstName,
@@ -53,7 +52,6 @@ namespace BusinessLogicLayerCoreTests.TestProfile;
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("test_user", result.Username);
             Assert.Equal("Lastname", result.FirstName);
             Assert.Equal("Firstname", result.LastName);
             Assert.Equal(Gender.Male, result.Gender);
@@ -67,7 +65,7 @@ namespace BusinessLogicLayerCoreTests.TestProfile;
             var user = new User
             {
                 Uuid = Guid.NewGuid(),
-                Username = TestUser.Username,
+                Username = "Dan",
                 NormalizedUsername = "TEST_USER",
                 Password = "3cmPeperoni",
                 FirstName = TestUser.FirstName,

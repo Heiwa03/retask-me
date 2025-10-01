@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using DataAccessLayerCore.Enum;
 
 namespace ReTaskMe.Models.Response{
-    public class UserProfile{
-        
-        public string Username { get; set; } = null!; 
+    public class UserProfileModel{        
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
-        public int Gender {get; set; }
+        public Gender Gender {get; set; }
     }
 }
