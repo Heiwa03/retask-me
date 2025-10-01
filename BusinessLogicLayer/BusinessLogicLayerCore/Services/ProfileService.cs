@@ -41,10 +41,13 @@ namespace BusinessLogicLayerCore.Services;
         }   
 
         public async Task UpdateProfile(PostRegisterDTO dto, Guid userUid){
-            User? profile = await _userRepository.GetByUuidAsync<User>(userUid) ?? throw new KeyNotFoundException($"User not found");
+            var profile = await _userRepository.GetByUuidAsync<User>(userUid) ?? throw new KeyNotFoundException($"User not found");
             
             profile.FirstName = dto.FirstName;
             profile.LastName = dto.LastName;
             profile.Gender = dto.Gender;
+
+            _userRepository.Update(profile);
+            await _userRepository.SaveChangesAsync();
         }  
     }
