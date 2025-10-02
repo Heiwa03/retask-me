@@ -50,6 +50,7 @@ namespace DataAccessLayerCore.Repositories
                 .Where(s => s.UserId == userId)
                 .ExecuteUpdateAsync(s => s.SetProperty(
                     session => session.isActive,
+
                     false));
         }*/
 

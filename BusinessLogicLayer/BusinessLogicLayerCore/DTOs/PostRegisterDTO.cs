@@ -3,9 +3,6 @@ using DataAccessLayerCore.Enum;
 
 namespace BusinessLogicLayerCore.DTOs{
     public class PostRegisterDTO{
-        
-        [Required(ErrorMessage = "Username is required")]
-        public string Username { get; set; } = null!; 
 
         [Required(ErrorMessage = "Firstname is required")]
         [MinLength(1, ErrorMessage = "Firstname is short")]
@@ -15,7 +12,6 @@ namespace BusinessLogicLayerCore.DTOs{
         [MinLength(1, ErrorMessage = "Lastname is short")]
         public string LastName { get; set; } = null!;
 
-        [Required(ErrorMessage = "Gender is required")]
         public Gender Gender {get; set; } = Gender.Undefiend;
     }
 }

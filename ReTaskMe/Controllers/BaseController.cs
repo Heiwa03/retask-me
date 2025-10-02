@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 
 namespace ReTaskMe.Controllers;
+
     public class BaseController : ControllerBase
     {
         protected Guid? UserGuid

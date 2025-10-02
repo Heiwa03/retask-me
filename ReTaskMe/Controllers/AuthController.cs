@@ -1,49 +1,77 @@
+
 ﻿using Microsoft.AspNetCore.Mvc;
 using BusinessLogicLayerCore.Services;
 using BusinessLogicLayerCore.Services.Interfaces;
 using BusinessLogicLayerCore.DTOs;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using BusinessLogicLayerCore.DTOs;
+using BusinessLogicLayerCore.Services.Interfaces;
+using BusinessLogicLayerCore.DTOs;
+using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore;
+using BusinessLogicLayerCore.Templates;
+using HelperLayer.Security.Token;
+using HelperLayer.Security;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace AuthBackend.Controllers
+[ApiController]
+[Route("api/v1/[controller]")]
+public class AuthController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    private readonly IAuthService _authService;
+    private readonly DatabaseContext _databaseContext;
+    private readonly SigningCredentials _signingCredentials;
+    private readonly IEmailService _emailService;
+    private readonly string _frontendUrl;
+
+    public AuthController(
+        IAuthService authService,
+        DatabaseContext databaseContext,
+        SigningCredentials signingCredentials,
+        IConfiguration configuration,
+        IEmailService emailService)
     {
-        private readonly IAuthService _authService;
+        _authService = authService;
+        _databaseContext = databaseContext;
+        _signingCredentials = signingCredentials;
+        _emailService = emailService;
+        _frontendUrl = configuration["Frontend:BaseUrl"] ?? throw new ApplicationException("Frontend:BaseUrl configuration is missing.");
 
-        private readonly IRegisterService _registerService;
+    }
 
-        private readonly DatabaseContext _databaseContext;
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+    {
+        var user = await _databaseContext.Users
+            .FirstOrDefaultAsync(u => u.NormalizedUsername == loginDto.Email.ToUpperInvariant());
 
-        public AuthController(IAuthService authService, IRegisterService registerService, DatabaseContext databaseContext)
+        if (user == null || !PasswordHelper.VerifyHashedPassword(loginDto.Password, user.Password))
+            return Unauthorized(new { message = "Invalid email or password.", isVerified = false });
+
+        if (!user.IsVerified)
         {
-            _authService = authService;
-            _registerService = registerService;
-            _databaseContext = databaseContext;
-        }
+            string token = TokenHelper.GenerateJwtToken(
+                user.Uuid,
+                user.NormalizedUsername,
+                _signingCredentials,
+                issuer: null,
+                audience: null,
+                expiresMinutes: 60
+            );
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
-        {
-            var authResponse = await _authService.LoginAsync(loginDto.Email, loginDto.Password);
+            string verificationLink = $"{_frontendUrl}/api/v1/Email/verify-email?token={token}";
 
-            if (authResponse == null)
-            {
-                return Unauthorized("Invalid email or password.");
-            }
+            string bodyContent = $@"
+                <p>Hi,</p>
+                <p>Please click the link below to verify your email:</p>
+                <p><a href='{verificationLink}'>Verify Email</a></p>
+                <p>If you did not register, ignore this email.</p>";
 
-            return Ok(authResponse);
-        }
+            string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO){
-            
-            try{
-                await _registerService.RegisterUser(registerDTO);
-                return Ok("User registred");
 
             } catch(Exception e){
                 return BadRequest(e.Message);

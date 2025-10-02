@@ -6,7 +6,16 @@ using DataAccessLayerCore.Entities;
 
 namespace BusinessLogicLayerCore.Services;
 
-    public class UserService(ITaskService _taskService, IProfileService _profileService) : IUserService {
+    public class UserService : IUserService {
+        private readonly ITaskService _taskService;
+        private readonly IProfileService _profileService;
+
+        public UserService(ITaskService taskService, IProfileService profileService)
+        {
+            _taskService = taskService ?? throw new ArgumentNullException(nameof(taskService));
+            _profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
+        }
+        
 
         // Delegete to taskServ
         public async Task CreateTask(TaskDTO dto, Guid userUid){

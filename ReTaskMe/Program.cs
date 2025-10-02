@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Cryptography;
 
+
 // ======================
 // Create builder
 // ======================
@@ -20,6 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ======================
 // Database configuration
 // ======================
+
 var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString")
                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -27,7 +29,10 @@ if (string.IsNullOrWhiteSpace(connectionString))
     throw new ApplicationException("Database connection string is missing.");
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseSqlServer(connectionString)
+    options.UseMySql(
+        connectionStringM,
+        ServerVersion.AutoDetect(connectionStringM)
+    )
 );
 
 // ======================
@@ -39,11 +44,13 @@ string? privateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY")
 if (string.IsNullOrWhiteSpace(privateKeyPem))
     throw new ApplicationException("JWT private key is missing.");
 
+
 RSA rsaPrivate = RSA.Create();
 rsaPrivate.ImportFromPem(privateKeyPem.ToCharArray());
 var rsaKey = new RsaSecurityKey(rsaPrivate);
 var signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
 builder.Services.AddSingleton(signingCredentials);
+
 
 string? jwtIssuer = builder.Configuration["Authorization:Issuer"] ?? throw new ApplicationException("Authorization:Issuer missing");
 string? jwtAudience = builder.Configuration["Authorization:Audience"] ?? throw new ApplicationException("Authorization:Audience missing");
@@ -55,6 +62,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -70,6 +78,7 @@ builder.Services.AddAuthentication(options =>
 
 // ======================
 // Email configuration
+
 // ======================
 var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
                              ?? builder.Configuration["Email:ConnectionString"];
@@ -185,7 +194,22 @@ builder.Services.AddSwaggerGen();
 // ======================
 // Build app
 // ======================
-var app = builder.Build();
+var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
+                             ?? builder.Configuration["Email:ConnectionString"];
+var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
+                         ?? builder.Configuration["Email:SenderAddress"];
+
+if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
+{
+    builder.Services.AddScoped<IEmailService>(sp =>
+        new EmailService(mailConnectionString, mailSenderAddress)
+    );
+}
+else
+{
+    builder.Services.AddScoped<IEmailService, NoOpEmailService>();
+}
+
 
 app.UseCors("FrontEndUI");
 

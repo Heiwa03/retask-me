@@ -53,6 +53,7 @@ namespace BusinessLogicLayerCore.Services
             // --- Create user ---
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
             var user = new User
+
             {
                 Uuid = Guid.NewGuid(),
                 Username = dto.Mail,

@@ -5,6 +5,7 @@ using HelperLayer.Security.Token;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
+
 namespace BusinessLogicLayerCore.Services
 {
     public class AuthService : IAuthService
@@ -16,6 +17,7 @@ namespace BusinessLogicLayerCore.Services
         private readonly SigningCredentials _signingCredentials;
         private readonly string _issuer;
         private readonly string _audience;
+
 
         private const int AccessTokenMinutes = 60;
         private const int RefreshTokenDays = 7;
@@ -75,6 +77,7 @@ namespace BusinessLogicLayerCore.Services
             _userSessionRepository.Add(newSession);
             await _userSessionRepository.SaveChangesAsync();
 
+
             var accessToken = TokenHelper.GenerateJwtToken(user.Uuid, user.NormalizedUsername, _signingCredentials, _issuer, _audience, AccessTokenMinutes);
 
             return new AuthResponse
@@ -93,6 +96,7 @@ namespace BusinessLogicLayerCore.Services
             // Remove any existing sessions for this user
             await _userSessionRepository.RemoveSessionByUserIdAsync(user.Id);
 
+
             var accessToken = TokenHelper.GenerateJwtToken(user.Uuid, user.NormalizedUsername, _signingCredentials, _issuer, _audience, AccessTokenMinutes);
             var refreshToken = TokenHelper.GenerateRefreshToken();
 
@@ -100,6 +104,7 @@ namespace BusinessLogicLayerCore.Services
             {
                 UserId = user.Id,
                 Uuid = user.Uuid,
+
                 //User = user,
                 RefreshToken = refreshToken,
                 JwtId = user.Uuid.ToString(),
