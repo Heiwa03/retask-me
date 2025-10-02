@@ -21,17 +21,17 @@ namespace DataAccessLayerCore.Repositories
         /// <summary>
         /// Получить все задачи пользователя
         /// </summary>
+
         public async Task<List<DailyTask>> GetTasksByUserUidAsync(Guid userUuid)
         {
-            return await _context.DailyTasks
+            return await _context.Tasks
                 .Where(t => t.UserUuid == userUuid)
-                .ToListAsync();
         }
         
         // найти юзера и таск
         public async Task<DailyTask?> GetTaskByUserUidAsync(Guid userUuid, Guid taskUuid)
         {
-            return await _context.DailyTasks
+            return await _context.Tasks
                 .FirstOrDefaultAsync(t => t.UserUuid == userUuid && t.Uuid == taskUuid);
         }
 

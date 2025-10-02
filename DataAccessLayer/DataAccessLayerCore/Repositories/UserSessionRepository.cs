@@ -44,13 +44,34 @@ namespace DataAccessLayerCore.Repositories
             return false;
         }
 
-        public async Task RemoveSessionByUserIdAsync(long userId)
+        /*public async Task RemoveSessionByUserIdAsync(long userId)
         {
             await _databaseContext.Set<UserSession>()
                 .Where(s => s.UserId == userId)
                 .ExecuteUpdateAsync(s => s.SetProperty(
                     session => session.isActive,
-                    session => false));
+
+                    false));
+        }*/
+
+        public async Task RemoveSessionByUserIdAsync(long userId)
+        {
+            // 1. Retrieve all matching entities (Db trip #1)
+            var sessions = await _databaseContext.Set<UserSession>()
+                .Where(s => s.UserId == userId)
+                .ToListAsync();
+
+            // 2. Modify the property of each entity in memory
+            // (This automatically marks them as 'Modified' by the Change Tracker)
+            foreach (var session in sessions)
+            {
+                session.isActive = false;
+                // Note: You do NOT explicitly call .Update() here 
+                // because the entities are already tracked.
+            }
+
+            // 3. Save all changes (Db trip #2, sends N UPDATE commands)
+            await _databaseContext.SaveChangesAsync();
         }
     }
 }
