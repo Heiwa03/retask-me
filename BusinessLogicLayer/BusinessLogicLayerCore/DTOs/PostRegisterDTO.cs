@@ -12,7 +12,6 @@ namespace BusinessLogicLayerCore.DTOs{
         [MinLength(1, ErrorMessage = "Lastname is short")]
         public string LastName { get; set; } = null!;
 
-        [Required(ErrorMessage = "Gender is required")]
         public Gender Gender {get; set; } = Gender.Undefiend;
     }
 }
