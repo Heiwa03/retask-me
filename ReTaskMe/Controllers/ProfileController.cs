@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using BusinessLogicLayerCore.Services.Interfaces;
 using BusinessLogicLayerCore.DTOs;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.AspNetCore.Authorization;
 using ReTaskMe.Models.Response;
-using Mono.TextTemplating;
 
 namespace ReTaskMe.Controllers;
     [ApiController]
