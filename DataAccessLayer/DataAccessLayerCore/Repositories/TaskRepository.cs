@@ -26,6 +26,7 @@ namespace DataAccessLayerCore.Repositories
         {
             return await _context.Tasks
                 .Where(t => t.UserUuid == userUuid);
+                .ToListAsync();
         }
         
         // найти юзера и таск
