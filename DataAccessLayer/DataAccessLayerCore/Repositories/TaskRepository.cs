@@ -25,7 +25,7 @@ namespace DataAccessLayerCore.Repositories
         public async Task<List<DailyTask>> GetTasksByUserUidAsync(Guid userUuid)
         {
             return await _context.Tasks
-                .Where(t => t.UserUuid == userUuid)
+                .Where(t => t.UserUuid == userUuid);
         }
         
         // найти юзера и таск
