@@ -45,6 +45,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
+        try{
         var user = await _databaseContext.Users
             .FirstOrDefaultAsync(u => u.NormalizedUsername == loginDto.Email.ToUpperInvariant());
 
@@ -71,7 +72,7 @@ public class AuthController : ControllerBase
                 <p>If you did not register, ignore this email.</p>";
 
             string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
-
+        }
 
             } catch(Exception e){
                 return BadRequest(e.Message);
