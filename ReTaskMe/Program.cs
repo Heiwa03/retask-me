@@ -122,6 +122,7 @@ builder.Services.AddScoped<ILoginChecker, LoginChecker>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IBoardService, BoardService>();
 
 
 
