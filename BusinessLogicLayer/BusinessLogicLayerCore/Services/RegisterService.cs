@@ -4,23 +4,17 @@ using Microsoft.EntityFrameworkCore;
 using BusinessLogicLayerCore.Services.Interfaces;
 using BusinessLogicLayerCore.DTOs;
 using DataAccessLayerCore.Entities;
-using HelperLayer.Security.Token;
 using HelperLayer.Security;
+using HelperLayer.Security.Token;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
-
 using DataAccessLayerCore.Repositories.Interfaces;
 
 namespace BusinessLogicLayerCore.Services
 {
-
-    /// <summary>
-    /// Service responsible for user registration and email verification.
-    /// </summary>
-
-    public class RegisterService : IRegisterService{
+    public class RegisterService : IRegisterService
+    {
         private readonly IUserRepository _userRepository;
-
         private readonly IEmailService _emailService;
         private readonly SigningCredentials _signingCredentials;
         private readonly string _frontendUrl;
@@ -35,7 +29,6 @@ namespace BusinessLogicLayerCore.Services
         {
             _userRepository = userRepository;
             _emailService = emailService;
-
             _signingCredentials = signingCredentials;
 
             _frontendUrl = configuration["Frontend:BaseUrl"]
@@ -48,7 +41,6 @@ namespace BusinessLogicLayerCore.Services
         public async Task RegisterUser(RegisterDTO dto)
         {
             // --- Input validation ---
-
             if (_userRepository.IsUsernameOccupied(dto.Mail))
                 throw new InvalidOperationException("Email already exists.");
 
@@ -72,7 +64,6 @@ namespace BusinessLogicLayerCore.Services
 
             _userRepository.Add(user);
             await _userRepository.SaveChangesAsync();
-
 
             // --- Create session ---
             var session = new UserSession
@@ -104,7 +95,6 @@ namespace BusinessLogicLayerCore.Services
             bool emailSent = await _emailService.SendVerificationEmailAsync(dto.Mail, verificationLink);
 
             if (!emailSent)
-
             {
                 Console.WriteLine($"[RegisterService] Failed to send verification email to {dto.Mail}");
             }

@@ -1,4 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
+
+﻿using Microsoft.AspNetCore.Mvc;
+using BusinessLogicLayerCore.Services;
+using BusinessLogicLayerCore.Services.Interfaces;
+using BusinessLogicLayerCore.DTOs;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using BusinessLogicLayerCore.DTOs;
@@ -67,17 +72,10 @@ public class AuthController : ControllerBase
 
             string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
 
-            await _emailService.SendEmailAsync(
-                new List<string> { user.Username },
-                "Verify Your Email",
-                htmlContent
-            );
 
-            return BadRequest(new { message = "Email not verified. A new verification link has been sent.", isVerified = false });
+            } catch(Exception e){
+                return BadRequest(e.Message);
+            }
         }
-
-        var authResponse = await _authService.LoginAsync(user.NormalizedUsername, loginDto.Password);
-
-        return Ok(new { authResponse, isVerified = true });
     }
 }

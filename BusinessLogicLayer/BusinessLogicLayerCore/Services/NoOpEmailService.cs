@@ -1,7 +1,6 @@
 ﻿using BusinessLogicLayerCore.Services.Interfaces;
 using System;
 using System.Collections.Generic;
-
 using System.Threading.Tasks;
 
 namespace BusinessLogicLayerCore.Services

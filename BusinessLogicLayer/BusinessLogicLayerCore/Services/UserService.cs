@@ -17,8 +17,13 @@ namespace BusinessLogicLayerCore.Services;
             this._profileService = _profileService ?? throw new ArgumentNullException(nameof(_profileService));
             this._boardService = _boardService ?? throw new ArgumentNullException(nameof(_boardService));
         }
+<<<<<<< HEAD
 
         // --------------------
+=======
+        
+
+>>>>>>> 8a8fafc9ebf624199fe688cf3db8a113734bb2a2
         // Delegete to taskServ
         // --------------------
         public async Task CreateTask(TaskDTO dto, Guid userUid){

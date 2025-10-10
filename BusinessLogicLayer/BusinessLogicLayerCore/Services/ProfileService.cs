@@ -25,7 +25,6 @@ namespace BusinessLogicLayerCore.Services;
             await _userRepository.SaveChangesAsync();
         }
 
-
         public async Task<PostRegisterDTO> GetProfile(Guid uuid){
             var profile = await _userRepository.GetByUuidAsync<User>(uuid);
 
@@ -34,6 +33,7 @@ namespace BusinessLogicLayerCore.Services;
             }
             
             return new PostRegisterDTO {
+
                 FirstName = profile.FirstName ?? "Nofirstname",
                 LastName = profile.LastName ?? "Nolastname",
                 Gender = profile.Gender
@@ -49,5 +49,6 @@ namespace BusinessLogicLayerCore.Services;
 
             _userRepository.Update(profile);
             await _userRepository.SaveChangesAsync();
+
         }  
     }
