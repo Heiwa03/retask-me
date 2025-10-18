@@ -6,10 +6,6 @@ using BusinessLogicLayerCore.DTOs;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using BusinessLogicLayerCore.DTOs;
-using BusinessLogicLayerCore.Services.Interfaces;
-using BusinessLogicLayerCore.DTOs;
-using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore;
 using BusinessLogicLayerCore.Templates;
 using HelperLayer.Security.Token;
@@ -45,6 +41,8 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
+        try{
+
         var user = await _databaseContext.Users
             .FirstOrDefaultAsync(u => u.NormalizedUsername == loginDto.Email.ToUpperInvariant());
 
@@ -72,10 +70,11 @@ public class AuthController : ControllerBase
 
             string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
 
-
+        }
             } catch(Exception e){
                 return BadRequest(e.Message);
             }
+            return Ok(new {isVerified = true });
         }
     }
-}
+

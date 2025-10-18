@@ -22,16 +22,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Database configuration
 // ======================
 
-var connectionStringM = Environment.GetEnvironmentVariable("Data__ConnectionString")
+var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString")
                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-if (string.IsNullOrWhiteSpace(connectionStringM))
+if (string.IsNullOrWhiteSpace(connectionString))
     throw new ApplicationException("Database connection string is missing.");
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseMySql(
-        connectionStringM,
-        ServerVersion.AutoDetect(connectionStringM)
+        connectionString,
+        ServerVersion.AutoDetect(connectionString)
     )
 );
 
