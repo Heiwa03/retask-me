@@ -27,8 +27,11 @@ if (string.IsNullOrWhiteSpace(connectionString))
 
 // Register DbContext (was missing)
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+    options.UseSqlServer(connectionString)
 );
+
+
+
 
 // ======================
 // JWT Configuration
