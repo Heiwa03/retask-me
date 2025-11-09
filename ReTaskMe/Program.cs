@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Cryptography;
+using OpenAI;
+using BusinessLogicLayerCore.Services.SearchBehaviour;
 
 // ======================
 // Create builder
@@ -165,6 +167,13 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
+//builder.Services.AddScoped<IAiService, AiService>();
+
+builder.Services.AddScoped<SearchService>(sp =>
+{
+    var defaultStrategy = new TitleSearchStrategy(); 
+    return new SearchService(defaultStrategy);
+});
 
 // ======================
 // Swagger
@@ -224,6 +233,17 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()
     );
 });
+
+
+
+
+// ======
+//   AI
+// ======
+
+
+
+
 
 // ======================
 // Controllers & Swagger
