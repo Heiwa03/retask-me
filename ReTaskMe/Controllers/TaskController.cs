@@ -11,7 +11,7 @@ namespace ReTaskMe.Controllers;
         private readonly IUserService _userService = userService;
         [HttpPost("createTask")]
         public async Task<IActionResult> ActionCreateTask([FromBody] TaskDTO dto){
-            await _userService.CreateTask(dto, UserGuid ?? Guid.NewGuid()) ; // THIS
+            await _userService.CreateTask(dto, TestUserGuid ?? Guid.NewGuid()) ; // !!!THIS!!!!
             return Ok(new { message = "Task created successfully" });
         }
 
