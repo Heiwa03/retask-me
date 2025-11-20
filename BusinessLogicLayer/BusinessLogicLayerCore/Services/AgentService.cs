@@ -1,12 +1,14 @@
-
+// System packages
 using System.ClientModel;
-using Azure.AI.OpenAI;
-
-
-using BusinessLogicLayerCore.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+
+// AI packages
+using Azure.AI.OpenAI;
 using OpenAI;
+
+// BL
+using BusinessLogicLayerCore.Services.Interfaces;
 
 
 
@@ -32,13 +34,12 @@ namespace BusinessLogicLayerCore.Services
             // Validate config 
             ValidateConfig();
 
-            //AIAgent agentService = _client.GetChatClient(_deploymentName);
+            // AIAgent agentService = _client.GetChatClient(_deploymentName);
 
             // Promnt to AI
             string message = HelperLayer.AIAgent.SystemPromnt.GenerateTaskPromnt();
 
             // Generate stuff
-            // var answer = await _client.RunAsync
 
             return "abobus";
         }
@@ -65,7 +66,7 @@ namespace BusinessLogicLayerCore.Services
                 (_apiKey.Contains("your-") || _apiKey.Length < 10))
                 errors.Add("Error -> AzureOpenAI:ApiKey appears to be invalid or a placeholder");
 
-            if (errors.Any()){
+            if (errors.Count() == 0){
                 var errorMessage = string.Join("; ", errors);
                 _logger.LogError("Erorr -> Configuration validation failed: {Errors}", errorMessage);
                 throw new InvalidOperationException($"Configuration validation failed: {errorMessage}");
