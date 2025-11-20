@@ -69,12 +69,14 @@ public class AuthController : ControllerBase
                 <p>If you did not register, ignore this email.</p>";
 
             string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
+            // get rid of this (verification and verification link. i needed this to tests)
+            return Ok(new { isVerified = false, verificationToken = token, verificationLink });
 
         }
             } catch(Exception e){
                 return BadRequest(e.Message);
             }
-            return Ok(new {isVerified = true });
+            return Ok(new {isVerified = true});
         }
     }
 

@@ -23,7 +23,9 @@ public class SearchTaskController : BaseController{
         if (string.IsNullOrWhiteSpace(query))
             return BadRequest("Search query cannot be empty, bro...");
 
-        switch (mode.ToLower()){
+        // search by...
+        // We have several methods to sort tasks, so we can use Strategy Pattern
+        switch (mode.ToLower()){ 
             case "title":
             default:
                 _searchService.SetStrategy(new TitleSearchStrategy());
@@ -31,7 +33,7 @@ public class SearchTaskController : BaseController{
             // The rest strategy in future... maybe
         }
 
-        var tasks = await _taskService.GetTasksByUserUidAsync(TestUserGuid ?? Guid.NewGuid());
+        var tasks = await _taskService.GetTasksByUserUidAsync(UserGuid ?? Guid.NewGuid());
 
         var result = _searchService.SearchTasks(tasks, query);
 
