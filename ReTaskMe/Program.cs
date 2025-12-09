@@ -1,4 +1,4 @@
-using Azure.Communication.Email;
+﻿using Azure.Communication.Email;
 using BusinessLogicLayerCore.Services;
 using BusinessLogicLayerCore.Services.Interfaces;
 using DataAccessLayerCore;
@@ -27,7 +27,10 @@ if (string.IsNullOrWhiteSpace(connectionString))
 
 // Register DbContext (was missing)
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseSqlServer(connectionString)
+    options.UseSqlServer(
+        connectionString,
+        b => b.MigrationsAssembly("ReTaskMe")   // <-- add this
+    )
 );
 
 
