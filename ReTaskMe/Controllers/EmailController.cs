@@ -1,45 +1,58 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HelperLayer.Security.Token;
 using DataAccessLayerCore.Repositories.Interfaces;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
 
 [ApiController]
 [Route("api/v1/[controller]")]
 public class EmailController : ControllerBase
 {
     private readonly IUserRepository _userRepository;
+    private readonly string _issuer;
+    private readonly string _audience;
+    private readonly RsaSecurityKey _publicKey;
 
-    public EmailController(IUserRepository userRepository)
+    public EmailController(
+        IUserRepository userRepository,
+        IConfiguration configuration)
     {
         _userRepository = userRepository;
+
+        _issuer = configuration["Jwt:Issuer"] ?? throw new ArgumentNullException("Jwt:Issuer");
+        _audience = configuration["Jwt:Audience"] ?? throw new ArgumentNullException("Jwt:Audience");
+        Console.WriteLine($"Issuer from config: '{_issuer}'");
+        Console.WriteLine($"Audience from config: '{_audience}'");
+
+
+        // Load public key
+        string publicKeyPem = System.IO.File.ReadAllText(configuration["Jwt:PublicKeyPem"] ?? "public_key.pem");
+        var rsa = RSA.Create();
+        rsa.ImportFromPem(publicKeyPem.ToCharArray());
+        _publicKey = new RsaSecurityKey(rsa);
     }
 
-    /// <summary>
-    /// Verifies a user's email by JWT token from the link
-    /// </summary>
     [HttpGet("verify-email")]
     public async Task<IActionResult> VerifyEmail([FromQuery] string token)
     {
         if (string.IsNullOrWhiteSpace(token))
             return BadRequest("Token is required.");
 
-        //  Validate JWT
-        string normalizedEmail;
+        Guid userUuid;
         try
         {
-            normalizedEmail = TokenHelper.ValidateJwtToken(token);
+            userUuid = TokenHelper.ValidateJwtToken(token, _issuer, _audience, _publicKey);
         }
         catch
         {
             return BadRequest("Invalid or expired token.");
         }
 
-        //  Find user via repository
-        var user = await _userRepository.GetUserByUsername(normalizedEmail);
+        var user = await _userRepository.GetUserByUuidAsync(userUuid); // Use UUID instead of email
 
         if (user == null)
             return NotFound("User not found.");
 
-        //  Update verification state
         if (user.IsVerified)
             return Ok("Email already verified.");
 
