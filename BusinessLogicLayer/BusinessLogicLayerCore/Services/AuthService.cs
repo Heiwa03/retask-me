@@ -33,8 +33,8 @@ namespace BusinessLogicLayerCore.Services
             _userRepository = userRepository;
             _userSessionRepository = userSessionRepository;
             _signingCredentials = signingCredentials;
-            _issuer = configuration["Authorization:Issuer"] ?? throw new ArgumentNullException("Authorization:Issuer");
-            _audience = configuration["Authorization:Audience"] ?? throw new ArgumentNullException("Authorization:Audience");
+            _issuer = configuration["Jwt:Issuer"] ?? throw new ArgumentNullException("Jwt:Issuer");
+            _audience = configuration["Jwt:Audience"] ?? throw new ArgumentNullException("Jwt:Audience");
         }
 
         public async Task<AuthResponse?> LoginAsync(string email, string password)
