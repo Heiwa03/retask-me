@@ -34,26 +34,41 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 );
 
 
-
-
 // ======================
 // JWT Configuration
 // ======================
-string? privateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY")
-                        ?? File.ReadAllText(builder.Configuration["Jwt:PrivateKeyPem"] ?? string.Empty);
 
+var privateKeyPath = "private_key.pem";
+var publicKeyPath = "public_key.pem";
+
+// Load private key (env → file → appsettings)
+string? privateKeyPem =
+    Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY")
+    ?? File.ReadAllText(builder.Configuration["Jwt:PrivateKeyPem"] ?? privateKeyPath);
+string? publicKeyPem =
+    Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY")
+    ?? File.ReadAllText(builder.Configuration["Jwt:PublicKeyPem"] ?? publicKeyPath);
+
+// Final check
 if (string.IsNullOrWhiteSpace(privateKeyPem))
     throw new ApplicationException("JWT private key is missing.");
 
 RSA rsaPrivate = RSA.Create();
+RSA rsaPublic = RSA.Create();
 rsaPrivate.ImportFromPem(privateKeyPem.ToCharArray());
-var rsaKey = new RsaSecurityKey(rsaPrivate);
-var signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
+rsaPublic.ImportFromPem(publicKeyPem.ToCharArray());
+var rsaPrivateKey = new RsaSecurityKey(rsaPrivate);
+var signingCredentials = new SigningCredentials(rsaPrivateKey, SecurityAlgorithms.RsaSha256);
 builder.Services.AddSingleton(signingCredentials);
 
-string? jwtIssuer = builder.Configuration["Authorization:Issuer"] ?? throw new ApplicationException("Authorization:Issuer missing");
-string? jwtAudience = builder.Configuration["Authorization:Audience"] ?? throw new ApplicationException("Authorization:Audience missing");
 
+string? jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? throw new ApplicationException("Jwt:Issuer missing");
+string? jwtAudience = builder.Configuration["Jwt:Audience"] ?? throw new ApplicationException("Jwt:Audience missing");
+
+Console.WriteLine($"Issuer from config: '{jwtIssuer}'");
+Console.WriteLine($"Audience from config: '{jwtAudience}'");
+
+var rsaPublicKey = new RsaSecurityKey(rsaPublic);
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -61,6 +76,16 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            Console.WriteLine("JWT auth failed: " + context.Exception);
+            return Task.CompletedTask;
+        }
+    };
+
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -69,10 +94,11 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtIssuer,
         ValidAudience = jwtAudience,
-        IssuerSigningKey = rsaKey,
-        ClockSkew = TimeSpan.FromMinutes(2)
+        IssuerSigningKey = rsaPublicKey,   // use public key here
+        ClockSkew = TimeSpan.FromMinutes(5)
     };
 });
+
 
 // ======================
 // Email configuration
@@ -185,15 +211,12 @@ builder.Services.AddSwaggerGen();
 // ======================
 var app = builder.Build();
 
-// Developer exception page for dev
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseDeveloperExceptionPage();
+app.UseSwagger();
+app.UseSwaggerUI();
 
-app.UseCors("FrontEndUI");
+
+app.UseCors("OpenCorsNoLimitation");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
