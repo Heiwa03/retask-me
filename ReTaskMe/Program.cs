@@ -78,9 +78,33 @@ builder.Services.AddAuthentication(options =>
 {
     options.Events = new JwtBearerEvents
     {
+        OnMessageReceived = context =>
+        {
+            // Grab Authorization header manually
+            var authHeader = context.Request.Headers["Authorization"].ToString();
+
+            if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            {
+                context.Token = authHeader.Substring("Bearer ".Length).Trim();
+            }
+            Console.WriteLine("TOKEN RECEIVED:");
+            Console.WriteLine(context.Token ?? "(null)");
+            return Task.CompletedTask;
+        },
+
         OnAuthenticationFailed = context =>
         {
-            Console.WriteLine("JWT auth failed: " + context.Exception);
+            Console.WriteLine("AUTH FAILED:");
+            Console.WriteLine(context.Exception.GetType().Name);
+            Console.WriteLine(context.Exception.Message);
+            return Task.CompletedTask;
+        },
+
+        OnChallenge = context =>
+        {
+            Console.WriteLine("AUTH CHALLENGE:");
+            Console.WriteLine(context.Error);
+            Console.WriteLine(context.ErrorDescription);
             return Task.CompletedTask;
         }
     };
