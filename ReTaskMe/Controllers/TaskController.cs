@@ -6,7 +6,7 @@ using ReTaskMe.Models.Response;
 
 namespace ReTaskMe.Controllers;
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 [Authorize]
 public class TaskController(IUserService userService) : BaseController {
     private readonly IUserService _userService = userService;

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ReTaskMe.Controllers;
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 [Authorize]
 public class UserController(IUserService userService) : BaseController {
     private readonly IUserService _userService = userService;
