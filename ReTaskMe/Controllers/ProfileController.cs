@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using BusinessLogicLayerCore.Services.Interfaces;
 using BusinessLogicLayerCore.DTOs;
 using Microsoft.AspNetCore.Authorization;
-using ReTaskMe.Models.Response;
+using ReTaskMe.Models.Responses;
 
 namespace ReTaskMe.Controllers;
     [ApiController]

@@ -1,6 +1,6 @@
 using BusinessLogicLayerCore.DTOs;
 
-namespace ReTaskMe.Models.Response;
+namespace ReTaskMe.Models.Responses;
 
 public class BoardModel{
     public required string Title { get; set; }

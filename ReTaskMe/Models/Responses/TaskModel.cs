@@ -1,7 +1,7 @@
 // В Web/Models/Responses
 using DataAccessLayerCore.Enum;
 
-namespace ReTaskMe.Models.Response{
+namespace ReTaskMe.Models.Responses{
     public class TaskModel {
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
