@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using System.Security.Cryptography;
 using OpenAI;
 using BusinessLogicLayerCore.Services.SearchBehaviour;
+using BusinessLogicLayerCore.Services.AiAgentBehaviour;
 
 // ======================
 // Create builder
@@ -167,7 +168,17 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
-//builder.Services.AddScoped<IAiService, AiService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
+
+// Ai stuff 
+builder.Services.AddHttpClient<IAgentService, AgentService>();
+builder.Services.AddScoped<IBoardService, BoardService>();
+builder.Services.AddScoped<IAgentService, AgentService>();
+builder.Services.AddScoped<IAiAgentBehaviour, CreataTaskStrategy>();
+builder.Services.AddScoped<IAiAgentBehaviour, DefaultAnswerStrategy>();
+builder.Services.AddScoped<AgentStrategyResolver>();
 
 builder.Services.AddScoped<SearchService>(sp =>
 {

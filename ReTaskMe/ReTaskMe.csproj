@@ -9,7 +9,6 @@
 
   <ItemGroup>
 
-    <PackageReference Include="Azure.AI.OpenAI" Version="2.1.0" />
 
     <PackageReference Include="Azure.Communication.Email" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />

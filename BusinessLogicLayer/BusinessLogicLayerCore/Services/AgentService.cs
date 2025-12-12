@@ -3,77 +3,94 @@ using System.ClientModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-// AI packages
-using Azure.AI.OpenAI;
-using OpenAI;
+
 
 // BL
+using System.Text;
+using System.Text.Json;
+using BusinessLogicLayerCore.DTOs;
 using BusinessLogicLayerCore.Services.Interfaces;
+
 
 
 
 namespace BusinessLogicLayerCore.Services
 {
-    public class AgentService{
-        private readonly String? _deploymentName;
-        private readonly String? _apiKey;
-        private readonly String? _endpoint;
-        private readonly AzureOpenAIClient _client;
-        private readonly ILogger<AgentService> _logger;
+    public class AgentService : IAgentService{
+        private readonly string? _apiKey;
+        private readonly string _modelId = "gemini-1.5-pro";
+        private readonly HttpClient _httpClient;
+        private readonly IConfiguration _configuration;
+        private readonly ITaskService _taskService;
 
-        public AgentService(IConfiguration config, ILogger<AgentService> _logger){
-            this._endpoint = config["AzureOpenAI:Endpoint"];
-            this._apiKey = config["AzureOpenAI:ApiKey"];
-            this._deploymentName = config["AzureOpenAI:ApiKey"];
-            this._client = new AzureOpenAIClient(new Uri(_endpoint), new ApiKeyCredential(_apiKey));
-            this._logger = _logger;
+        public AgentService(IConfiguration _configuration, HttpClient _httpClient, ITaskService _taskService){
+            this._apiKey = _configuration["GoogleAiApi:ApiKey"];
+            this._httpClient = _httpClient;
+            this._taskService = _taskService;
         }
 
-        
-        public async Task<string> GenerateTaskAsync(string userPromnt){
-            // Validate config 
-            ValidateConfig();
-
-            // AIAgent agentService = _client.GetChatClient(_deploymentName);
-
-            // Promnt to AI
-            string message = HelperLayer.AIAgent.SystemPromnt.GenerateTaskPromnt();
-
-            // Generate stuff
-
-            return "abobus";
-        }
-
-        
-
-
-        private void ValidateConfig(){
-            var errors = new List<string>();
-
-            if (string.IsNullOrWhiteSpace(_endpoint))
-                errors.Add("Error -> AzureOpenAI:Endpoint is required in configuration");
-
-            if (string.IsNullOrWhiteSpace(_apiKey))
-                errors.Add("Error -> AzureOpenAI:ApiKey is required in configuration");
-
-            if (string.IsNullOrWhiteSpace(_deploymentName))
-                errors.Add("Error -> AzureOpenAI:DeploymentName is required in configuration");
-
-            if (!string.IsNullOrWhiteSpace(_endpoint) && !Uri.IsWellFormedUriString(_endpoint, UriKind.Absolute))
-                errors.Add("Error -> AzureOpenAI:Endpoint must be a valid URL");
-
-            if (!string.IsNullOrWhiteSpace(_apiKey) && 
-                (_apiKey.Contains("your-") || _apiKey.Length < 10))
-                errors.Add("Error -> AzureOpenAI:ApiKey appears to be invalid or a placeholder");
-
-            if (errors.Count() == 0){
-                var errorMessage = string.Join("; ", errors);
-                _logger.LogError("Erorr -> Configuration validation failed: {Errors}", errorMessage);
-                throw new InvalidOperationException($"Configuration validation failed: {errorMessage}");
+        public async Task<TaskDTO> GenerateTask(string userPromnt){
+            if(string.IsNullOrWhiteSpace(_apiKey)){
+                throw new Exception("API key is null ;(");
             }
 
-            _logger.LogInformation("Azure OpenAI configuration validated successfully (this shit is working? :0 )");
+            if(string.IsNullOrWhiteSpace(userPromnt)){
+                throw new Exception("Promnt is empty ;(");
+            }
+
+            // Promt for Gemini to server to tell him that he is the best task AI manager ever (lmao)
+            var promnt = HelperLayer.AIAgent.SystemPrompts.TaskManagement;
+
+            var body = new{
+                prompt = new[]{
+                    new{
+                        content = userPromnt
+                    }
+                }
+            };
+
+            using var request = new HttpRequestMessage(HttpMethod.Post,
+                $"https://generativelanguage.googleapis.com/v1/models/{_modelId}:generateContent?key={_apiKey}");
+
+            request.Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+            var response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("AI Error. Status: " + response.StatusCode);
+
+            var json = await response.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(json);
+
+            var textResponse =
+                doc.RootElement
+                .GetProperty("candidates")[0]
+                .GetProperty("content")
+                .GetProperty("parts")[0]
+                .GetProperty("text")
+                .GetString();
+
+            if (string.IsNullOrWhiteSpace(textResponse))
+                throw new Exception("AI returns nothing (literary).");
+
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var dto = JsonSerializer.Deserialize<TaskDTO>(textResponse);
+
+            if (dto == null)
+                throw new Exception("AI returns broken asf json.");
+
+            return dto;                             
         }
-        
+
+        // this shit was moved, it will be removed soon...
+        //
+        // public async Task AddGeneratedTask(Guid uuid, string prompt){
+        //     try {
+        //         TaskDTO taskDto = await GenerateTask(prompt);
+        //         await _taskService.CreateAndSaveTask(taskDto, uuid);
+        //     }
+        //     catch (Exception ex){
+        //         throw new Exception($"Failed to add generated task: {ex.Message}", ex);
+        //     }
+        // }
     }
 }

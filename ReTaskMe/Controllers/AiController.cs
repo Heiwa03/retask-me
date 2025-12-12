@@ -1,27 +1,29 @@
 
+using BusinessLogicLayerCore.Services.AiAgentBehaviour;
 using BusinessLogicLayerCore.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ReTaskMe.Controllers;
 
 public class AiController : BaseController{
-    private readonly IAgentService _aiService;
+    private readonly AgentStrategyResolver _resolver;
 
-    public AiController(IAgentService _aiService){
-        this._aiService = _aiService;
+    public AiController(AgentStrategyResolver _resolver){
+        this._resolver = _resolver;
     }
 
-    public class AiPromtRequest{
-        public string Prompt { get; set; } = string.Empty;
+    [HttpPost("AiAssist")]
+    public async Task<IActionResult> GenerateBlyat([FromBody] String request){
+        try{
+            var strategy = _resolver.Resolve(request);
+
+            var result = await strategy.HandleAsync(request, UserGuid.Value);
+
+            return Ok(new { result });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
-
-    // [HttpPost("AiAssist")]
-    // public async Task<IActionResult> GenerateBlyat([FromBody] AiPromtRequest request){
-    //     if (string.IsNullOrWhiteSpace(request.Prompt)){
-    //         return BadRequest("Prompt cannot be empty.");
-    //     }
-
-    //     var response = await _aiService.GetAiResponse(request.Prompt);
-    //     return Ok(new { response });
-    // }
 }
