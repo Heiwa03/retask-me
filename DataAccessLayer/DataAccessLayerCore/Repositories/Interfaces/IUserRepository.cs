@@ -24,14 +24,5 @@ namespace DataAccessLayerCore.Repositories.Interfaces
         /// The user object if found in the database, otherwise null.
         /// </returns>
         Task<User?> GetUserByUsername(string username);
-
-        /// <summary>
-        /// Retrieves a user from the database given a UUID.
-        /// </summary>
-        /// <param name="uuid">The UUID of the user to retrieve.</param>
-        /// <returns>
-        /// The user object if found in the database, otherwise null.
-        /// </returns>
-        public Task<User?> GetUserByUuidAsync(Guid uuid);
     }
 }

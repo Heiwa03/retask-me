@@ -22,8 +22,6 @@ public class AuthController : ControllerBase
     private readonly SigningCredentials _signingCredentials;
     private readonly IEmailService _emailService;
     private readonly string _frontendUrl;
-    private readonly string _issuer;
-    private readonly string _audience;
 
     public AuthController(
         IAuthService authService,
@@ -37,8 +35,7 @@ public class AuthController : ControllerBase
         _signingCredentials = signingCredentials;
         _emailService = emailService;
         _frontendUrl = configuration["Frontend:BaseUrl"] ?? throw new ApplicationException("Frontend:BaseUrl configuration is missing.");
-        _issuer = configuration["Jwt:Issuer"] ?? throw new ApplicationException("Jwt:Issuer is missing.");
-        _audience = configuration["Jwt:Audience"] ?? throw new ApplicationException("Jwt:Audience is missing.");
+
     }
 
     [HttpPost("login")]
@@ -50,36 +47,44 @@ public class AuthController : ControllerBase
                 .FirstOrDefaultAsync(u => u.NormalizedUsername == loginDto.Email.ToUpperInvariant());
 
             if (user == null || !PasswordHelper.VerifyHashedPassword(loginDto.Password, user.Password))
-                return Unauthorized(new { message = "Invalid email or password." });
+                return Unauthorized(new { message = "Invalid email or password.", isVerified = false });
 
-            // Skip verification check, treat user as verified
-            user.IsVerified = true; // Optional: set this if you want to store it
-
-            // Generate JWT token
-            string accessToken = TokenHelper.GenerateJwtToken(
+            string token = TokenHelper.GenerateJwtToken(
                 user.Uuid,
                 user.NormalizedUsername,
                 _signingCredentials,
-                issuer: _issuer,
-                audience: _audience,
+                issuer: "ReTaskMe",
+                audience: "ReTaskMeClients",
                 expiresMinutes: 60
             );
 
-            // Optional: generate refresh token
-            string refreshToken = TokenHelper.GenerateRefreshToken();
-
-            return Ok(new
+            if (!user.IsVerified)
             {
-                message = "Login successful.",
-                isVerified = true,
-                token = accessToken,
-                refreshToken = refreshToken
+                string verificationLink = $"{_frontendUrl}/api/v1/Email/verify-email?token={token}";
+
+                string bodyContent = $@"
+                    <p>Hi,</p>
+                    <p>Please click the link below to verify your email:</p>
+                    <p><a href='{verificationLink}'>Verify Email</a></p>
+                    <p>If you did not register, ignore this email.</p>";
+
+                string htmlContent = EmailTemplates.WelcomeTemplate(bodyContent);
+
+                return Ok(new { isVerified = false, verificationToken = token, verificationLink });
+            }
+
+            return Ok(new 
+            { 
+                isVerified = true, 
+                token = token,                
+                expiresIn = 60 * 60           
             });
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(new { error = e.Message });
         }
     }
 }
+
 

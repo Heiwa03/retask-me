@@ -33,8 +33,8 @@ namespace BusinessLogicLayerCore.Services
             _userRepository = userRepository;
             _userSessionRepository = userSessionRepository;
             _signingCredentials = signingCredentials;
-            _issuer = configuration["Jwt:Issuer"] ?? throw new ArgumentNullException("Jwt:Issuer");
-            _audience = configuration["Jwt:Audience"] ?? throw new ArgumentNullException("Jwt:Audience");
+            _issuer = configuration["Authorization:Issuer"] ?? throw new ArgumentNullException("Authorization:Issuer");
+            _audience = configuration["Authorization:Audience"] ?? throw new ArgumentNullException("Authorization:Audience");
         }
 
         public async Task<AuthResponse?> LoginAsync(string email, string password)
@@ -95,7 +95,16 @@ namespace BusinessLogicLayerCore.Services
 
             await _userSessionRepository.RemoveSessionByUserIdAsync(user.Id);
 
-            var accessToken = TokenHelper.GenerateJwtToken(user.Uuid, user.NormalizedUsername, _signingCredentials, _issuer, _audience, AccessTokenMinutes);
+
+            var accessToken = TokenHelper.GenerateJwtToken(
+                user.Uuid,
+                user.NormalizedUsername,
+                _signingCredentials,
+                _issuer,          
+                _audience,        
+                AccessTokenMinutes
+            );
+            
             var refreshToken = TokenHelper.GenerateRefreshToken();
 
             var session = new UserSession
