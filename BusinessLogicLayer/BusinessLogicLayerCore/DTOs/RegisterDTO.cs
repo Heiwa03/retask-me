@@ -22,5 +22,7 @@ namespace BusinessLogicLayerCore.DTOs{
 
         [Required(ErrorMessage = "Rep password is required")]
         public string RepeatPassword { get; set; } = null!;
+
+        public UserRole Role {get; set; } = UserRole.Client;
     }
 }

@@ -2,65 +2,36 @@ using Microsoft.AspNetCore.Mvc;
 using BusinessLogicLayerCore.Services.Interfaces;
 using BusinessLogicLayerCore.DTOs;
 using Microsoft.AspNetCore.Authorization;
-using ReTaskMe.Models.Response;
+using ReTaskMe.Models.Responses;
 
 namespace ReTaskMe.Controllers;
-[ApiController]
-[Route("api/v1/[controller]")]
-[Authorize]    
-public class ProfileController(IProfileService _profileService) : BaseController {
-
-    [HttpPost("registerProfile")]
-    public async Task<IActionResult> RegisterUserProfile([FromBody] PostRegisterDTO dto)
-    {
-        if (UserGuid is not Guid userGuid)
-            return Unauthorized();
-
-        await _profileService.RegisterUserProfile(dto, userGuid);
-        return Ok(new { message = "Profile registered successfully" });
-    }
-
-    [HttpGet("getUserProfile")]
-    public async Task<IActionResult> GetProfile()
-    {
-        if (UserGuid is not Guid userGuid)
-            return Unauthorized(new { message = "User not authenticated" });
-
-        var profile = await _profileService.GetProfile(userGuid);
-        if (profile == null)
-            return NotFound(new { message = "Profile not found" });
-
-        var profileModel = new UserProfileModel
-        {
-            FirstName = profile.FirstName,
-            LastName = profile.LastName,
-            Gender = profile.Gender
-        };
-
-        return Ok(profileModel);
-    }
-
-
-    [HttpPost("updateRegisterProfile")]
-    public async Task<IActionResult> UpdateProfile([FromBody] PostRegisterDTO dto)
-    {
-        if (UserGuid is not Guid userGuid)
-            return Unauthorized(new { message = "User not authenticated" });
-
-        try
-        {
-            await _profileService.UpdateProfile(dto, userGuid);
-            return Ok(new { message = "Profile updated successfully" });
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProfileController(IUserService _userService, IProfileService _profileService) : BaseController {
+        
+        [HttpPost("registerProfile")]
+        public async Task RegisterUserProfile([FromBody] PostRegisterDTO dto){
+            await _profileService.RegisterUserProfile(dto, UserGuid ?? Guid.NewGuid());
         }
-        catch (KeyNotFoundException e)
-        {
-            return NotFound(new { message = e.Message });
-        }
-        catch (Exception e)
-        {
-            return BadRequest(new { message = e.Message });
-        }
-    }
 
-}
+        [HttpGet("getUserProfile")]
+        public async Task<UserProfileModel> GetProfile(){
+            var profile = await _userService.GetUserProfile(UserGuid ?? Guid.NewGuid());
+
+            var profileModel = new UserProfileModel{
+                FirstName = profile.FirstName,
+                LastName = profile.LastName,
+                Gender = profile.Gender
+            };
+
+            return profileModel;
+        }
+
+        [HttpPost("updateRegisterProfile")]
+        public async Task UpdateProfile([FromBody] PostRegisterDTO dto){
+            await _userService.UpdateUserProfile(dto, UserGuid ?? Guid.NewGuid());
+        }
+    
+
+    }
 
