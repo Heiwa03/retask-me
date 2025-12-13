@@ -31,9 +31,9 @@ if (string.IsNullOrWhiteSpace(connectionString))
 
 // Register DbContext (was missing)
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseMySql(
+    options.UseSqlServer(
         connectionString,
-        ServerVersion.AutoDetect(connectionString)
+        b => b.MigrationsAssembly("ReTaskMe")   // <-- add this
     )
 );
 
@@ -44,6 +44,17 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 
 var privateKeyPath = "private_key.pem";
 var publicKeyPath = "public_key.pem";
+
+// Generate keys if they don't exist
+if (!File.Exists(privateKeyPath) || !File.Exists(publicKeyPath))
+{
+    using var rsakey = RSA.Create(2048);
+    var privateKey = rsakey.ExportRSAPrivateKeyPem();
+    var publicKey = rsakey.ExportRSAPublicKeyPem();
+
+    File.WriteAllText(privateKeyPath, privateKey);
+    File.WriteAllText(publicKeyPath, publicKey);
+}
 
 // Load private key (env → file → appsettings)
 string? privateKeyPem =
