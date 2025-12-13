@@ -1,16 +1,12 @@
 // System packages
-using System.ClientModel;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-
-
 
 // BL
 using System.Text;
 using System.Text.Json;
 using BusinessLogicLayerCore.DTOs;
 using BusinessLogicLayerCore.Services.Interfaces;
-
+using System.Net.Http.Headers;
 
 
 
@@ -18,40 +14,59 @@ namespace BusinessLogicLayerCore.Services
 {
     public class AgentService : IAgentService{
         private readonly string? _apiKey;
-        private readonly string _modelId = "gemini-1.5-pro";
+        private readonly string _modelId = "gemini‑2.5‑flash";
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private readonly ITaskService _taskService;
 
         public AgentService(IConfiguration _configuration, HttpClient _httpClient, ITaskService _taskService){
-            this._apiKey = _configuration["GoogleAiApi:ApiKey"];
+            this._apiKey = _configuration["AiAgent:ApiKey"];
             this._httpClient = _httpClient;
             this._taskService = _taskService;
         }
 
         public async Task<TaskDTO> GenerateTask(string userPromnt){
             if(string.IsNullOrWhiteSpace(_apiKey)){
-                throw new Exception("API key is null ;(");
+                throw new Exception("[Error]: API key is null ;(");
             }
 
             if(string.IsNullOrWhiteSpace(userPromnt)){
-                throw new Exception("Promnt is empty ;(");
+                throw new Exception("[Error]: Promnt is empty ;(");
             }
 
             // Promt for Gemini to server to tell him that he is the best task AI manager ever (lmao)
             var promnt = HelperLayer.AIAgent.SystemPrompts.TaskManagement;
 
-            var body = new{
-                prompt = new[]{
-                    new{
-                        content = userPromnt
+            var body = new
+            {
+                contents = new[]
+                {
+                    new
+                    {
+                        role = "system",          
+                        parts = new[]
+                        {
+                            new { text = HelperLayer.AIAgent.SystemPrompts.TaskManagement }
+                        }
+                    },
+                    new
+                    {
+                        role = "user",            
+                        parts = new[]
+                        {
+                            new { text = userPromnt }
+                        }
                     }
                 }
             };
 
-            using var request = new HttpRequestMessage(HttpMethod.Post,
-                $"https://generativelanguage.googleapis.com/v1/models/{_modelId}:generateContent?key={_apiKey}");
 
+
+
+            using var request = new HttpRequestMessage(HttpMethod.Post,
+                $"https://generativelanguage.googleapis.com/v1beta2/models/{_modelId}:generateText");
+
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
             request.Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
             var response = await _httpClient.SendAsync(request);
 

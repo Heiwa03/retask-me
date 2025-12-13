@@ -46,6 +46,7 @@ string? privateKeyPem = Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY")
 if (string.IsNullOrWhiteSpace(privateKeyPem))
     throw new ApplicationException("JWT private key is missing.");
 
+privateKeyPem = privateKeyPem.Replace("\\n", "\n").Trim();
 
 RSA rsaPrivate = RSA.Create();
 rsaPrivate.ImportFromPem(privateKeyPem.ToCharArray());

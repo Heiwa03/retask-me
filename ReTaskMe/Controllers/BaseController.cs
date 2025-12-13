@@ -26,7 +26,7 @@ namespace ReTaskMe.Controllers;
 
         protected Guid? TestUserGuid{
             get{
-                return Guid.Parse("219cd970-f0a2-4f3e-950c-a34be23e0881");
+                return Guid.Parse("dabb3016-776b-423a-ac74-8e52bcc227e4");
             }
         }
     }
