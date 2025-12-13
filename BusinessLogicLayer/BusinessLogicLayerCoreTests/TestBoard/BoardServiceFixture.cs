@@ -209,6 +209,26 @@ public class BoardServiceFixture
     }
 
     [Fact]
+    public async Task GetBoardWithTasks_ShouldReturnBoardDTO_WhenBoardExists()
+    {
+        // Arrange
+        var userUuid = TestUser.Uuid;
+        var board = TestBoard;
+
+        _boardRepository
+            .Setup(r => r.GetBoardByUserUuidAsync(userUuid, board.Uuid))
+            .ReturnsAsync(board);
+
+        // Act
+        var result = await _boardService.GetBoardWithTasks(userUuid, board.Uuid);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(board.Title, result.Title);
+        Assert.Equal(board.Description, result.Description);
+    }
+
+    [Fact]
     public async Task GetTasksFromBoard_ShouldReturnTaskList_WhenBoardExists()
     {
         // Arrange
