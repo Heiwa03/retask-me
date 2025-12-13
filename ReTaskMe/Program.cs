@@ -10,9 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Cryptography;
-using OpenAI;
-using BusinessLogicLayerCore.Services.SearchBehaviour;
-using BusinessLogicLayerCore.Services.AiAgentBehaviour;
 
 // ======================
 // Create builder
@@ -22,7 +19,6 @@ var builder = WebApplication.CreateBuilder(args);
 // ======================
 // Database configuration
 // ======================
-
 var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionString")
                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -67,8 +63,6 @@ string? publicKeyPem =
 // Final check
 if (string.IsNullOrWhiteSpace(privateKeyPem))
     throw new ApplicationException("JWT private key is missing.");
-
-privateKeyPem = privateKeyPem.Replace("\\n", "\n").Trim();
 
 RSA rsaPrivate = RSA.Create();
 RSA rsaPublic = RSA.Create();
@@ -143,7 +137,6 @@ builder.Services.AddAuthentication(options =>
 
 // ======================
 // Email configuration
-
 // ======================
 var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
                              ?? builder.Configuration["Email:ConnectionString"];
@@ -183,23 +176,6 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ITaskService, TaskService>();
-builder.Services.AddScoped<IProfileService, ProfileService>();
-
-// Ai stuff 
-builder.Services.AddHttpClient<IAgentService, AgentService>();
-builder.Services.AddScoped<IBoardService, BoardService>();
-builder.Services.AddScoped<IAgentService, AgentService>();
-builder.Services.AddScoped<IAiAgentBehaviour, CreataTaskStrategy>();
-builder.Services.AddScoped<IAiAgentBehaviour, DefaultAnswerStrategy>();
-builder.Services.AddScoped<AgentStrategyResolver>();
-
-builder.Services.AddScoped<SearchService>(sp =>
-{
-    var defaultStrategy = new TitleSearchStrategy(); 
-    return new SearchService(defaultStrategy);
-});
 
 // ======================
 // Swagger
@@ -259,17 +235,6 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()
     );
 });
-
-
-
-
-// ======
-//   AI
-// ======
-
-
-
-
 
 // ======================
 // Controllers & Swagger

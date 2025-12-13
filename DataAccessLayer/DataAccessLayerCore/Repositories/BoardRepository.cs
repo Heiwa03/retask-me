@@ -16,16 +16,14 @@ public class BoardRepository : BaseRepository, IBoardRepository
 
     public async Task<List<Board>> GetBoardsByUserUuidAsync(Guid userUuid)
     {
-        return await _context.Boards
-            .Include(b => b.DailyTasks)       
+        return await _context.Board
             .Where(b => b.UserUuid == userUuid)
             .ToListAsync();
     }
 
     public async Task<Board?> GetBoardByUserUuidAsync(Guid userUuid, Guid boardUuid)
     {
-        return await _context.Boards
-            .Include(b => b.DailyTasks)       
+        return await _context.Board
             .FirstOrDefaultAsync(b => b.UserUuid == userUuid && b.Uuid == boardUuid);
     }
 

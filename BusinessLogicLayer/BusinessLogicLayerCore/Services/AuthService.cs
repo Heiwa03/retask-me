@@ -93,7 +93,9 @@ namespace BusinessLogicLayerCore.Services
             if (user == null)
                 throw new InvalidOperationException("User not found after credential check.");
 
+            // Remove any existing sessions for this user
             await _userSessionRepository.RemoveSessionByUserIdAsync(user.Id);
+
 
             var accessToken = TokenHelper.GenerateJwtToken(user.Uuid, user.NormalizedUsername, _signingCredentials, _issuer, _audience, AccessTokenMinutes);
             var refreshToken = TokenHelper.GenerateRefreshToken();
