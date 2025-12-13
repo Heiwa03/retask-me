@@ -1,4 +1,5 @@
 using BusinessLogicLayerCore.DTOs;
+using DataAccessLayerCore.Entities;
 
 namespace BusinessLogicLayerCore.Services.Interfaces;
 
@@ -8,7 +9,7 @@ namespace BusinessLogicLayerCore.Services.Interfaces;
         Task RemoveTaskFromBoard(Guid userUuid, Guid boardUuid, Guid taskUuid);
 
         Task<List<BoardDTO>> GetUserBoards(Guid userUuid);
-        Task<BoardDTO> GetBoardWithTasks(Guid userUuid, Guid boardUuid);
-
+        Task<List<TaskDTO>> GetTasksFromBoard(Guid userUuid, Guid boardUuid);
+        //Task<BoardDTO> GetBoardWithTasks(Guid userUuid, Guid boardUuid);
 
     }

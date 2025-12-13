@@ -56,16 +56,8 @@ public class BoardService : IBoardService
         task.BoardUuid = board.Uuid;
         task.Board = board;
 
-        var taskDto = new TaskDTO
-        {
-            Title = task.Title,
-            Description = task.Description,
-            Deadline = task.Deadline,
-            Priority = task.Priority,
-            Status = task.Status
-        };
-
         _boardRepository.Update(board);
+        await _taskRepository.SaveChangesAsync();
     }
 
     public async Task RemoveTaskFromBoard(Guid userUuid, Guid boardUuid, Guid taskUuid)
@@ -83,16 +75,8 @@ public class BoardService : IBoardService
         task.BoardUuid = null;
         task.Board = null;
 
-        var taskDto = new TaskDTO
-        {
-            Title = task.Title,
-            Description = task.Description,
-            Deadline = task.Deadline,
-            Priority = task.Priority,
-            Status = task.Status
-        };
-
-        _boardRepository.Update(board);      
+        _boardRepository.Update(board);   
+        await _taskRepository.SaveChangesAsync();   
     }
 
     public async Task<List<BoardDTO>> GetUserBoards(Guid userUuid)
@@ -101,21 +85,19 @@ public class BoardService : IBoardService
         return boards.Select(ToBoardDTO).ToList();
     }
 
-    public async Task<BoardDTO> GetBoardWithTasks(Guid userUuid, Guid boardUuid)
+    public async Task<List<TaskDTO>> GetTasksFromBoard(Guid userUuid, Guid boardUuid)
     {
         var board = await _boardRepository.GetBoardByUserUuidAsync(userUuid, boardUuid)
             ?? throw new KeyNotFoundException($"Board {boardUuid} not found");
 
-        return ToBoardDTO(board);
-    }
-
-
-    public async Task<List<DailyTask>> GetTasksFromBoard(Guid userUuid, Guid boardUuid)
-    {
-        var board = await _boardRepository.GetBoardByUserUuidAsync(userUuid, boardUuid)
-            ?? throw new KeyNotFoundException($"Board {boardUuid} not found");
-
-        return board.DailyTasks.ToList();
+        return board.DailyTasks.Select(t => new TaskDTO
+        {
+            Title = t.Title,
+            Description = t.Description,
+            Deadline = t.Deadline,
+            Priority = t.Priority,
+            Status = t.Status
+        }).ToList();
     }
 
     private BoardDTO ToBoardDTO(Board board)

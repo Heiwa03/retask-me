@@ -112,5 +112,20 @@ namespace HelperLayer.Security.Token
                 throw new SecurityTokenException("Invalid token", ex);
             }
         }
+        public static string ValidateJwtToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadJwtToken(token);
+
+            // Optional: validate expiry
+            if (jwtToken.ValidTo < DateTime.UtcNow)
+                throw new SecurityTokenExpiredException();
+
+            var email = jwtToken.Subject; // "sub" claim
+            if (string.IsNullOrEmpty(email))
+                throw new SecurityTokenException("Invalid token");
+
+            return email;
+        }
     }
 }
