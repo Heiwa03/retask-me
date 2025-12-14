@@ -43,6 +43,7 @@ public class SearchTaskController : BaseController{
         
         var taskModels = filteredTasks.Select(t => new TaskModel
         {
+            Uuid = t.Uuid,
             Title = t.Title,
             Description = t.Description,
             Deadline = t.Deadline,

@@ -3,6 +3,7 @@ using DataAccessLayerCore.Enum;
 
 namespace ReTaskMe.Models.Responses{
     public class TaskModel {
+        public Guid Uuid { get; set; }
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
         public DateTime? Deadline { get; set; }
