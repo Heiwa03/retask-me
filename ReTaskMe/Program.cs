@@ -7,6 +7,7 @@ using DataAccessLayerCore.Repositories.Interfaces;
 using HelperLayer.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Cryptography;
@@ -29,14 +30,12 @@ var connectionString = Environment.GetEnvironmentVariable("Data__ConnectionStrin
 if (string.IsNullOrWhiteSpace(connectionString))
     throw new ApplicationException("Database connection string is missing.");
 
-// Register DbContext (was missing)
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseMySql(
         connectionString,
         ServerVersion.AutoDetect(connectionString)
     )
 );
-
 
 // ======================
 // JWT Configuration
@@ -45,36 +44,48 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 var privateKeyPath = "private_key.pem";
 var publicKeyPath = "public_key.pem";
 
-// Load private key (env → file → appsettings)
-string? privateKeyPem =
-    Environment.GetEnvironmentVariable("JWT_PRIVATE_KEY")
-    ?? File.ReadAllText(builder.Configuration["Jwt:PrivateKeyPem"] ?? privateKeyPath);
-string? publicKeyPem =
-    Environment.GetEnvironmentVariable("JWT_PUBLIC_KEY")
-    ?? File.ReadAllText(builder.Configuration["Jwt:PublicKeyPem"] ?? publicKeyPath);
+if (!File.Exists(privateKeyPath) || !File.Exists(publicKeyPath))
+{
+    Console.WriteLine("Generating RSA key pair...");
+    using var rsa = RSA.Create(2048);
+    
+    var privateKey = rsa.ExportRSAPrivateKeyPem();
+    File.WriteAllText(privateKeyPath, privateKey);
+    
+    var publicKey = rsa.ExportRSAPublicKeyPem();
+    File.WriteAllText(publicKeyPath, publicKey);
+    
+    Console.WriteLine($"Created key pair: {privateKeyPath} (private), {publicKeyPath} (public)");
+}
 
-// Final check
-if (string.IsNullOrWhiteSpace(privateKeyPem))
-    throw new ApplicationException("JWT private key is missing.");
+string privateKeyPem = File.ReadAllText(privateKeyPath).Replace("\\n", "\n").Trim();
+Console.WriteLine($"Private key loaded from: {privateKeyPath}");
 
-privateKeyPem = privateKeyPem.Replace("\\n", "\n").Trim();
+string publicKeyPem = File.ReadAllText(publicKeyPath).Replace("\\n", "\n").Trim();
+Console.WriteLine($"Public key loaded from: {publicKeyPath}");
 
 RSA rsaPrivate = RSA.Create();
 RSA rsaPublic = RSA.Create();
+
 rsaPrivate.ImportFromPem(privateKeyPem.ToCharArray());
 rsaPublic.ImportFromPem(publicKeyPem.ToCharArray());
-var rsaPrivateKey = new RsaSecurityKey(rsaPrivate);
+
+var rsaPrivateKey = new RsaSecurityKey(rsaPrivate);  
+var rsaPublicKey = new RsaSecurityKey(rsaPublic);    
+
 var signingCredentials = new SigningCredentials(rsaPrivateKey, SecurityAlgorithms.RsaSha256);
 builder.Services.AddSingleton(signingCredentials);
 
+Console.WriteLine("✓ RSA keys loaded successfully:");
+Console.WriteLine($"  Private key (for signing): {rsaPrivateKey.KeySize} bits");
+Console.WriteLine($"  Public key (for validation): {rsaPublicKey.KeySize} bits");
 
-string? jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? throw new ApplicationException("Jwt:Issuer missing");
-string? jwtAudience = builder.Configuration["Jwt:Audience"] ?? throw new ApplicationException("Jwt:Audience missing");
+string jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "ReTaskMe";
+string jwtAudience = builder.Configuration["Jwt:Audience"] ?? "ReTaskMeClients";
 
-Console.WriteLine($"Issuer from config: '{jwtIssuer}'");
-Console.WriteLine($"Audience from config: '{jwtAudience}'");
+Console.WriteLine($"  Issuer: '{jwtIssuer}'");
+Console.WriteLine($"  Audience: '{jwtAudience}'");
 
-var rsaPublicKey = new RsaSecurityKey(rsaPublic);
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -82,40 +93,6 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
-        {
-            // Grab Authorization header manually
-            var authHeader = context.Request.Headers["Authorization"].ToString();
-
-            if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-            {
-                context.Token = authHeader.Substring("Bearer ".Length).Trim();
-            }
-            Console.WriteLine("TOKEN RECEIVED:");
-            Console.WriteLine(context.Token ?? "(null)");
-            return Task.CompletedTask;
-        },
-
-        OnAuthenticationFailed = context =>
-        {
-            Console.WriteLine("AUTH FAILED:");
-            Console.WriteLine(context.Exception.GetType().Name);
-            Console.WriteLine(context.Exception.Message);
-            return Task.CompletedTask;
-        },
-
-        OnChallenge = context =>
-        {
-            Console.WriteLine("AUTH CHALLENGE:");
-            Console.WriteLine(context.Error);
-            Console.WriteLine(context.ErrorDescription);
-            return Task.CompletedTask;
-        }
-    };
-
-
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -124,15 +101,28 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtIssuer,
         ValidAudience = jwtAudience,
-        IssuerSigningKey = rsaPublicKey,   // use public key here
-        ClockSkew = TimeSpan.FromMinutes(5)
+        IssuerSigningKey = rsaPublicKey,  
+        ClockSkew = TimeSpan.FromMinutes(2)
+    };
+    
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = context =>
+        {
+            Console.WriteLine("✓ Token validated successfully");
+            return Task.CompletedTask;
+        },
+        OnAuthenticationFailed = context =>
+        {
+            Console.WriteLine($"✗ Authentication failed: {context.Exception.Message}");
+            Console.WriteLine($"Exception type: {context.Exception.GetType().Name}");
+            return Task.CompletedTask;
+        }
     };
 });
 
-
 // ======================
 // Email configuration
-
 // ======================
 var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
                              ?? builder.Configuration["Email:ConnectionString"];
@@ -142,17 +132,29 @@ var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFro
 System.Console.WriteLine(mailConnectionString);
 System.Console.WriteLine(mailSenderAddress);
 System.Console.WriteLine(mailConnectionString);
+System.Console.WriteLine(mailSenderAddress);
+System.Console.WriteLine(mailConnectionString);
+System.Console.WriteLine(mailSenderAddress);
+
 
 if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
 {
+    // builder.Services.AddSingleton(sp => new EmailHelper(new EmailClient(mailConnectionString), mailSenderAddress));
+
+    // Register EmailService with proper constructor injection
     builder.Services.AddScoped<IEmailService>(sp =>
-        new EmailService(mailSenderAddress)
-    );
+    {
+        //var helper = sp.GetRequiredService<EmailHelper>();
+        return new EmailService(mailSenderAddress);
+    });
 }
 else
 {
     builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 }
+
+
+builder.Services.AddScoped<IEmailService, NoOpEmailService>();
 
 // ======================
 // Repositories
@@ -164,35 +166,27 @@ builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 builder.Services.AddScoped<ILoginChecker, LoginChecker>();
 
+
+
+
 // ======================
 // Business Services
 // ======================
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
-
-// Ai stuff 
 builder.Services.AddHttpClient<IAgentService, AgentService>();
 builder.Services.AddScoped<IBoardService, BoardService>();
 builder.Services.AddScoped<IAgentService, AgentService>();
 builder.Services.AddScoped<IAiAgentBehaviour, CreataTaskStrategy>();
 builder.Services.AddScoped<IAiAgentBehaviour, DefaultAnswerStrategy>();
-builder.Services.AddScoped<AgentStrategyResolver>();
+builder.Services.AddScoped<IAgentStrategyResolver, AgentStrategyResolver>();
+builder.Services.AddScoped<ISearchBehaviour, TitleSearchStrategy>();
+builder.Services.AddScoped<SearchService>();
 
-builder.Services.AddScoped<SearchService>(sp =>
-{
-    var defaultStrategy = new TitleSearchStrategy(); 
-    return new SearchService(defaultStrategy);
-});
-
-// ======================
-// Swagger
-// ======================
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(o =>
 {
@@ -204,28 +198,26 @@ builder.Services.AddSwaggerGen(o =>
     });
     o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Enter your JWT token like this: Bearer {token}",
+        Description =
+            "JWT Authorization header using bearer scheme. Example: \"Authorization: Bearer {token}\"",
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT"
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
     });
-
     o.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" },
+                        Scheme = "oauth2",
+                        Name = "Bearer",
+                        In = ParameterLocation.Header
+                    },
+                    new List<string>()
                 }
-            },
-            new List<string>()
-        }
-    });
+            });
 });
 
 // ======================
@@ -265,18 +257,37 @@ builder.Services.AddCors(options =>
 // ======================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // ======================
 // Build app
 // ======================
 var app = builder.Build();
 
+// var mailConnectionString = Environment.GetEnvironmentVariable("AppSettings_EmailSmtp")
+//                              ?? builder.Configuration["Email:ConnectionString"];
+// var mailSenderAddress = Environment.GetEnvironmentVariable("AppSettings_EmailFrom")
+//                          ?? builder.Configuration["Email:SenderAddress"];
+
+// if (!string.IsNullOrWhiteSpace(mailConnectionString) && !string.IsNullOrWhiteSpace(mailSenderAddress))
+// {
+//     builder.Services.AddScoped<IEmailService>(sp =>
+//         new EmailService(mailConnectionString, mailSenderAddress)
+//     );
+// }
+// else
+// {
+//     builder.Services.AddScoped<IEmailService, NoOpEmailService>();
+// }
+
+
+app.UseCors("FrontEndUI");
+
+// Developer exception page for dev
+
 app.UseDeveloperExceptionPage();
 app.UseSwagger();
 app.UseSwaggerUI();
-
-
-app.UseCors("OpenCorsNoLimitation");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

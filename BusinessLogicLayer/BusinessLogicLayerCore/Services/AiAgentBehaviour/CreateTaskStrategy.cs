@@ -20,10 +20,10 @@ public class CreataTaskStrategy : IAiAgentBehaviour{
         try{
             TaskDTO taskDto = await _agentService.GenerateTask(prompt);
             await _taskService.CreateAndSaveTask(taskDto, uuid);
-            return $"Task created with id ";
+            return $"[*] Success: Task created";
         }
         catch (Exception ex){
-            throw new Exception($"Failed to add generated task: {ex.Message}", ex);
+            throw new Exception($"[*] Error: Failed to add generated task: {ex.Message}", ex);
         }
     }
 }

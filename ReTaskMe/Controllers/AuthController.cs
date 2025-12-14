@@ -49,6 +49,8 @@ public class AuthController : ControllerBase
             var user = await _databaseContext.Users
                 .FirstOrDefaultAsync(u => u.NormalizedUsername == loginDto.Email.ToUpperInvariant());
 
+            //var user = await _authService.LoginAsync(loginDto.Email, loginDto.Password);
+
             if (user == null || !PasswordHelper.VerifyHashedPassword(loginDto.Password, user.Password))
                 return Unauthorized(new { message = "Invalid email or password." });
 

@@ -4,8 +4,11 @@ using DataAccessLayerCore.Entities;
 namespace BusinessLogicLayerCore.Services.SearchBehaviour;
 
 
-public class TitleSearchStrategy : ISearchService{
-    public IEnumerable<DailyTask> Search(IEnumerable<DailyTask> tasks, string taskName){
-        return tasks.Where(t => t.Title.Contains(taskName, StringComparison.OrdinalIgnoreCase));
+public class TitleSearchStrategy : ISearchBehaviour{
+    public IEnumerable<DailyTask> Search(IEnumerable<DailyTask> tasks, string query){
+        return tasks.Where(t => 
+            t.Title.Contains(query, StringComparison.OrdinalIgnoreCase));
     }
 }
+
+

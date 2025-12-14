@@ -6,5 +6,5 @@ namespace BusinessLogicLayerCore.Services.Interfaces;
 
 public interface IAgentService{
     Task<TaskDTO> GenerateTask(string userPromnt);
-    //Task AddGeneratedTask(Guid uuid, string prompt);
+    Task<string> GenerateAnswer(string userPromnt);
 }
