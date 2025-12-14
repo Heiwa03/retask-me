@@ -2,11 +2,12 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: linear-gradient(160deg, #ffffff, #f4ecff);
+  background: var(--card-bg);
   border: 1px solid var(--neutral-200);
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 24px 60px rgba(80, 0, 150, 0.08);
+  box-shadow: var(--shadow);
+  color: var(--text);
 }
 
 .chat-panel__header {
@@ -68,7 +69,7 @@
 
 .bubble--agent {
   background: var(--neutral-200);
-  color: #180024;
+  color: var(--text);
 }
 
 .chat-panel__input {

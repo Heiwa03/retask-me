@@ -7,11 +7,12 @@
 }
 
 .card {
-  background: var(--neutral-100);
+  background: var(--card-bg, var(--neutral-100));
   border-radius: 18px;
   padding: 28px;
-  box-shadow: 0 24px 60px rgba(80, 0, 150, 0.08);
+  box-shadow: var(--shadow, 0 24px 60px rgba(80, 0, 150, 0.08));
   border: 1px solid var(--neutral-200);
+  color: var(--text);
 }
 
 .purple-text {
@@ -27,11 +28,21 @@
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 10px 30px rgba(110, 45, 226, 0.25);
 }
 
 .primary-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 10px 30px rgba(110, 45, 226, 0.25);
+}
+
+[data-theme="dark"] .primary-btn {
+  background: linear-gradient(120deg, #5a2e9f, #46227d);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .primary-btn:hover {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
 }
 
 .secondary-btn {
@@ -42,6 +53,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: border-color 0.15s ease, color 0.15s ease;
+  color: var(--text);
 }
 
 .secondary-btn:hover {
@@ -54,9 +66,10 @@
   padding: 12px 14px;
   border-radius: 10px;
   border: 1px solid var(--neutral-200);
-  background: var(--neutral-100);
+  background: var(--card-bg, var(--neutral-100));
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   font-size: 14px;
+  color: var(--text);
 }
 
 .input:focus {

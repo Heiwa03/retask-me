@@ -1,11 +1,11 @@
 .task-form {
   display: grid;
   gap: 12px;
-  background: linear-gradient(140deg, #ffffff 0%, #f7f2ff 100%);
+  background: var(--card-bg);
   border: 1px solid var(--neutral-200);
   border-radius: 16px;
   padding: 18px;
-  box-shadow: 0 16px 40px rgba(80, 0, 150, 0.08);
+  box-shadow: var(--shadow);
 }
 
 .task-form__row {

@@ -7,6 +7,9 @@ interface Props {
   onEdit: (taskUid: string, update: { title: string; description?: string; deadline?: string | null; priority: number; status: number }) => Promise<void>;
   onDelete: (taskUid: string) => Promise<void>;
   onMarkComplete: (taskUid: string) => Promise<void>;
+  boards: { uuid: string; title: string }[];
+  onAssignBoard: (taskUid: string, boardUuid: string) => Promise<void>;
+  onRemoveBoard: (taskUid: string) => Promise<void>;
 }
 
 const priorityLabels: Record<number, string> = {
@@ -23,7 +26,7 @@ const statusLabels: Record<number, string> = {
   4: "Archived",
 };
 
-export default function TaskList({ tasks, onEdit, onDelete, onMarkComplete }: Props) {
+export default function TaskList({ tasks, onEdit, onDelete, onMarkComplete, boards, onAssignBoard, onRemoveBoard }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<{
@@ -77,6 +80,19 @@ export default function TaskList({ tasks, onEdit, onDelete, onMarkComplete }: Pr
     setSaving(true);
     try {
       await onMarkComplete(taskUid);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleBoardChange = async (taskUid: string, value: string) => {
+    setSaving(true);
+    try {
+      if (!value) {
+        await onRemoveBoard(taskUid);
+      } else {
+        await onAssignBoard(taskUid, value);
+      }
     } finally {
       setSaving(false);
     }
@@ -176,6 +192,22 @@ export default function TaskList({ tasks, onEdit, onDelete, onMarkComplete }: Pr
                 Due {new Date(task.deadline).toLocaleDateString()}
               </span>
             )}
+            <span className="board-chip">
+              Board:
+              <select
+                className="input board-select"
+                value={task.boardUuid ?? ""}
+                onChange={(e) => handleBoardChange(task.uuid, e.target.value)}
+                disabled={saving}
+              >
+                <option value="">None</option>
+                {boards.map((b) => (
+                  <option key={b.uuid} value={b.uuid}>
+                    {b.title}
+                  </option>
+                ))}
+              </select>
+            </span>
           </div>
           <div className="task-actions">
             <button

@@ -4,11 +4,12 @@
 }
 
 .task-card {
-  background: var(--neutral-100);
+  background: var(--card-bg);
   border: 1px solid var(--neutral-200);
   border-radius: 14px;
   padding: 16px;
-  box-shadow: 0 12px 30px rgba(70, 20, 130, 0.06);
+  box-shadow: var(--shadow);
+  color: var(--text);
 }
 
 .task-card__row {
@@ -56,8 +57,9 @@
   display: flex;
   gap: 10px;
   align-items: center;
-  color: #5c4a73;
+  color: var(--text);
   font-weight: 600;
+  flex-wrap: wrap;
 }
 
 .task-actions {
@@ -72,18 +74,40 @@
   color: #b42318;
 }
 
+.task-actions button {
+  color: var(--text);
+}
+
 .task-edit {
   margin: 10px 0 0;
   padding: 12px;
   border: 1px solid var(--neutral-200);
   border-radius: 12px;
-  background: #faf7ff;
+  background: var(--neutral-200);
 }
 
 .task-edit__row {
   display: grid;
   gap: 10px;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.board-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--neutral-200);
+  padding: 6px 10px;
+  border-radius: 10px;
+  color: var(--text);
+}
+
+.board-select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--neutral-400);
+  background: var(--card-bg);
+  color: var(--text);
 }
 
 .status {

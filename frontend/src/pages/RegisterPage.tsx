@@ -22,7 +22,8 @@ export default function RegisterPage() {
     setError(null);
     try {
       await register(email, password, repeatPassword);
-      navigate("/dashboard");
+      localStorage.removeItem("retask-video-seen");
+      navigate("/welcome");
     } catch (err: any) {
       setError(err?.response?.data?.message ?? "Registration failed");
     } finally {

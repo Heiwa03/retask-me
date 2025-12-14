@@ -17,7 +17,8 @@ export default function LoginPage() {
     setError(null);
     try {
       await login(email, password);
-      navigate("/dashboard");
+      localStorage.removeItem("retask-video-seen");
+      navigate("/welcome");
     } catch (err: any) {
       setError(err?.response?.data?.message ?? "Login failed");
     } finally {
