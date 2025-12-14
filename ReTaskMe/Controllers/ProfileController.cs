@@ -10,6 +10,7 @@ namespace ReTaskMe.Controllers;
 [Authorize]    
 public class ProfileController(IProfileService _profileService) : BaseController {
 
+    [Authorize]
     [HttpPost("registerProfile")]
     public async Task<IActionResult> RegisterUserProfile([FromBody] PostRegisterDTO dto)
     {
@@ -20,6 +21,7 @@ public class ProfileController(IProfileService _profileService) : BaseController
         return Ok(new { message = "Profile registered successfully" });
     }
 
+    [Authorize]
     [HttpGet("getUserProfile")]
     public async Task<IActionResult> GetProfile()
     {
@@ -40,8 +42,8 @@ public class ProfileController(IProfileService _profileService) : BaseController
         return Ok(profileModel);
     }
 
-
-    [HttpPost("updateRegisterProfile")]
+    [Authorize]
+    [HttpPut("updateRegisterProfile")]
     public async Task<IActionResult> UpdateProfile([FromBody] PostRegisterDTO dto)
     {
         if (UserGuid is not Guid userGuid)

@@ -6,9 +6,11 @@ namespace BusinessLogicLayerCore.Services.Interfaces;
         Task CreateBoard(BoardDTO boardDto, Guid userUuid);
         Task AddTaskToBoard(Guid userUuid, Guid boardUuid, Guid taskUuid);
         Task RemoveTaskFromBoard(Guid userUuid, Guid boardUuid, Guid taskUuid);
+        Task DeleteBoard(Guid userUuid, Guid boardUuid);
+        Task UpdateBoard(BoardDTO boardDTO, Guid userUuid, Guid boardUuid);
+
 
         Task<List<BoardDTO>> GetUserBoards(Guid userUuid);
-        Task<BoardDTO> GetBoardWithTasks(Guid userUuid, Guid boardUuid);
-
+        Task<List<TaskDTO>> GetTasksFromBoard(Guid userUuid, Guid boardUuid);
 
     }

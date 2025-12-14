@@ -118,20 +118,35 @@ public class BoardService : IBoardService
         return board.DailyTasks.ToList();
     }
 
+    public async Task DeleteBoard(Guid userUuid, Guid boardUuid){
+        var board = await _boardRepository.GetBoardByUserUuidAsync(userUuid, boardUuid)
+            ?? throw new KeyNotFoundException($"Board {boardUuid} not found");
+        
+        _boardRepository.Delete(board);
+        await _boardRepository.SaveChangesAsync();
+    }
+
+    public async Task UpdateBoard(BoardDTO boardDTO, Guid userUuid, Guid boardUuid){
+        var board = await _boardRepository.GetBoardByUserUuidAsync(userUuid, boardUuid)
+            ?? throw new KeyNotFoundException($"Board {boardUuid} not found");
+
+        if (!string.IsNullOrWhiteSpace(boardDTO.Title))
+            board.Title = boardDTO.Title;
+        
+        if (boardDTO.Description != null) 
+            board.Description = boardDTO.Description;
+
+
+        _boardRepository.Update(board);
+        await _boardRepository.SaveChangesAsync();
+    }
+
     private BoardDTO ToBoardDTO(Board board)
     {
         return new BoardDTO
         {
             Title = board.Title,
             Description = board.Description,
-            Tasks = board.DailyTasks?.Select(t => new TaskDTO
-            {
-                Title = t.Title,
-                Description = t.Description,
-                Deadline = t.Deadline,
-                Priority = t.Priority,
-                Status = t.Status
-            }).ToList()
         };
     }
 }

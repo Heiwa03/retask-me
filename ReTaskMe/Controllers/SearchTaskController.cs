@@ -2,6 +2,9 @@ using BusinessLogicLayerCore.Services;
 using DataAccessLayerCore.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using BusinessLogicLayerCore.Services.SearchBehaviour;
+using ReTaskMe.Models.Responses;
+using Microsoft.AspNetCore.Authorization;
+using BusinessLogicLayerCore.Services.Interfaces;
 
 
 namespace ReTaskMe.Controllers;
@@ -9,7 +12,7 @@ namespace ReTaskMe.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 public class SearchTaskController : BaseController{
-    public readonly SearchService _searchService;
+    public readonly ISearchService _searchService;
     public readonly ITaskRepository _taskService;
 
     public SearchTaskController(SearchService _searchService, ITaskRepository _taskService){
@@ -17,25 +20,44 @@ public class SearchTaskController : BaseController{
         this._taskService = _taskService;
     }
 
+    [Authorize]
     [HttpGet("search")]
-    public async Task<IActionResult> Search([FromQuery] string query, [FromQuery] string mode = "title"){
+    public async Task<IActionResult> Search([FromQuery] string query, [FromQuery] string mode = "title")
+    {
         if (string.IsNullOrWhiteSpace(query))
-            return BadRequest("Search query cannot be empty, bro...");
+            return BadRequest(new { Message = "Search query cannot be empty" });
 
-        // search by...
-        // We have several methods to sort tasks, so we can use Strategy Pattern
-        switch (mode.ToLower()){ 
+        if (UserGuid is not Guid userGuid)
+            return Unauthorized(new { Message = "User not authenticated" });
+
+        switch (mode.ToLower())
+        { 
             case "title":
-            default:
                 _searchService.SetStrategy(new TitleSearchStrategy());
                 break;
-            // The rest strategy in future... maybe
+            default:
+                return BadRequest(new { Message = $"Unsupported search mode: {mode}" });
         }
 
-        var tasks = await _taskService.GetTasksByUserUidAsync(UserGuid ?? Guid.NewGuid());
+        var filteredTasks = await _searchService.SearchTasks(userGuid, query);
+        
+        var taskModels = filteredTasks.Select(t => new TaskModel
+        {
+            Title = t.Title,
+            Description = t.Description,
+            Deadline = t.Deadline,
+            Status = t.Status,
+            Priority = t.Priority
+        }).ToList();
 
-        var result = _searchService.SearchTasks(tasks, query);
+        var response = new
+        {
+            Query = query,
+            Mode = mode,
+            TotalCount = taskModels.Count,
+            Tasks = taskModels  
+        };
 
-        return Ok(result);
+        return Ok(response);
     }
 }

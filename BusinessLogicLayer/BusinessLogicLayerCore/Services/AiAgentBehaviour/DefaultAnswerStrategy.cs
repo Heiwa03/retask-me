@@ -10,11 +10,11 @@ public class DefaultAnswerStrategy : IAiAgentBehaviour
         this._agentService = _agentService;
     }
 
-    // Данный метод будет вызван, в случае если условия остальных стратегии не были удволетворены  (как крайний)
+    // Данный метод будет вызван если условиe остальных стратегии не были удволетворены (как крайний)
     public bool CanHandle(string prompt) => true;
 
-    // Основной метод
+    // Основной метод. Guid нужен чтобы ИИ мог обращаться по имени, но это на будущее уже
     public async Task<string> HandleAsync(string prompt, Guid uuid){
-        return await Task.FromResult($"AI says: {prompt}");
+        return await _agentService.GenerateAnswer(prompt);
     }
 }

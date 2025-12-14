@@ -2,16 +2,17 @@
 using BusinessLogicLayerCore.Services.AiAgentBehaviour;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BusinessLogicLayerCore.Services.Interfaces;
 
 namespace ReTaskMe.Controllers;
 
 public class AiController : BaseController{
-    private readonly AgentStrategyResolver _resolver;
+    private readonly IAgentStrategyResolver _resolver;
 
-    public AiController(AgentStrategyResolver _resolver){
+    public AiController(IAgentStrategyResolver _resolver){
         this._resolver = _resolver;
     }
-
+    
     [Authorize]
     [HttpPost("AiAssist")]
     public async Task<IActionResult> GenerateContent([FromBody] String request){

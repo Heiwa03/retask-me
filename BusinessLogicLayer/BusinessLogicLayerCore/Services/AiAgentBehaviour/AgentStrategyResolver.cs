@@ -4,7 +4,7 @@ using BusinessLogicLayerCore.Services.Interfaces;
 namespace BusinessLogicLayerCore.Services.AiAgentBehaviour;
 
 
-public class AgentStrategyResolver
+public class AgentStrategyResolver : IAgentStrategyResolver
 {
     private readonly IEnumerable<IAiAgentBehaviour> _strategies;
 
