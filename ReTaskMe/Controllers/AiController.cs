@@ -6,6 +6,9 @@ using BusinessLogicLayerCore.Services.Interfaces;
 
 namespace ReTaskMe.Controllers;
 
+[ApiController]
+[Route("api/v1/[controller]")]
+[Authorize]
 public class AiController : BaseController{
     private readonly IAgentStrategyResolver _resolver;
 
@@ -13,7 +16,6 @@ public class AiController : BaseController{
         this._resolver = _resolver;
     }
     
-    [Authorize]
     [HttpPost("AiAssist")]
     public async Task<IActionResult> GenerateContent([FromBody] String request){
         if (!UserGuid.HasValue)
