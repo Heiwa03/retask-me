@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ReTaskMe.Controllers;
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class BoardController(IBoardService _boardService) : BaseController {
     
         [Authorize]
@@ -55,7 +55,10 @@ namespace ReTaskMe.Controllers;
         [Authorize]
         [HttpGet("getTasksfromBoard")]
         public async Task<IActionResult> GetTasksFromBoard(Guid boardUuid){
-            var board = await _boardService.GetTasksFromBoard(UserGuid ?? Guid.NewGuid(), boardUuid);
+            if (UserGuid is not Guid userGuid)
+                return Unauthorized(new { message = "User not authenticated" });
+
+            var board = await _boardService.GetTasksFromBoard(UserGuid.Value, boardUuid);
             return Ok(board);
         }
 

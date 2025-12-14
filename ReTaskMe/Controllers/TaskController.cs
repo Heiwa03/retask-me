@@ -55,7 +55,8 @@ public class TaskController(ITaskService _taskService) : BaseController {
             Description = task.Description,
             Deadline = task.Deadline,
             Priority = task.Priority,
-            Status = task.Status
+            Status = task.Status,
+            BoardUuid = task.BoardUuid
         };
 
         return Ok(taskModel); 
@@ -75,7 +76,8 @@ public class TaskController(ITaskService _taskService) : BaseController {
             Description = task.Description,
             Deadline = task.Deadline,
             Priority = task.Priority,
-            Status = task.Status
+            Status = task.Status,
+            BoardUuid = task.BoardUuid
         }).ToList();
 
         return Ok(taskModels);

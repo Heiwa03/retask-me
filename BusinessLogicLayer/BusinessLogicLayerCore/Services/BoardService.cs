@@ -55,17 +55,8 @@ public class BoardService : IBoardService
         task.BoardId = board.Id;
         task.BoardUuid = board.Uuid;
         task.Board = board;
-
-        var taskDto = new TaskDTO
-        {
-            Title = task.Title,
-            Description = task.Description,
-            Deadline = task.Deadline,
-            Priority = task.Priority,
-            Status = task.Status
-        };
-
-        _boardRepository.Update(board);
+        _taskRepository.Update(task);
+        await _taskRepository.SaveChangesAsync();
     }
 
     public async Task RemoveTaskFromBoard(Guid userUuid, Guid boardUuid, Guid taskUuid)
@@ -82,17 +73,8 @@ public class BoardService : IBoardService
         task.BoardId = null;
         task.BoardUuid = null;
         task.Board = null;
-
-        var taskDto = new TaskDTO
-        {
-            Title = task.Title,
-            Description = task.Description,
-            Deadline = task.Deadline,
-            Priority = task.Priority,
-            Status = task.Status
-        };
-
-        _boardRepository.Update(board);      
+        _taskRepository.Update(task);
+        await _taskRepository.SaveChangesAsync();
     }
 
     public async Task<List<BoardDTO>> GetUserBoards(Guid userUuid)
@@ -153,6 +135,7 @@ public class BoardService : IBoardService
     {
         return new BoardDTO
         {
+            Uuid = board.Uuid,
             Title = board.Title,
             Description = board.Description,
         };
