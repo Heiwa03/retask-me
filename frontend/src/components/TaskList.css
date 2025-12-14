@@ -60,6 +60,32 @@
   font-weight: 600;
 }
 
+.task-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.task-actions .danger {
+  border-color: #d92d20;
+  color: #b42318;
+}
+
+.task-edit {
+  margin: 10px 0 0;
+  padding: 12px;
+  border: 1px solid var(--neutral-200);
+  border-radius: 12px;
+  background: #faf7ff;
+}
+
+.task-edit__row {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
 .status {
   padding: 5px 10px;
   border-radius: 10px;

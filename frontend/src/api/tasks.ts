@@ -23,3 +23,17 @@ export async function createTask(
   await client.post("/Task/createTask", payload);
 }
 
+export async function updateTask(
+  token: string,
+  taskUid: string,
+  payload: TaskPayload,
+): Promise<void> {
+  const client = createApiClient(token);
+  await client.put(`/Task/updateTask/${taskUid}`, payload);
+}
+
+export async function deleteTask(token: string, taskUid: string): Promise<void> {
+  const client = createApiClient(token);
+  await client.delete(`/Task/deleteTask/${taskUid}`);
+}
+

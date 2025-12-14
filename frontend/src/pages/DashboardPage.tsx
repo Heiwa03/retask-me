@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import TaskList from "../components/TaskList";
 import TaskForm from "../components/TaskForm";
 import ChatPanel from "../components/ChatPanel";
-import { createTask, fetchTasks } from "../api/tasks";
+import { createTask, fetchTasks, updateTask, deleteTask } from "../api/tasks";
 import { Task } from "../types";
 import { useAuth } from "../hooks/useAuth";
 import "../App.css";
@@ -54,6 +54,41 @@ export default function DashboardPage() {
     navigate("/login");
   };
 
+  const handleEditTask = async (
+    taskUid: string,
+    update: { title: string; description?: string; deadline?: string | null; priority: number; status: number },
+  ) => {
+    if (!token) return;
+    await updateTask(token, taskUid, {
+      title: update.title,
+      description: update.description ?? "",
+      deadline: update.deadline,
+      priority: update.priority,
+      status: update.status,
+    });
+    await reloadTasks();
+  };
+
+  const handleDeleteTask = async (taskUid: string) => {
+    if (!token) return;
+    await deleteTask(token, taskUid);
+    await reloadTasks();
+  };
+
+  const handleMarkComplete = async (taskUid: string) => {
+    if (!token) return;
+    const task = tasks.find((t) => t.uuid === taskUid);
+    if (!task) return;
+    await updateTask(token, taskUid, {
+      title: task.title,
+      description: task.description ?? "",
+      deadline: task.deadline ?? null,
+      priority: task.priority,
+      status: 3, // Done
+    });
+    await reloadTasks();
+  };
+
   return (
     <div
       style={{
@@ -97,7 +132,12 @@ export default function DashboardPage() {
           {loading ? (
             <p>Loading tasks...</p>
           ) : (
-            <TaskList tasks={tasks} />
+            <TaskList
+              tasks={tasks}
+              onEdit={handleEditTask}
+              onDelete={handleDeleteTask}
+              onMarkComplete={handleMarkComplete}
+            />
           )}
         </div>
 
