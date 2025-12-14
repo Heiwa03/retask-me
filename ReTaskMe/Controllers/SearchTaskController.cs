@@ -48,7 +48,8 @@ public class SearchTaskController : BaseController{
             Description = t.Description,
             Deadline = t.Deadline,
             Status = t.Status,
-            Priority = t.Priority
+            Priority = t.Priority,
+            BoardUuid = t.BoardUuid
         }).ToList();
 
         var response = new
