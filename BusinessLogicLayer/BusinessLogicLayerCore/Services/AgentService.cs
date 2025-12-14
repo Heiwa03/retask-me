@@ -3,6 +3,7 @@ using System.Text.Json;
 using BusinessLogicLayerCore.DTOs;
 using BusinessLogicLayerCore.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
+using OpenAI.Chat;
 
 
 
