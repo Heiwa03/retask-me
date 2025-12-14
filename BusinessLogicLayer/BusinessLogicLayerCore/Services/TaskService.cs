@@ -50,11 +50,8 @@ namespace BusinessLogicLayerCore.Services;
       public async Task<List<DailyTask>> GetAllTasks(Guid uuid){
           var tasks = await _taskRepository.GetTasksByUserUidAsync(uuid);
 
-          if (tasks == null || tasks.Count == 0){
-              throw new KeyNotFoundException($"No tasks found for user {uuid}");
-          }
-
-          return tasks;
+          // Return an empty list instead of throwing to simplify clients
+          return tasks ?? [];
       }
 
       //Delete task
