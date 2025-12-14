@@ -240,17 +240,6 @@ builder.Services.AddCors(options =>
     );
 });
 
-
-
-
-// ======
-//   AI
-// ======
-
-
-
-
-
 // ======================
 // Controllers & Swagger
 // ======================
@@ -280,7 +269,7 @@ var app = builder.Build();
 // }
 
 
-app.UseCors("FrontEndUI");
+app.UseCors("OpenCorsNoLimitation");
 
 // Developer exception page for dev
 
