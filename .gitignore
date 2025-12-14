@@ -412,3 +412,5 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,dotnetcore
 /BusinessLogicLayer/Services/TemporaryLoginChecker.cs
+ReTaskMe/appsettings.Development.json
+ReTaskMe/appsettings.json
