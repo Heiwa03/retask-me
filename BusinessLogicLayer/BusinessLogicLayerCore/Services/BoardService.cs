@@ -110,13 +110,21 @@ public class BoardService : IBoardService
     }
 
 
-    public async Task<List<DailyTask>> GetTasksFromBoard(Guid userUuid, Guid boardUuid)
+    public async Task<List<TaskDTO>> GetTasksFromBoard(Guid userUuid, Guid boardUuid)
     {
         var board = await _boardRepository.GetBoardByUserUuidAsync(userUuid, boardUuid)
             ?? throw new KeyNotFoundException($"Board {boardUuid} not found");
 
-        return board.DailyTasks.ToList();
+        return board.DailyTasks.Select(t => new TaskDTO
+        {
+            Title = t.Title,
+            Description = t.Description,
+            Deadline = t.Deadline,
+            Priority = t.Priority,
+            Status = t.Status
+        }).ToList();
     }
+
 
     public async Task DeleteBoard(Guid userUuid, Guid boardUuid){
         var board = await _boardRepository.GetBoardByUserUuidAsync(userUuid, boardUuid)
