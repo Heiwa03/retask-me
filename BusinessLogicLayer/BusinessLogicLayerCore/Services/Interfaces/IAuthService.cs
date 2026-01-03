@@ -1,16 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using BusinessLogicLayerCore.DTOs;
+using DataAccessLayerCore.Entities;
 
-namespace BusinessLogicLayerCore.Services.Interfaces
-{
-    public class AuthResponse
-    {
-        public string Token { get; set; } = string.Empty;
-        public string RefreshToken { get; set; } = string.Empty;
-    }
-
+namespace BusinessLogicLayerCore.Services.Interfaces{
     public interface IAuthService
     {
-        Task<AuthResponse?> LoginAsync(string email, string password);
+        Task<AuthResponse> LoginAsync(LoginDto loginDto);
+
         Task<AuthResponse?> RefreshAsync(string refreshToken);
     }
 }
