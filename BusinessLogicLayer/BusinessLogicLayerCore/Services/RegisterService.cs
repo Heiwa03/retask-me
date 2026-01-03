@@ -15,7 +15,6 @@ namespace BusinessLogicLayerCore.Services
     public class RegisterService : IRegisterService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IEmailService _emailService;
         private readonly SigningCredentials _signingCredentials;
         private readonly string _frontendUrl;
         private readonly string _jwtIssuer;
@@ -28,7 +27,6 @@ namespace BusinessLogicLayerCore.Services
             IConfiguration configuration)
         {
             _userRepository = userRepository;
-            _emailService = emailService;
             _signingCredentials = signingCredentials;
 
             _frontendUrl = configuration["Frontend:BaseUrl"]
@@ -88,16 +86,6 @@ namespace BusinessLogicLayerCore.Services
                 audience: _jwtAudience,
                 expiresMinutes: 60
             );
-
-            string verificationLink = $"{_frontendUrl}/verify-email?token={token}";
-
-            // --- Send verification email ---
-            bool emailSent = await _emailService.SendVerificationEmailAsync(dto.Mail, verificationLink);
-
-            if (!emailSent)
-            {
-                Console.WriteLine($"[RegisterService] Failed to send verification email to {dto.Mail}");
-            }
         }
     }
 }
