@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.10" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="PayPalCheckoutSdk" Version="1.0.4" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
     <PackageReference Include="System.Linq.Async" Version="6.0.3" />
     <PackageReference Include="xunit" Version="2.9.3" />
