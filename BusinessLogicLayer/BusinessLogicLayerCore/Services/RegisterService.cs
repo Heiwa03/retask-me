@@ -9,6 +9,7 @@ using HelperLayer.Security.Token;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using DataAccessLayerCore.Repositories.Interfaces;
+using BusinessLogicLayerCore.Exceptions;
 
 namespace BusinessLogicLayerCore.Services
 {
@@ -22,7 +23,6 @@ namespace BusinessLogicLayerCore.Services
 
         public RegisterService(
             IUserRepository userRepository,
-            IEmailService emailService,
             SigningCredentials signingCredentials,
             IConfiguration configuration)
         {
@@ -40,16 +40,20 @@ namespace BusinessLogicLayerCore.Services
         {
             // --- Input validation ---
             if (_userRepository.IsUsernameOccupied(dto.Mail))
-                throw new InvalidOperationException("Email already exists.");
+                //throw new InvalidOperationException("Email already exists.");  !!! Old exception
+                throw new UsernameExistException();
 
             if (!PasswordHelper.ValidateRegisterData(dto.Password, dto.RepeatPassword))
-                throw new InvalidOperationException("Passwords do not match.");
+                //throw new InvalidOperationException("Passwords do not match.");  !!! Old exception
+                throw new MatchPasswordException(); // TODO: MatchPasswordHandler
 
             if (!PasswordHelper.IsPasswordStrong(dto.Password))
-                throw new InvalidOperationException("Password is not strong enough.");
+                //throw new InvalidOperationException("Password is not motivated enough.");
+                throw new ValidPasswordException();
 
             // --- Create user ---
             string hashedPassword = PasswordHelper.HashPassword(dto.Password);
+
             var user = new User
 
             {

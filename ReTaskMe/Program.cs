@@ -14,6 +14,9 @@ using System.Security.Cryptography;
 using OpenAI;
 using BusinessLogicLayerCore.Services.SearchBehaviour;
 using BusinessLogicLayerCore.Services.AiAgentBehaviour;
+using ReTaskMe.Middleware.Interfaces;
+using ReTaskMe.Middleware.Handlers;
+using ReTaskMe.Middleware;
 
 // ======================
 // Create builder
@@ -168,7 +171,6 @@ builder.Services.AddScoped<ILoginChecker, LoginChecker>();
 
 
 
-
 // ======================
 // Business Services
 // ======================
@@ -186,6 +188,8 @@ builder.Services.AddScoped<IAiAgentBehaviour, DefaultAnswerStrategy>();
 builder.Services.AddScoped<IAgentStrategyResolver, AgentStrategyResolver>();
 builder.Services.AddScoped<ISearchBehaviour, TitleSearchStrategy>();
 builder.Services.AddScoped<SearchService>();
+builder.Services.AddScoped<IPayPalSerivce, PayPalService>();
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(o =>
@@ -244,9 +248,11 @@ builder.Services.AddCors(options =>
 
 
 
-// ======
-//   AI
-// ======
+// ============
+//   Midleware
+// ============
+
+builder.Services.AddTransient<IExceptionHandling, InvalidCredentialsHandler>();
 
 
 
@@ -281,11 +287,13 @@ var app = builder.Build();
 // }
 
 
+app.UseMiddleware<ErrorHandlingMiddleware>();
+
 app.UseCors("FrontEndUI");
 
 // Developer exception page for dev
 
-app.UseDeveloperExceptionPage();
+//app.UseDeveloperExceptionPage();
 app.UseSwagger();
 app.UseSwaggerUI();
 
