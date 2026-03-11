@@ -1,6 +1,4 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+
 using BusinessLogicLayerCore.Services.Interfaces;
 using BusinessLogicLayerCore.DTOs;
 using DataAccessLayerCore.Entities;
@@ -67,29 +65,6 @@ namespace BusinessLogicLayerCore.Services
             _userRepository.Add(user);
             await _userRepository.SaveChangesAsync();
 
-            // --- Create session ---
-            var session = new UserSession
-            {
-                Uuid = user.Uuid,
-                User = user,
-                UserId = user.Id,
-                RefreshToken = TokenHelper.GenerateRefreshToken(),
-                JwtId = user.Uuid.ToString(),
-                RefreshTokenExpiration = DateTime.UtcNow.AddDays(7),
-                Redeemed = false
-            };
-            _userRepository.Add(session);
-            await _userRepository.SaveChangesAsync();
-
-            // --- Generate JWT verification token (1h expiry) ---
-            string token = TokenHelper.GenerateJwtToken(
-                user.Uuid,
-                user.NormalizedUsername,
-                _signingCredentials,
-                issuer: _jwtIssuer,
-                audience: _jwtAudience,
-                expiresMinutes: 60
-            );
         }
     }
 }
