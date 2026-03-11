@@ -1,0 +1,6 @@
+@ReTaskMe_HostAddress = http://localhost:5017
+
+GET {{ReTaskMe_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,148 @@
+.task-list {
+  display: grid;
+  gap: 12px;
+}
+
+.task-card {
+  background: var(--card-bg);
+  border: 1px solid var(--neutral-200);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+
+.task-card__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.task-card__row h3 {
+  margin: 0;
+  color: var(--purple-900);
+}
+
+.task-card__desc {
+  margin: 8px 0 12px;
+  color: #3f2c5c;
+}
+
+.pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.pill--low {
+  background: #ecfdf3;
+  color: #1f7a3f;
+}
+
+.pill--medium {
+  background: #fdf4ff;
+  color: #7a1fb8;
+}
+
+.pill--high {
+  background: #fff0f0;
+  color: #b42318;
+}
+
+.task-card__meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--text);
+  font-weight: 600;
+  flex-wrap: wrap;
+}
+
+.task-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.task-actions .danger {
+  border-color: #d92d20;
+  color: #b42318;
+}
+
+.task-actions button {
+  color: var(--text);
+}
+
+.task-edit {
+  margin: 10px 0 0;
+  padding: 12px;
+  border: 1px solid var(--neutral-200);
+  border-radius: 12px;
+  background: var(--neutral-200);
+}
+
+.task-edit__row {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.board-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--neutral-200);
+  padding: 6px 10px;
+  border-radius: 10px;
+  color: var(--text);
+}
+
+.board-select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--neutral-400);
+  background: var(--card-bg);
+  color: var(--text);
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  background: var(--neutral-200);
+}
+
+.status--pending,
+.status--new {
+  background: #f0e8ff;
+  color: #5c3bbd;
+}
+
+.status--inprogress {
+  background: #e6f0ff;
+  color: #1f5fb8;
+}
+
+.status--done {
+  background: #ecfdf3;
+  color: #1f7a3f;
+}
+
+.status--archived {
+  background: #f5f5f5;
+  color: #5b5b5b;
+}
+
+.deadline {
+  font-size: 13px;
+}
+
+.empty-card {
+  text-align: center;
+}
+

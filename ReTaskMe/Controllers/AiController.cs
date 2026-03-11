@@ -1,0 +1,38 @@
+
+using BusinessLogicLayerCore.Services.AiAgentBehaviour;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using BusinessLogicLayerCore.Services.Interfaces;
+
+namespace ReTaskMe.Controllers;
+
+[ApiController]
+[Route("api/v1/[controller]")]
+[Authorize]
+public class AiController : BaseController{
+    private readonly IAgentStrategyResolver _resolver;
+
+    public AiController(IAgentStrategyResolver _resolver){
+        this._resolver = _resolver;
+    }
+    
+    [HttpPost("AiAssist")]
+    public async Task<IActionResult> GenerateContent([FromBody] String request){
+        if (!UserGuid.HasValue)
+        {
+            return BadRequest(new { error = "User is not authenticated or UserGuid is missing." });
+        }
+
+        try{
+            var strategy = _resolver.Resolve(request);
+
+            var result = await strategy.HandleAsync(request, UserGuid.Value);
+
+            return Ok(new { result });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+}
